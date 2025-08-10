@@ -53,34 +53,41 @@ export default function PublicReportView({ report }: { report: any }) {
   const growthValue = Math.round((totalCurrentRevenue * assumedGrowthPercent) / 100)
 
   return (
-    <div className="space-y-10">
-      <header className="space-y-3 print:space-y-1">
+    <div className="space-y-12">
+      {/* Cover / Executive Intro */}
+      <header className="space-y-4 print:space-y-1">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-semibold">{report.name}</h1>
+            <p className="text-xs tracking-wide text-gray-500">ParkBunny</p>
+            <h1 className="text-3xl font-semibold">Multi-Location Revenue Enhancement Report</h1>
             <p className="text-sm text-gray-600">Prepared for: Agena Group</p>
           </div>
           <DownloadPdfButton />
         </div>
+        <p className="text-gray-800">Unlock your parking revenue potential. ParkBunny partners with local businesses to drive measurable, recurring uplift across your car parks — without CapEx or additional operational burden.</p>
         <p className="text-sm text-gray-600">Postcodes analyzed: {report.postcodes}</p>
-        <p className="text-gray-700">Unlock Your Parking Revenue Potential — increase parking revenue by 20–25% through smart business partnerships across all locations. No CapEx, fully managed, instant impact.</p>
       </header>
 
+      {/* Headline Metrics */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Projected revenue</p>
           <p className="text-xl font-semibold">{formatCurrency(revenue)}</p>
+          <p className="text-xs text-gray-600 mt-1">Based on uplift scenarios applied to local business mix</p>
         </div>
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Total businesses</p>
           <p className="text-xl font-semibold">{totalBusinesses}</p>
+          <p className="text-xs text-gray-600 mt-1">Identified partners across analyzed postcodes</p>
         </div>
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Categories</p>
           <p className="text-xl font-semibold">{categories.length}</p>
+          <p className="text-xs text-gray-600 mt-1">Diverse coverage (e.g., restaurants, gyms, hotels)</p>
         </div>
       </section>
 
+      {/* Context Metrics */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Total Current Revenue</p>
@@ -99,14 +106,14 @@ export default function PublicReportView({ report }: { report: any }) {
         </div>
       </section>
 
+      {/* Map Overview (High-level) */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Revenue Enhancement Opportunity</h2>
-        <p className="text-sm text-gray-700">Current vs Potential Revenue with ParkBunny (Average {assumedGrowthPercent}% growth potential).</p>
-        <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">
-          Chart placeholder: Current vs Potential
-        </div>
+        <h2 className="text-xl font-medium">Map Overview</h2>
+        <p className="text-sm text-gray-700">Visual representation of analyzed car parks and nearby business clusters. This informs our partnership targeting and expected demand uplift within each micro-market.</p>
+        <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
       </section>
 
+      {/* Assumptions */}
       <section className="space-y-2">
         <h2 className="text-xl font-medium">Assumptions</h2>
         {estimatedRevenuePerPostcode ? (
@@ -114,11 +121,13 @@ export default function PublicReportView({ report }: { report: any }) {
         ) : (
           <p className="text-sm text-gray-700">Defaults applied</p>
         )}
-        <p className="text-xs text-gray-500">Uplift and sign-up rates based on ParkBunny defaults unless configured per report.</p>
+        <p className="text-xs text-gray-500">Uplift and sign-up rates reflect ParkBunny defaults unless configured per report. We use conservative benchmarks from comparable sites.</p>
       </section>
 
+      {/* Category Breakdown (Detail) */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Business breakdown</h2>
+        <h2 className="text-xl font-medium">Business Breakdown</h2>
+        <p className="text-sm text-gray-700">Distribution of local business types identified near each location. Categories with higher counts typically correlate with stronger on-peak demand, and thus higher parking conversion potential.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {categories.map(([cat, count]) => (
             <div key={cat} className="rounded border p-3 flex items-center justify-between">
@@ -129,29 +138,29 @@ export default function PublicReportView({ report }: { report: any }) {
         </div>
       </section>
 
+      {/* Executive Area Summary (Narrative) */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Map Overview</h2>
-        <p className="text-sm text-gray-700">Visual representation of analyzed car parks and nearby business clusters. (Placeholder map; will be populated from Google Places results.)</p>
-        <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">
-          Map placeholder
-        </div>
+        <h2 className="text-xl font-medium">Executive Summary of the Local Area</h2>
+        <p className="text-sm text-gray-700">The analyzed catchments present strong demand drivers across hospitality, fitness, and professional services. Weekday occupancy is shaped by nearby offices and co-working hubs; evenings and weekends benefit from restaurants and entertainment venues. Seasonal peaks (e.g., holidays, events) further lift demand. ParkBunny converts this latent demand via targeted partnerships and instant in-app offers.</p>
+        <p className="text-sm text-gray-700">This narrative can be generated from live POI context using OpenAI for location-specific insights (e.g., notable attractions, regular events, transport hubs) to guide partnership prioritization.</p>
       </section>
 
+      {/* Opportunity (Current vs Potential) */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Executive Summary of Local Area</h2>
-        <p className="text-sm text-gray-700">This area presents strong demand drivers from hospitality, fitness, and professional services. Weekday occupancy is influenced by nearby offices and co-working hubs, while evening and weekend peaks are driven by restaurants and entertainment venues. ParkBunny’s instant deals and local partnerships can convert these audiences with minimal friction. (This narrative can be generated via OpenAI with live POI context.)</p>
+        <h2 className="text-xl font-medium">Revenue Enhancement Opportunity</h2>
+        <p className="text-sm text-gray-700">Current vs Potential Revenue with ParkBunny, illustrating the average {assumedGrowthPercent}% growth potential when local partnerships and ParkBunny’s activation are deployed.</p>
+        <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Current vs Potential</div>
       </section>
 
+      {/* By Location (Detailed Cards) */}
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Revenue Enhancement by Location</h2>
-        <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">
-          Chart placeholder: Growth potential by location
-        </div>
+        <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Growth potential by location</div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Parking Locations</h2>
-        <p className="text-sm text-gray-700">Overview of analyzed car parks and nearby business mix.</p>
+        <h2 className="text-xl font-medium">Parking Locations (Detail)</h2>
+        <p className="text-sm text-gray-700">Per-location outlook using default revenue assumptions and category mix. Uplift is indicative and will be refined post site surveys and initial partner activation.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {postcodes.map((pc) => {
             const uplift = pseudoRandomPercentFromCode(pc)
@@ -193,91 +202,100 @@ export default function PublicReportView({ report }: { report: any }) {
         </div>
       </section>
 
+      {/* App Showcase */}
+      <section className="space-y-3">
+        <h2 className="text-xl font-medium">Smart Parking Management (App)</h2>
+        <p className="text-sm text-gray-700">Our platform enables multi-location partnership management, centralized revenue tracking, and instant promotional tools. Below are mockups illustrating the driver app and operator console.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded border h-64 bg-gray-100 flex items-center justify-center text-gray-500">App mockup placeholder</div>
+          <div className="rounded border h-64 bg-gray-100 flex items-center justify-center text-gray-500">Dashboard mockup placeholder</div>
+        </div>
+      </section>
+
+      {/* Distribution Overview */}
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Partnership Opportunities</h2>
-        <p className="text-sm text-gray-700">Nearby businesses driving parking demand. Mix varies by location; categories below reflect the broader opportunity.</p>
-        <div className="w-full h-56 rounded border bg-gray-100 flex items-center justify-center text-gray-500">
-          Chart placeholder: Business type distribution
-        </div>
+        <p className="text-sm text-gray-700">Nearby businesses driving parking demand. Distribution varies by location; the illustrative mix below informs activation sequencing (e.g., hospitality first in the evening economy).</p>
+        <div className="w-full h-56 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Business type distribution</div>
       </section>
 
+      {/* Ancillary Services Revenue Potential */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Additional Revenue Streams</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded border p-4">
+        <h2 className="text-xl font-medium">Ancillary Services Revenue Potential</h2>
+        <p className="text-sm text-gray-700">Subject to site surveys — projected upside from additional services</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="rounded border p-4 space-y-1">
+            <p className="font-medium">Smart Lockers</p>
+            <p className="text-sm">£36k</p>
+            <p className="text-xs text-gray-600">Per year recurring revenue</p>
+          </div>
+          <div className="rounded border p-4 space-y-1">
             <p className="font-medium">Digital Signage</p>
-            <p className="text-sm text-gray-600">High footfall areas</p>
-            <p className="text-sm">£4K - £40K</p>
-            <p className="text-xs text-gray-500">Subject to survey</p>
+            <p className="text-sm">£4k–£40k</p>
+            <p className="text-xs text-gray-600">Per year depending on location</p>
           </div>
-          <div className="rounded border p-4">
+          <div className="rounded border p-4 space-y-1">
             <p className="font-medium">WeBuyAnyCar.com</p>
-            <p className="text-sm text-gray-600">8-12 spaces</p>
-            <p className="text-sm">£15K - £20K / year</p>
+            <p className="text-sm">£15k–£20k</p>
+            <p className="text-xs text-gray-600">Per year per site</p>
           </div>
-          <div className="rounded border p-4">
-            <p className="font-medium">Tesla</p>
-            <p className="text-sm text-gray-600">3 spaces test drive centre</p>
-            <p className="text-sm">£50K</p>
-            <p className="text-xs text-gray-500">Affluent areas</p>
+          <div className="rounded border p-4 space-y-1">
+            <p className="font-medium">Tesla Test Drive Centre</p>
+            <p className="text-sm">£50k</p>
+            <p className="text-xs text-gray-600">Per year per site</p>
           </div>
-          <div className="rounded border p-4">
-            <p className="font-medium">Amazon Lockers</p>
-            <p className="text-sm text-gray-600">Convenient pickup points</p>
-            <p className="text-sm">£5K - £8K / year</p>
+          <div className="rounded border p-4 space-y-1">
+            <p className="font-medium">Waterless Car Wash</p>
+            <p className="text-sm">£12k–£45k/year</p>
+            <p className="text-xs text-gray-600">Eco-friendly car washing; minimal water usage</p>
           </div>
+          <div className="rounded border p-4 space-y-1">
+            <p className="font-medium">Courier Partnerships</p>
+            <p className="text-sm">Up to £30k/year per site</p>
+            <p className="text-xs text-gray-600">Delivery partnerships for efficient logistics</p>
+          </div>
+          <div className="rounded border p-4 space-y-1">
+            <p className="font-medium">Markets & Events</p>
+            <p className="text-sm">Flexible activation</p>
+            <p className="text-xs text-gray-600">Pop-up markets and community events</p>
+          </div>
+        </div>
+        <div className="rounded border p-4 text-xs text-gray-600">
+          <p className="font-medium">Implementation Notes</p>
+          <p>All opportunities subject to site survey and feasibility assessment. Partnership negotiations and planning permissions may apply.</p>
         </div>
       </section>
 
+      {/* Commercial Offer (Close) */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium">Evolution Of Parking</h2>
-        <p className="text-sm text-gray-700">ParkBunny is a revolutionary Parking & Marketing app: leverage additional income for shopping centres, increase footfall for retailers, and unlock alternative revenue streams.</p>
+        <h2 className="text-xl font-medium">Commercial Offer</h2>
+        <p className="text-sm text-gray-700">ParkBunny deploys a fully managed, no-CapEx model to activate local partnerships and convert demand into measurable parking revenue. We provide multi-location partner management, in-app promotions, and centralized revenue tracking, with rapid time-to-value.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="rounded border p-4 space-y-2">
-            <p className="font-medium">The Evolution Of Parking - A New Opportunity</p>
+          <div className="rounded border p-4">
+            <p className="font-medium">What we deliver</p>
             <ul className="list-disc pl-5 space-y-1 text-gray-700">
-              <li>Traditional Parking = Transactional</li>
-              <li>No direct way to communicate with drivers and families</li>
-              <li>No visibility on footfall or driver behaviour</li>
-              <li>No tools to support independent retailers</li>
+              <li>Partner sourcing and onboarding</li>
+              <li>Instant deals and demand activation</li>
+              <li>Analytics and uplift reporting</li>
+              <li>Ancillary services feasibility & rollouts</li>
             </ul>
           </div>
-          <div className="rounded border p-4 space-y-2">
-            <p className="font-medium">With ParkBunny</p>
+          <div className="rounded border p-4">
+            <p className="font-medium">Next steps</p>
             <ul className="list-disc pl-5 space-y-1 text-gray-700">
-              <li>Instant Deals to support independent retailers</li>
-              <li>Turn car parks into smart, data-driven customer acquisition hubs</li>
-              <li>Real time footfall and behaviour tracking</li>
-              <li>Direct comms with drivers via in-app promo and messaging</li>
+              <li>Confirm target locations and priorities</li>
+              <li>Site surveys and partner pipeline build</li>
+              <li>Pilot activation (4–6 weeks) and measure uplift</li>
+              <li>Scale to full estate</li>
             </ul>
           </div>
-        </div>
-        <div className="rounded border p-4 text-sm space-y-1">
-          <p className="font-medium">Parking is Transactional — ParkBunny Makes it Profitable</p>
-          <ul className="list-disc pl-5 text-gray-700 space-y-1">
-            <li>Drive Footfall to Your Tenants</li>
-            <li>Instant Deals platform promotes retailers & fills quiet periods</li>
-            <li>Nearby Business Activation engages hotels, gyms, offices</li>
-            <li>Direct Communication with Drivers for events, offers & activities</li>
-            <li>No CapEx — fully managed</li>
-            <li>Simple Payment — cashless parking</li>
-          </ul>
         </div>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-xl font-medium">Contact</h2>
-        <p className="text-sm">jon.sprank@parkbunny.app</p>
-      </section>
-      <section className="space-y-2">
-        <h2 className="text-xl font-medium">ParkBunny Solutions</h2>
-        <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
-          <li>Revenue Driving: drive footfall via instant deals and partner packages.</li>
-          <li>Nearby Business Activation: engage hotels, gyms, and offices to fill underutilized spaces.</li>
-          <li>Direct Communication: promote events and offers to drivers via the app.</li>
-          <li>Zero CapEx: fully managed by ParkBunny; simple, cashless payments.</li>
-        </ul>
-      </section>
+      {/* Footer */}
+      <footer className="border-t pt-6 text-xs text-gray-600">
+        <p>ParkBunny • Contact: jon.sprank@parkbunny.app</p>
+      </footer>
     </div>
   )
 }
