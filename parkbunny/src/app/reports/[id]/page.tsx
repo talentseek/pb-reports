@@ -17,9 +17,10 @@ export default async function ReportViewPage({ params }: { params: { id: string 
     notFound();
   }
 
+  const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {};
   const revenue = calculateRevenuePotential(
     (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
-    defaultSettings,
+    { ...defaultSettings, ...safeSettings },
   );
 
   return (

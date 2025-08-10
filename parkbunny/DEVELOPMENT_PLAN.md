@@ -5,7 +5,7 @@
   - [x] Initialize Prisma (SQLite)
   - [x] Set up Clerk auth shell
   - [x] Routes: /dashboard, /reports/new, /reports/[id], /settings
-  - [ ] Components: ReportForm, ReportList, ReportView (stubs pending)
+  - [ ] Components: ReportForm, ReportList, ReportView (ReportList done)
   - [x] Lib: db client, mockData, calculations
   - [x] API: POST /api/reports, GET /api/reports, GET /api/reports/[id]
   - [x] Basic calculation: uplift x signUpRate x base per business
@@ -13,8 +13,8 @@
 - [ ] M2: Persistence + Settings
   - [x] Persist businesses and reports with Prisma
   - [x] Per-report settings JSON field
-  - [ ] Settings page to edit uplift and sign-up rates
-  - [ ] Use settings in calculations
+  - [ ] Settings page to edit uplift and sign-up rates (and estimatedRevenue)
+  - [x] Use settings in calculations
 - [ ] M3: Polish
   - [x] Auth-protected routes with Clerk
   - [ ] Empty states and optimistic UX
