@@ -31,3 +31,13 @@
 
 ## Tracking
 - We will check off items as they are implemented and tested.
+
+
+- [ ] Public share links (Option A)
+  - [x] Default shared link + password on report creation
+  - [x] DB fields (enabled, code, password hash, expiry, counters)
+  - [x] API to enable/disable/regenerate and set password
+  - [x] Public route /share/[code] with password gate and cookie
+  - [x] Manage link from report settings page
+  - [ ] View analytics counters in internal UI
+  - [ ] Rate limit password attempts

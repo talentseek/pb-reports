@@ -26,6 +26,13 @@ model Report {
   createdAt  DateTime    @default(now())
   user       User?       @relation(fields: [userId], references: [id])
   userId     String?
+  // Public share fields
+  shareEnabled      Boolean   @default(false)
+  shareCode         String?   @unique
+  sharePasswordHash String?
+  shareExpiresAt    DateTime?
+  shareViewCount    Int       @default(0)
+  shareLastViewedAt DateTime?
 }
 
 model Business {
