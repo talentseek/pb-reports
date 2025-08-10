@@ -11,7 +11,7 @@ export default async function DashboardPage() {
   const reports = await prisma.report.findMany({
     where: { user: { clerkId: user.id } },
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, postcodes: true, createdAt: true },
+    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true },
   });
 
   return (
