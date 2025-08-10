@@ -18,23 +18,19 @@ export default function RootLayout({
 }>) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {publishableKey ? (
-          <ClerkProvider publishableKey={publishableKey}>
-            <header className="border-b">
-              <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
-                <Link href="/dashboard" className="font-semibold">ParkBunny</Link>
-                <AuthButtons />
-              </div>
-            </header>
-            {children}
-          </ClerkProvider>
-        ) : (
-          children
-        )}
-      </body>
-    </html>
+    <ClerkProvider publishableKey={publishableKey}>
+      <html lang="en">
+        <body className={inter.className}>
+          <header className="border-b">
+            <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
+              <Link href="/dashboard" className="font-semibold">ParkBunny</Link>
+              <AuthButtons />
+            </div>
+          </header>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
 
