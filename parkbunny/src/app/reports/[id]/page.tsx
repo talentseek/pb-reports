@@ -1,7 +1,7 @@
-import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations";
 import prisma from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import ReportView from "@/components/report/ReportView";
 
 export default async function ReportViewPage({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -17,53 +17,9 @@ export default async function ReportViewPage({ params }: { params: { id: string 
     notFound();
   }
 
-  const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {};
-  const revenue = calculateRevenuePotential(
-    (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
-    { ...defaultSettings, ...safeSettings },
-  );
-
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{report.name}</h1>
-          <p className="text-sm text-gray-600">Postcodes: {report.postcodes}</p>
-        </div>
-      </header>
-      <section>
-        <h2 className="text-xl font-medium mb-2">Executive Overview</h2>
-        <p className="text-gray-700">Estimated revenue potential: £{revenue}</p>
-        <p>
-          <a href={`/reports/${report.id}/settings`} className="text-sm underline">Edit settings</a>
-        </p>
-        {safeSettings?.estimatedRevenuePerPostcode && (
-          <p className="text-sm text-gray-600">Assumptions: £{safeSettings.estimatedRevenuePerPostcode} per postcode × {safeSettings.postcodesCount ?? 1} postcode(s)</p>
-        )}
-      </section>
-      <section>
-        <h2 className="text-xl font-medium mb-2">Businesses</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left border-b">
-                <th className="py-2 pr-4">Name</th>
-                <th className="py-2 pr-4">Category</th>
-                <th className="py-2 pr-4">Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(report.businesses ?? []).map((b: any) => (
-                <tr key={b.id} className="border-b last:border-0">
-                  <td className="py-2 pr-4">{b.name}</td>
-                  <td className="py-2 pr-4 capitalize">{b.category}</td>
-                  <td className="py-2 pr-4">{b.address}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ReportView report={report} />
     </main>
   );
 }
