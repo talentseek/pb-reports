@@ -41,3 +41,17 @@
   - [x] Manage link from report settings page
   - [ ] View analytics counters in internal UI
   - [ ] Rate limit password attempts
+
+## P1: Report Pages (Showcase + Internal Summary)
+
+- [ ] Shared Report Showcase (/share/[code])
+  - [ ] Executive summary with headline metrics (total businesses, projected revenue range)
+  - [ ] Assumptions section (estimated revenue per postcode × count, uplift %, sign-up rates)
+  - [ ] Business breakdown section (by category), concise and print-friendly
+  - [ ] Basic branding polish and clear sectioning
+  - [ ] Print/export-friendly layout (print CSS; PDF later)
+
+- [ ] Internal Report Summary (/reports/[id])
+  - [ ] Summary panel mirroring public executive summary (readable at a glance)
+  - [ ] Quick actions: edit settings, regenerate link, copy public link/password
+  - [ ] After-create banner showing the public link and copy actions
