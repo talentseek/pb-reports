@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CopyLinkButton from "@/components/CopyLinkButton";
 
 type ReportListProps = {
   reports: { id: string; name: string; postcodes: string; createdAt: string | Date; shareEnabled?: boolean; shareCode?: string | null }[];
@@ -18,13 +19,7 @@ export default function ReportList({ reports }: ReportListProps) {
           </div>
           <div className="flex items-center gap-3">
             {r.shareEnabled && r.shareCode ? (
-              <button
-                className="text-xs rounded border px-2 py-1 hover:bg-gray-50"
-                onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${r.shareCode}`)}
-                title="Copy public link"
-              >
-                Copy link
-              </button>
+              <CopyLinkButton url={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${r.shareCode}`} />
             ) : null}
             <Link href={`/reports/${r.id}`} className="text-sm underline">
               View

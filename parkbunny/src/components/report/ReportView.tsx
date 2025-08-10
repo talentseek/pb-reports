@@ -1,4 +1,5 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations";
+import CopyLinkButton from "@/components/CopyLinkButton";
 
 export default function ReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {};
@@ -23,12 +24,7 @@ export default function ReportView({ report }: { report: any }) {
             >
               Public link
             </a>
-            <button
-              className="text-xs rounded border px-2 py-1 hover:bg-gray-50"
-              onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`)}
-            >
-              Copy
-            </button>
+            <CopyLinkButton url={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`} label="Copy" />
           </div>
         ) : null}
       </header>
