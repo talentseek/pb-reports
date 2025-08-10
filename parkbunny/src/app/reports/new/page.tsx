@@ -5,7 +5,7 @@ import { validateUkPostcodes } from "@/lib/postcode";
 export default function NewReportPage() {
   const [name, setName] = useState("");
   const [postcodes, setPostcodes] = useState("");
-  const [estimatedRevenue, setEstimatedRevenue] = useState<number>(100000);
+  const [estimatedRevenuePerPostcode, setEstimatedRevenuePerPostcode] = useState<number>(50000);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export default function NewReportPage() {
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, postcodes: parsed.postcodes, estimatedRevenue }),
+        body: JSON.stringify({ name, postcodes: parsed.postcodes, estimatedRevenuePerPostcode }),
       });
       if (!res.ok) throw new Error(await res.text());
       const report = await res.json();
@@ -45,14 +45,14 @@ export default function NewReportPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Estimated Revenue (£)</label>
+          <label className="block text-sm font-medium">Estimated carpark revenue per postcode (£)</label>
           <input
             className="mt-1 w-full rounded border px-3 py-2"
             type="number"
             min={0}
             step={100}
-            value={estimatedRevenue}
-            onChange={(e) => setEstimatedRevenue(Number(e.target.value))}
+            value={estimatedRevenuePerPostcode}
+            onChange={(e) => setEstimatedRevenuePerPostcode(Number(e.target.value))}
             required
           />
         </div>
