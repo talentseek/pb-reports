@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
 import mockBusinesses from '@/lib/mockData'
+import { defaultSettings } from '@/lib/calculations'
 
 export async function GET() {
   const { userId } = await auth()
@@ -34,7 +35,9 @@ export async function POST(req: Request) {
       postcodes: postcodesStr,
       settings: {
         estimatedRevenuePerPostcode: typeof estimatedRevenuePerPostcode === 'number' ? estimatedRevenuePerPostcode : 100000,
-        postcodesCount: Array.isArray(postcodes) ? postcodes.length : (postcodesStr ? postcodesStr.split(',').filter(Boolean).length : 1)
+        postcodesCount: Array.isArray(postcodes) ? postcodes.length : (postcodesStr ? postcodesStr.split(',').filter(Boolean).length : 1),
+        upliftPercentages: defaultSettings.upliftPercentages,
+        signUpRates: defaultSettings.signUpRates,
       },
       userId: user.id,
       businesses: {
