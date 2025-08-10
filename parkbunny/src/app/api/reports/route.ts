@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   if (!userId) return new Response('Unauthorized', { status: 401 })
 
   const body = await req.json()
-  const { name, postcodes, estimatedRevenue } = body as { name: string; postcodes: string[] | string; estimatedRevenue?: number }
+  const { name, postcodes, estimatedRevenuePerPostcode } = body as { name: string; postcodes: string[] | string; estimatedRevenuePerPostcode?: number }
   const postcodesStr = Array.isArray(postcodes) ? postcodes.join(',') : String(postcodes)
 
   // Ensure a user record exists
@@ -32,7 +32,10 @@ export async function POST(req: Request) {
     data: {
       name,
       postcodes: postcodesStr,
-      settings: { estimatedRevenue: typeof estimatedRevenue === 'number' ? estimatedRevenue : 100000 },
+      settings: {
+        estimatedRevenuePerPostcode: typeof estimatedRevenuePerPostcode === 'number' ? estimatedRevenuePerPostcode : 100000,
+        postcodesCount: Array.isArray(postcodes) ? postcodes.length : (postcodesStr ? postcodesStr.split(',').filter(Boolean).length : 1)
+      },
       userId: user.id,
       businesses: {
         create: mockBusinesses.map((b) => ({

@@ -15,7 +15,8 @@ export const defaultSettings = {
     coworking: 0.5,
     gyms: 0.25,
   },
-  estimatedRevenue: 100_000, // default per postcode
+  estimatedRevenuePerPostcode: 50_000, // default per postcode
+  postcodesCount: 1,
 }
 
 export type Settings = typeof defaultSettings
@@ -25,8 +26,9 @@ export function calculateRevenuePotential(
   settings: Partial<Settings> = defaultSettings,
 ): number {
   const s: Settings = { ...defaultSettings, ...settings }
-  const num = Math.max(1, businesses.length)
-  const basePerBusiness = Math.max(1, s.estimatedRevenue) / num
+  const numBusinesses = Math.max(1, businesses.length)
+  const totalRevenue = Math.max(1, s.estimatedRevenuePerPostcode) * Math.max(1, s.postcodesCount)
+  const basePerBusiness = totalRevenue / numBusinesses
   let total = 0
   for (const biz of businesses) {
     const category = biz.category as keyof typeof s.upliftPercentages
