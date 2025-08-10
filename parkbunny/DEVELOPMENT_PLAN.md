@@ -13,7 +13,7 @@
 - [ ] M2: Persistence + Settings
   - [x] Persist businesses and reports with Prisma
   - [x] Per-report settings JSON field
-  - [ ] Settings page to edit uplift and sign-up rates (and estimatedRevenuePerPostcode)
+  - [x] Settings page to edit uplift and sign-up rates (and estimatedRevenuePerPostcode)
   - [x] Use settings in calculations
 - [ ] M3: Polish
   - [x] Auth-protected routes with Clerk
