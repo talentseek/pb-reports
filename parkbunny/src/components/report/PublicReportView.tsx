@@ -51,6 +51,8 @@ export default function PublicReportView({ report }: { report: any }) {
   const totalCurrentRevenue = (estimatedRevenuePerPostcode ?? 50000) * (postcodes.length || postcodesCount || 1)
   const upliftValue = revenue
   const computedGrowthPercent = Math.round((upliftValue / Math.max(1, totalCurrentRevenue)) * 100)
+  const locationCount = postcodes.length || postcodesCount
+  const isMulti = locationCount > 1
 
   return (
     <div className="space-y-12">
@@ -106,12 +108,14 @@ export default function PublicReportView({ report }: { report: any }) {
         </div>
       </section>
 
-      {/* Map Overview (High-level) */}
-      <section className="space-y-3">
-        <h2 className="text-xl font-medium">Map Overview</h2>
-        <p className="text-sm text-gray-700">Visual representation of analyzed car parks and nearby business clusters. This informs our partnership targeting and expected demand uplift within each micro-market.</p>
-        <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
-      </section>
+      {/* Map Overview (High-level) - only for single location */}
+      {!isMulti && (
+        <section className="space-y-3">
+          <h2 className="text-xl font-medium">Map Overview</h2>
+          <p className="text-sm text-gray-700">Visual representation of the analyzed car park and nearby business clusters. This informs our partnership targeting and expected demand uplift within the micro-market.</p>
+          <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
+        </section>
+      )}
 
       {/* Assumptions */}
       <section className="space-y-2">
@@ -124,19 +128,21 @@ export default function PublicReportView({ report }: { report: any }) {
         <p className="text-xs text-gray-500">Uplift and sign-up rates reflect ParkBunny defaults unless configured per report. We use conservative benchmarks from comparable sites.</p>
       </section>
 
-      {/* Category Breakdown (Detail) */}
-      <section className="space-y-3">
-        <h2 className="text-xl font-medium">Business Breakdown</h2>
-        <p className="text-sm text-gray-700">Distribution of local business types identified near each location. Categories with higher counts typically correlate with stronger on-peak demand, and thus higher parking conversion potential.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {categories.map(([cat, count]) => (
-            <div key={cat} className="rounded border p-3 flex items-center justify-between">
-              <span className="capitalize">{cat}</span>
-              <span className="font-medium">{count}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Category Breakdown (Detail) - only for single location */}
+      {!isMulti && (
+        <section className="space-y-3">
+          <h2 className="text-xl font-medium">Business Breakdown</h2>
+          <p className="text-sm text-gray-700">Distribution of local business types identified near the location. Categories with higher counts typically correlate with stronger on-peak demand, and thus higher parking conversion potential.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {categories.map(([cat, count]) => (
+              <div key={cat} className="rounded border p-3 flex items-center justify-between">
+                <span className="capitalize">{cat}</span>
+                <span className="font-medium">{count}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Executive Area Summary (Narrative) */}
       <section className="space-y-3">
@@ -152,55 +158,68 @@ export default function PublicReportView({ report }: { report: any }) {
         <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Current vs Potential</div>
       </section>
 
-      {/* By Location (Detailed Cards) */}
-      <section className="space-y-3">
-        <h2 className="text-xl font-medium">Revenue Enhancement by Location</h2>
-        <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Growth potential by location</div>
-      </section>
+      {/* Per-Location Analysis (for multi-location) */}
+      {isMulti && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-medium">Per-Location Analysis</h2>
+          <p className="text-sm text-gray-700">Each postcode section below includes its own map, indicative metrics, and a placeholder breakdown. Real per-location POI breakdowns will be wired once Google Places integration lands.</p>
+          <div className="space-y-8">
+            {postcodes.map((pc) => {
+              const uplift = pseudoRandomPercentFromCode(pc)
+              const current = estimatedRevenuePerPostcode ?? 50000
+              const growth = Math.round((current * uplift) / 100)
+              const total = current + growth
+              const top3 = categories.slice(0, 3)
+              return (
+                <div key={pc} className="rounded border p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-lg">{pc}</p>
+                      <p className="text-xs text-green-700 font-medium">+{uplift}% uplift (indicative)</p>
+                    </div>
+                    <div className="w-64 h-32 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <div className="rounded border p-3">
+                      <p className="text-xs text-gray-600">Current</p>
+                      <p className="font-medium">{formatCurrency(current)}</p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-xs text-gray-600">Growth</p>
+                      <p className="font-medium">+{formatCurrency(growth)}</p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-xs text-gray-600">Total Potential</p>
+                      <p className="font-medium">{formatCurrency(total)}</p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-xs text-gray-600">Top Category</p>
+                      <p className="font-medium capitalize">{top3[0]?.[0] ?? 'tbd'}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Business Breakdown (placeholder)</p>
+                    <ul className="text-sm list-disc pl-4 grid grid-cols-1 md:grid-cols-2 gap-1">
+                      {top3.map(([c, n]) => (
+                        <li key={String(c)} className="capitalize">{c} <span className="text-gray-500">({n})</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Parking Locations (Detail)</h2>
-        <p className="text-sm text-gray-700">Per-location outlook using default revenue assumptions and category mix. Uplift is indicative and will be refined post site surveys and initial partner activation.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {postcodes.map((pc) => {
-            const uplift = pseudoRandomPercentFromCode(pc)
-            const current = estimatedRevenuePerPostcode ?? 50000
-            const growth = Math.round((current * uplift) / 100)
-            const total = current + growth
-            const top3 = categories.slice(0, 3)
-            return (
-              <div key={pc} className="rounded border p-4 space-y-3">
-                <div>
-                  <p className="font-medium">{pc}</p>
-                  <p className="text-xs text-green-700 font-medium">+{uplift}% uplift</p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="rounded border p-2">
-                    <p className="text-xs text-gray-600">Current</p>
-                    <p className="font-medium">{formatCurrency(current)}</p>
-                  </div>
-                  <div className="rounded border p-2">
-                    <p className="text-xs text-gray-600">Growth</p>
-                    <p className="font-medium">+{formatCurrency(growth)}</p>
-                  </div>
-                  <div className="rounded border p-2 col-span-2">
-                    <p className="text-xs text-gray-600">Total Potential</p>
-                    <p className="font-medium">{formatCurrency(total)}</p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600">Top 3 Business Types</p>
-                  <ul className="text-sm list-disc pl-4">
-                    {top3.map(([c, n]) => (
-                      <li key={String(c)} className="capitalize">{c} <span className="text-gray-500">({n})</span></li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </section>
+      {/* Omit card grid if multi-location section is shown */}
+      {!isMulti && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-medium">Parking Location (Detail)</h2>
+          <p className="text-sm text-gray-700">Per-location outlook using default revenue assumptions and category mix.</p>
+          <div className="rounded border p-4 text-sm text-gray-600">Single location details are summarized above.</div>
+        </section>
+      )}
 
       {/* App Showcase */}
       <section className="space-y-3">
@@ -287,6 +306,50 @@ export default function PublicReportView({ report }: { report: any }) {
               <li>Site surveys and partner pipeline build</li>
               <li>Pilot activation (4–6 weeks) and measure uplift</li>
               <li>Scale to full estate</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Commercial Terms */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Commercial Terms</h2>
+        <p className="text-sm text-gray-700">Transparent Fee Structure — simple and clear commercial terms</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded border p-4 space-y-3">
+            <p className="font-medium">Transparent Fee Structure</p>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="rounded border p-3 flex flex-col gap-1">
+                <p className="text-xs text-gray-600">% Transaction Fee</p>
+                <p className="text-lg font-semibold">Per booking</p>
+                <p className="text-2xl font-bold">1.5%</p>
+              </div>
+              <div className="rounded border p-3 flex flex-col gap-1">
+                <p className="text-xs text-gray-600">£ Convenience Fee</p>
+                <p className="text-lg font-semibold">Per booking</p>
+                <p className="text-2xl font-bold">25p</p>
+              </div>
+              <div className="rounded border p-3 flex flex-col gap-1">
+                <p className="text-xs text-gray-600">Signage & Installation</p>
+                <p className="text-lg font-semibold">Provided at no cost</p>
+                <p className="text-2xl font-bold text-emerald-700">FREE</p>
+              </div>
+            </div>
+          </div>
+          <div className="rounded border p-4 space-y-3">
+            <p className="font-medium">Pilot Program</p>
+            <p className="text-sm text-gray-700">Risk-free trial period</p>
+            <div className="rounded border p-3 text-center">
+              <p className="text-xs text-gray-600">Pilot duration</p>
+              <p className="text-3xl font-bold">4</p>
+              <p className="text-sm font-medium">Month Pilot</p>
+              <p className="text-xs text-gray-600">Demonstrate value and performance</p>
+            </div>
+            <ul className="text-sm text-gray-700 space-y-1">
+              <li>✓ AI-generated signage mockups</li>
+              <li>✓ Monthly transparent reporting</li>
+              <li>✓ Dedicated control panel access</li>
+              <li>✓ Real-time tariff updates</li>
             </ul>
           </div>
         </div>
