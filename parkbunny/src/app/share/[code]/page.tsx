@@ -41,7 +41,7 @@ export default async function PublicReportPage({ params }: { params: { code: str
   }
 
   return (
-    <main className="mx-auto max-w-4xl p-6 space-y-6">
+    <main className="mx-auto max-w-7xl p-8 space-y-10">
       <PublicReportView report={report} />
     </main>
   )
