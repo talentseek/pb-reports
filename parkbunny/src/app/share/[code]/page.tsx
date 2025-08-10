@@ -1,5 +1,5 @@
 import prisma from '@/lib/db'
-import ReportView from '@/components/report/ReportView'
+import PublicReportView from '@/components/report/PublicReportView'
 import { cookies } from 'next/headers'
 
 async function getReportByCode(code: string) {
@@ -42,7 +42,7 @@ export default async function PublicReportPage({ params }: { params: { code: str
 
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
-      <ReportView report={report} />
+      <PublicReportView report={report} />
     </main>
   )
 }
