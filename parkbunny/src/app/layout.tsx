@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import Link from "next/link";
+import HeaderAuth from "@/components/HeaderAuth";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,23 +25,12 @@ export default function RootLayout({
           <header className="border-b">
             <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
               <Link href="/dashboard" className="font-semibold">ParkBunny</Link>
-              <AuthButtons />
+              <HeaderAuth />
             </div>
           </header>
           {children}
         </body>
       </html>
     </ClerkProvider>
-  );
-}
-
-function AuthButtons() {
-  // This component is client-only via usage of Clerk components, but we avoid "use client" by rendering simple links here.
-  // We'll show simple links; the dashboard and API routes require auth via middleware.
-  return (
-    <nav className="space-x-4 text-sm">
-      <Link href="/sign-in">Sign in</Link>
-      <Link href="/sign-up">Sign up</Link>
-    </nav>
   );
 }
