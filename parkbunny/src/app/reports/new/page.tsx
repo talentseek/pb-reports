@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { validateUkPostcodes } from "@/lib/postcode";
 
 export default function NewReportPage() {
   const [name, setName] = useState("");
@@ -12,10 +13,12 @@ export default function NewReportPage() {
     setLoading(true);
     setError(null);
     try {
+      const parsed = validateUkPostcodes(postcodes);
+      if (!parsed.valid) throw new Error(parsed.message ?? "Invalid postcodes");
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, postcodes: postcodes.split(",").map((p) => p.trim()) }),
+        body: JSON.stringify({ name, postcodes: parsed.postcodes }),
       });
       if (!res.ok) throw new Error(await res.text());
       const report = await res.json();
