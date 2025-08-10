@@ -14,6 +14,23 @@ export default function ReportView({ report }: { report: any }) {
           <h1 className="text-2xl font-semibold">{report.name}</h1>
           <p className="text-sm text-gray-600">Postcodes: {report.postcodes}</p>
         </div>
+        {report.shareEnabled && report.shareCode ? (
+          <div className="flex items-center gap-2">
+            <a
+              href={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`}
+              target="_blank"
+              className="text-sm underline"
+            >
+              Public link
+            </a>
+            <button
+              className="text-xs rounded border px-2 py-1 hover:bg-gray-50"
+              onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`)}
+            >
+              Copy
+            </button>
+          </div>
+        ) : null}
       </header>
       <section>
         <h2 className="text-xl font-medium mb-2">Executive Overview</h2>
