@@ -1,11 +1,14 @@
 # Development Plan
 
 - [ ] M1: POC UI + Mock Data
+  - [x] Dashboard list with links to reports
+  - [x] UK postcode validation/normalization/dedupe
   - [x] Scaffold Next.js 14 App Router with TS & Tailwind
   - [x] Initialize Prisma (SQLite)
   - [x] Set up Clerk auth shell
   - [x] Routes: /dashboard, /reports/new, /reports/[id], /settings
   - [ ] Components: ReportForm, ReportView (ReportList done)
+  - [ ] Extract ReportForm and ReportView into src/components/report and wire pages
   - [x] Lib: db client, mockData, calculations
   - [x] API: POST /api/reports, GET /api/reports, GET /api/reports/[id]
   - [x] Basic calculation: uplift x signUpRate x base per business
