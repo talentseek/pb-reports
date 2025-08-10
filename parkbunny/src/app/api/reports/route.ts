@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
 import mockBusinesses from '@/lib/mockData'
 import { defaultSettings } from '@/lib/calculations'
+import { generateShareCode, hashPassword } from '@/lib/share'
 
 export async function GET() {
   const { userId } = await auth()
@@ -29,6 +30,9 @@ export async function POST(req: Request) {
     user = await prisma.user.create({ data: { clerkId: userId, email: `${userId}@example.invalid` } })
   }
 
+  // Prepare default share details
+  const defaultSharePassword = process.env.SHARE_DEFAULT_PASSWORD || 'parkbunny'
+  const sharePasswordHash = await hashPassword(defaultSharePassword)
   const report = await prisma.report.create({
     data: {
       name,
@@ -39,6 +43,9 @@ export async function POST(req: Request) {
         upliftPercentages: defaultSettings.upliftPercentages,
         signUpRates: defaultSettings.signUpRates,
       },
+      shareEnabled: true,
+      shareCode: generateShareCode(),
+      sharePasswordHash,
       userId: user.id,
       businesses: {
         create: mockBusinesses.map((b) => ({

@@ -15,6 +15,9 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
   const [settings, setSettings] = useState<Settings>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareEnabled, setShareEnabled] = useState<boolean>(false);
+  const [sharePassword, setSharePassword] = useState<string>("");
 
   useEffect(() => {
     let isMounted = true;
@@ -24,6 +27,12 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       const data = await res.json();
       if (isMounted) {
         const incoming = (data.settings ?? {}) as Settings;
+        setShareEnabled(Boolean(data.shareEnabled));
+        setShareUrl(data.shareCode ? `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${data.shareCode}` : null);
+        if (data.shareEnabled && data.shareCode && !data.sharePasswordHash) {
+          // Show the default password hint once if no explicit password set
+          setSharePassword(process.env.NEXT_PUBLIC_SHARE_DEFAULT_PASSWORD || 'parkbunny');
+        }
         setSettings({
           estimatedRevenuePerPostcode: incoming.estimatedRevenuePerPostcode ?? defaultSettings.estimatedRevenuePerPostcode,
           postcodesCount: incoming.postcodesCount ?? defaultSettings.postcodesCount,
@@ -62,6 +71,26 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       router.push(`/reports/${params.id}`);
     } catch (e: any) {
       setError(e.message ?? "Failed to save settings");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function updateShare(opts: { enable?: boolean; password?: string; regenerate?: boolean }) {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/reports/${params.id}/share`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(opts),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setShareEnabled(Boolean(data.shareEnabled));
+      setShareUrl(data.shareCode ? `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${data.shareCode}` : null);
+    } catch (e: any) {
+      setError(e.message ?? "Failed to update share settings");
     } finally {
       setSaving(false);
     }
@@ -117,6 +146,26 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       <div className="flex gap-3">
         <button onClick={onSave} disabled={saving} className="rounded bg-black text-white px-4 py-2 disabled:opacity-60">{saving ? "Saving..." : "Save"}</button>
         <button onClick={() => router.push(`/reports/${params.id}`)} className="rounded border px-4 py-2">Cancel</button>
+      </div>
+
+      <hr className="my-6" />
+      <h2 className="text-xl font-semibold">Public link</h2>
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <label className="text-sm">Enable public link</label>
+          <input type="checkbox" checked={shareEnabled} onChange={(e) => updateShare({ enable: e.target.checked })} />
+        </div>
+        <div>
+          <label className="block text-sm">Password</label>
+          <div className="flex gap-2">
+            <input className="rounded border px-3 py-2 flex-1" type="text" value={sharePassword} onChange={(e) => setSharePassword(e.target.value)} />
+            <button type="button" onClick={() => updateShare({ password: sharePassword })} className="rounded border px-3 py-2">Set</button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => updateShare({ regenerate: true })} className="rounded border px-3 py-2">Regenerate link</button>
+          {shareUrl && <a href={shareUrl} target="_blank" className="text-sm underline">{shareUrl}</a>}
+        </div>
       </div>
     </main>
   );
