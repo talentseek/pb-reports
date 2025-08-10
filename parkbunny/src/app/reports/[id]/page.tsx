@@ -34,6 +34,9 @@ export default async function ReportViewPage({ params }: { params: { id: string 
       <section>
         <h2 className="text-xl font-medium mb-2">Executive Overview</h2>
         <p className="text-gray-700">Estimated revenue potential: £{revenue}</p>
+        {safeSettings?.estimatedRevenuePerPostcode && (
+          <p className="text-sm text-gray-600">Assumptions: £{safeSettings.estimatedRevenuePerPostcode} per postcode × {safeSettings.postcodesCount ?? 1} postcode(s)</p>
+        )}
       </section>
       <section>
         <h2 className="text-xl font-medium mb-2">Businesses</h2>
