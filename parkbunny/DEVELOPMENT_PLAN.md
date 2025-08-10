@@ -14,6 +14,7 @@
   - [x] Basic calculation: uplift x signUpRate x base per business
   - [ ] Basic error/loading states
 - [ ] M2: Persistence + Settings
+  - [x] Defaults surfaced in settings UI when absent
   - [x] Persist businesses and reports with Prisma
   - [x] Per-report settings JSON field
   - [x] Settings page to edit uplift and sign-up rates (and estimatedRevenuePerPostcode)

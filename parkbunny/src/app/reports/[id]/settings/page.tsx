@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { defaultSettings } from "@/lib/calculations";
 
 type Settings = {
   upliftPercentages?: Record<string, number>
@@ -21,7 +22,27 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       const res = await fetch(`/api/reports/${params.id}`);
       if (!res.ok) return;
       const data = await res.json();
-      if (isMounted) setSettings(data.settings ?? {});
+      if (isMounted) {
+        const incoming = (data.settings ?? {}) as Settings;
+        setSettings({
+          estimatedRevenuePerPostcode: incoming.estimatedRevenuePerPostcode ?? defaultSettings.estimatedRevenuePerPostcode,
+          postcodesCount: incoming.postcodesCount ?? defaultSettings.postcodesCount,
+          upliftPercentages: {
+            restaurants: incoming.upliftPercentages?.restaurants ?? defaultSettings.upliftPercentages.restaurants,
+            bars: incoming.upliftPercentages?.bars ?? defaultSettings.upliftPercentages.bars,
+            hotels: incoming.upliftPercentages?.hotels ?? defaultSettings.upliftPercentages.hotels,
+            coworking: incoming.upliftPercentages?.coworking ?? defaultSettings.upliftPercentages.coworking,
+            gyms: incoming.upliftPercentages?.gyms ?? defaultSettings.upliftPercentages.gyms,
+          },
+          signUpRates: {
+            restaurants: incoming.signUpRates?.restaurants ?? defaultSettings.signUpRates.restaurants,
+            bars: incoming.signUpRates?.bars ?? defaultSettings.signUpRates.bars,
+            hotels: incoming.signUpRates?.hotels ?? defaultSettings.signUpRates.hotels,
+            coworking: incoming.signUpRates?.coworking ?? defaultSettings.signUpRates.coworking,
+            gyms: incoming.signUpRates?.gyms ?? defaultSettings.signUpRates.gyms,
+          },
+        });
+      }
     })();
     return () => {
       isMounted = false;
@@ -55,38 +76,38 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
         <input
           className="w-full rounded border px-3 py-2"
           type="number"
-          value={settings.estimatedRevenuePerPostcode ?? 50000}
+          value={settings.estimatedRevenuePerPostcode ?? defaultSettings.estimatedRevenuePerPostcode}
           onChange={(e) => setSettings((s) => ({ ...s, estimatedRevenuePerPostcode: Number(e.target.value) }))}
         />
         <label className="block text-sm">Postcodes count</label>
         <input
           className="w-full rounded border px-3 py-2"
           type="number"
-          value={settings.postcodesCount ?? 1}
+          value={settings.postcodesCount ?? defaultSettings.postcodesCount}
           onChange={(e) => setSettings((s) => ({ ...s, postcodesCount: Number(e.target.value) }))}
         />
         <h2 className="font-medium mt-4">Uplift percentages</h2>
-        {['restaurants','bars','hotels','coworking','gyms'].map((k) => (
+        {(['restaurants','bars','hotels','coworking','gyms'] as const).map((k) => (
           <div key={k} className="flex items-center gap-2">
             <label className="w-32 text-sm capitalize">{k}</label>
             <input
               className="flex-1 rounded border px-3 py-2"
               type="number"
               step={0.01}
-              value={settings.upliftPercentages?.[k] ?? ''}
+              value={settings.upliftPercentages?.[k] ?? defaultSettings.upliftPercentages[k]}
               onChange={(e) => setSettings((s) => ({ ...s, upliftPercentages: { ...(s.upliftPercentages ?? {}), [k]: Number(e.target.value) } }))}
             />
           </div>
         ))}
         <h2 className="font-medium mt-4">Sign-up rates</h2>
-        {['restaurants','bars','hotels','coworking','gyms'].map((k) => (
+        {(['restaurants','bars','hotels','coworking','gyms'] as const).map((k) => (
           <div key={k} className="flex items-center gap-2">
             <label className="w-32 text-sm capitalize">{k}</label>
             <input
               className="flex-1 rounded border px-3 py-2"
               type="number"
               step={0.01}
-              value={settings.signUpRates?.[k] ?? ''}
+              value={settings.signUpRates?.[k] ?? defaultSettings.signUpRates[k]}
               onChange={(e) => setSettings((s) => ({ ...s, signUpRates: { ...(s.signUpRates ?? {}), [k]: Number(e.target.value) } }))}
             />
           </div>
