@@ -15,22 +15,24 @@ export const defaultSettings = {
     coworking: 0.5,
     gyms: 0.25,
   },
+  estimatedRevenue: 100_000, // default per postcode
 }
 
 export type Settings = typeof defaultSettings
 
-const BASE_REVENUE_PER_BUSINESS = 1000 // placeholder for POC
-
 export function calculateRevenuePotential(
   businesses: Pick<MockBusiness, 'category'>[],
-  settings: Settings = defaultSettings,
+  settings: Partial<Settings> = defaultSettings,
 ): number {
+  const s: Settings = { ...defaultSettings, ...settings }
+  const num = Math.max(1, businesses.length)
+  const basePerBusiness = Math.max(1, s.estimatedRevenue) / num
   let total = 0
   for (const biz of businesses) {
-    const category = biz.category as keyof typeof settings.upliftPercentages
-    const uplift = settings.upliftPercentages[category] ?? 0.05
-    const signUp = settings.signUpRates[category] ?? 0.2
-    total += BASE_REVENUE_PER_BUSINESS * uplift * signUp
+    const category = biz.category as keyof typeof s.upliftPercentages
+    const uplift = s.upliftPercentages[category] ?? 0.05
+    const signUp = s.signUpRates[category] ?? 0.2
+    total += basePerBusiness * uplift * signUp
   }
   return Math.round(total)
 }
