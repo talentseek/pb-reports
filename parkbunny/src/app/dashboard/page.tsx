@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import prisma from "@/lib/db";
+import ReportList from "@/components/report/ReportList";
 
 export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+
+  const reports = await prisma.report.findMany({
+    where: { user: { clerkId: user.id } },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, name: true, postcodes: true, createdAt: true },
+  });
 
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
@@ -17,7 +25,7 @@ export default async function DashboardPage() {
           Create New Report
         </Link>
       </header>
-      <p className="text-sm text-gray-600">Report list coming soon.</p>
+      <ReportList reports={reports} />
     </main>
   );
 }

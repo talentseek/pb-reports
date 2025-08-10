@@ -17,7 +17,10 @@ export default async function ReportViewPage({ params }: { params: { id: string 
     notFound();
   }
 
-  const revenue = calculateRevenuePotential(report.businesses ?? [], defaultSettings);
+  const revenue = calculateRevenuePotential(
+    (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
+    defaultSettings,
+  );
 
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
