@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,11 +21,30 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {publishableKey ? (
-          <ClerkProvider publishableKey={publishableKey}>{children}</ClerkProvider>
+          <ClerkProvider publishableKey={publishableKey}>
+            <header className="border-b">
+              <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
+                <Link href="/dashboard" className="font-semibold">ParkBunny</Link>
+                <AuthButtons />
+              </div>
+            </header>
+            {children}
+          </ClerkProvider>
         ) : (
           children
         )}
       </body>
     </html>
+  );
+}
+
+function AuthButtons() {
+  // This component is client-only via usage of Clerk components, but we avoid "use client" by rendering simple links here.
+  // We'll show simple links; the dashboard and API routes require auth via middleware.
+  return (
+    <nav className="space-x-4 text-sm">
+      <Link href="/sign-in">Sign in</Link>
+      <Link href="/sign-up">Sign up</Link>
+    </nav>
   );
 }

@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
       <header className="flex items-center justify-between">
