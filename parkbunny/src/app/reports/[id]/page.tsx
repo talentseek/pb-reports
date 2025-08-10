@@ -1,21 +1,20 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations";
-
-async function getReport(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/reports/${id}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
+import prisma from "@/lib/db";
+import { currentUser } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
 
 export default async function ReportViewPage({ params }: { params: { id: string } }) {
-  const report = await getReport(params.id);
+  const user = await currentUser();
+  if (!user) {
+    notFound();
+  }
+
+  const report = await prisma.report.findFirst({
+    where: { id: params.id, user: { clerkId: user!.id } },
+    include: { businesses: true },
+  });
   if (!report) {
-    return (
-      <main className="mx-auto max-w-4xl p-6">
-        <h1 className="text-2xl font-semibold">Report not found</h1>
-      </main>
-    );
+    notFound();
   }
 
   const revenue = calculateRevenuePotential(report.businesses ?? [], defaultSettings);
