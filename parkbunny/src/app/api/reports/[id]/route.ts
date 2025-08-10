@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) return new Response('Unauthorized', { status: 401 })
 
   const report = await prisma.report.findFirst({

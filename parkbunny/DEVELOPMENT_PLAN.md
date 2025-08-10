@@ -1,13 +1,13 @@
 # Development Plan
 
 - [ ] M1: POC UI + Mock Data
-  - [ ] Scaffold Next.js 14 App Router with TS & Tailwind
-  - [ ] Initialize Prisma (SQLite)
+  - [x] Scaffold Next.js 14 App Router with TS & Tailwind
+  - [x] Initialize Prisma (SQLite)
   - [ ] Set up Clerk auth shell
   - [ ] Routes: /dashboard, /reports/new, /reports/[id], /settings
   - [ ] Components: ReportForm, ReportList, ReportView
-  - [ ] Lib: db client, mockData, calculations
-  - [ ] API: POST /api/reports, GET /api/reports, GET /api/reports/[id]
+  - [x] Lib: db client, mockData, calculations
+  - [x] API: POST /api/reports, GET /api/reports, GET /api/reports/[id]
   - [ ] Basic calculation: uplift x signUpRate x base per business
   - [ ] Basic error/loading states
 - [ ] M2: Persistence + Settings
