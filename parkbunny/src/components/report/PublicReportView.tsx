@@ -49,8 +49,8 @@ export default function PublicReportView({ report }: { report: any }) {
   const postcodesCount: number = safeSettings?.postcodesCount ?? 1
   const postcodes = parsePostcodes(report.postcodes)
   const totalCurrentRevenue = (estimatedRevenuePerPostcode ?? 50000) * (postcodes.length || postcodesCount || 1)
-  const assumedGrowthPercent = 21 // headline
-  const growthValue = Math.round((totalCurrentRevenue * assumedGrowthPercent) / 100)
+  const upliftValue = revenue
+  const computedGrowthPercent = Math.round((upliftValue / Math.max(1, totalCurrentRevenue)) * 100)
 
   return (
     <div className="space-y-12">
@@ -71,8 +71,8 @@ export default function PublicReportView({ report }: { report: any }) {
       {/* Headline Metrics */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded border p-4">
-          <p className="text-xs text-gray-600">Projected revenue</p>
-          <p className="text-xl font-semibold">{formatCurrency(revenue)}</p>
+          <p className="text-xs text-gray-600">Projected uplift</p>
+          <p className="text-xl font-semibold">{formatCurrency(upliftValue)}</p>
           <p className="text-xs text-gray-600 mt-1">Based on uplift scenarios applied to local business mix</p>
         </div>
         <div className="rounded border p-4">
@@ -101,8 +101,8 @@ export default function PublicReportView({ report }: { report: any }) {
         </div>
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Revenue Potential</p>
-          <p className="text-xl font-semibold">+{assumedGrowthPercent}%</p>
-          <p className="text-xs text-gray-500">≈ {formatCurrency(growthValue)} uplift</p>
+          <p className="text-xl font-semibold">+{computedGrowthPercent}%</p>
+          <p className="text-xs text-gray-500">≈ {formatCurrency(upliftValue)} uplift</p>
         </div>
       </section>
 
@@ -148,7 +148,7 @@ export default function PublicReportView({ report }: { report: any }) {
       {/* Opportunity (Current vs Potential) */}
       <section className="space-y-3">
         <h2 className="text-xl font-medium">Revenue Enhancement Opportunity</h2>
-        <p className="text-sm text-gray-700">Current vs Potential Revenue with ParkBunny, illustrating the average {assumedGrowthPercent}% growth potential when local partnerships and ParkBunny’s activation are deployed.</p>
+        <p className="text-sm text-gray-700">Current vs potential revenue with ParkBunny. The uplift shown reflects the modeled {computedGrowthPercent}% increase across analyzed locations.</p>
         <div className="w-full h-64 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Chart placeholder: Current vs Potential</div>
       </section>
 
