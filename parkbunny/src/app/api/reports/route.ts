@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   if (!userId) return new Response('Unauthorized', { status: 401 })
 
   const body = await req.json()
-  const { name, postcodes, estimatedRevenuePerPostcode, radiusMiles } = body as { name: string; postcodes: string[] | string; estimatedRevenuePerPostcode?: number; radiusMiles?: number }
+  const { name, postcodes, estimatedRevenuePerPostcode, radiusMiles, placesMaxPerType } = body as { name: string; postcodes: string[] | string; estimatedRevenuePerPostcode?: number; radiusMiles?: number; placesMaxPerType?: number }
   const postcodesStr = Array.isArray(postcodes) ? postcodes.join(',') : String(postcodes)
 
   // Ensure a user record exists
@@ -41,6 +41,7 @@ export async function POST(req: Request) {
         estimatedRevenuePerPostcode: typeof estimatedRevenuePerPostcode === 'number' ? estimatedRevenuePerPostcode : 100000,
         postcodesCount: Array.isArray(postcodes) ? postcodes.length : (postcodesStr ? postcodesStr.split(',').filter(Boolean).length : 1),
         radiusMiles: typeof radiusMiles === 'number' ? Math.max(0.5, Math.min(10, radiusMiles)) : 0.75,
+        placesMaxPerType: typeof placesMaxPerType === 'number' ? Math.max(1, Math.min(50, Math.floor(placesMaxPerType))) : 10,
         upliftPercentages: defaultSettings.upliftPercentages,
         signUpRates: defaultSettings.signUpRates,
       },

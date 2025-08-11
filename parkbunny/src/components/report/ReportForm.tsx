@@ -7,6 +7,7 @@ export default function ReportForm() {
   const [postcodes, setPostcodes] = useState("");
   const [estimatedRevenuePerPostcode, setEstimatedRevenuePerPostcode] = useState<number>(50000);
   const [radiusMiles, setRadiusMiles] = useState<number>(0.75);
+  const [placesMaxPerType, setPlacesMaxPerType] = useState<number>(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +21,7 @@ export default function ReportForm() {
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, postcodes: parsed.postcodes, estimatedRevenuePerPostcode, radiusMiles }),
+        body: JSON.stringify({ name, postcodes: parsed.postcodes, estimatedRevenuePerPostcode, radiusMiles, placesMaxPerType }),
       });
       if (!res.ok) throw new Error(await res.text());
       const report = await res.json();
@@ -42,6 +43,20 @@ export default function ReportForm() {
           onChange={(e) => setName(e.target.value)}
           required
         />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Max results per category (testing)</label>
+        <input
+          className="mt-1 w-full rounded border px-3 py-2"
+          type="number"
+          min={1}
+          max={50}
+          step={1}
+          value={placesMaxPerType}
+          onChange={(e) => setPlacesMaxPerType(Number(e.target.value))}
+          required
+        />
+        <p className="text-xs text-gray-500 mt-1">Default 10. Lower this to reduce API calls and costs during testing.</p>
       </div>
       <div>
         <label className="block text-sm font-medium">Search radius (miles)</label>
