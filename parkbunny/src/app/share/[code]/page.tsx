@@ -34,7 +34,7 @@ export default async function PublicReportPage({ params }: { params: { code: str
         <h1 className="text-xl font-semibold">Enter password</h1>
         <form method="POST" action={`/share/${report.shareCode}/verify`} className="space-y-3">
           <input type="password" name="password" className="w-full rounded border px-3 py-2" required />
-          <button className="rounded bg-black text-white px-4 py-2">View report</button>
+          <button className="rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90">View report</button>
         </form>
       </main>
     )
