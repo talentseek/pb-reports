@@ -172,7 +172,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">
-        <button onClick={onSave} disabled={saving} className="rounded bg-black text-white px-4 py-2 disabled:opacity-60">{saving ? "Saving..." : "Save"}</button>
+        <button onClick={onSave} disabled={saving} className="rounded bg-primary text-primary-foreground px-4 py-2 disabled:opacity-60 hover:opacity-90">{saving ? "Saving..." : "Save"}</button>
         <button onClick={() => router.push(`/reports/${params.id}`)} className="rounded border px-4 py-2">Cancel</button>
       </div>
 

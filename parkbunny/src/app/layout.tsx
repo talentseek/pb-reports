@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import Link from "next/link";
-import HeaderAuth from "@/components/HeaderAuth";
+import AppHeader from "@/components/AppHeader";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,12 +21,7 @@ export default function RootLayout({
     <ClerkProvider publishableKey={publishableKey}>
       <html lang="en">
         <body className={inter.className}>
-          <header className="border-b">
-            <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
-              <Link href="/dashboard" className="font-semibold">ParkBunny</Link>
-              <HeaderAuth />
-            </div>
-          </header>
+          <AppHeader />
           {children}
         </body>
       </html>
