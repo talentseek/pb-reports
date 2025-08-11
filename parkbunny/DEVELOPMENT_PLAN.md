@@ -55,3 +55,36 @@
   - [ ] Summary panel mirroring public executive summary (readable at a glance)
   - [ ] Quick actions: edit settings, regenerate link, copy public link/password
   - [ ] After-create banner showing the public link and copy actions
+
+## P1: Search Controls (implemented)
+
+- [x] Default radius 0.75 miles with UI control (min 0.5, max 10) on `/reports/new`
+- [x] Testing cap: max results per category (`placesMaxPerType`, default 10, clamp 1–50) on `/reports/new`
+
+## P2: Google Places Data Integration (preview-safe)
+
+- [ ] Category grouping (initial)
+  - Hotels & Accommodation (lodging: hotel, motel, b&b, resort)
+  - Restaurants & Cafes (restaurant, cafe)
+  - Bars & Nightlife (bar, night_club)
+  - Fitness & Wellness (gym, spa)
+  - Offices & Coworking (POI + keywords: coworking, shared workspace, office space)
+  - Events & Conferences (POI + keywords: event venue, conference center, wedding venue)
+  - Entertainment & Venues (POI + keywords: entertainment venue)
+  - Retail & Services (store + keywords: retail space, catering service)
+  - Community & Public (POI + keywords: community center)
+- [ ] Schema
+  - [ ] `Place` (placeId unique, name, types[], rating, priceLevel, lat/lng, minimal normalized fields, raw JSON)
+  - [ ] `ReportLocation` (reportId, postcode, lat/lng, radiusMeters, lastFetchedAt, params)
+  - [ ] `ReportLocationPlace` (join + metadata for category assignment)
+- [ ] Server fetcher (server-only)
+  - [ ] Geocode postcode → lat/lng
+  - [ ] Per-category Nearby/Text Search with `placesMaxPerType` cap
+  - [ ] Place Details fetch with field mask (rating, price_level, hours, contact)
+  - [ ] TTL cache (24h) and backoff
+- [ ] De-duplication
+  - [ ] Dedup across categories and across locations by `placeId`
+- [ ] UI wiring
+  - [ ] Per-postcode sections render real counts and top categories
+  - [ ] Keep overall summary at top
+  - [ ] Fallback to placeholders when cache empty
