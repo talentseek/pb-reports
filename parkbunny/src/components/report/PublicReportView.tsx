@@ -39,18 +39,24 @@ function formatCurrency(n: number): string {
 
 export default async function PublicReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {}
+  const postcodes = parsePostcodes(report.postcodes)
+  const locationSummaries = await getReportLocationSummaries(report.id)
   const revenue = calculateRevenuePotential(
     (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
     { ...defaultSettings, ...safeSettings },
   )
 
-  const totalBusinesses = (report.businesses ?? []).length
-  const categories = getCategoryBreakdown(report.businesses ?? [])
+  const dbTotalPlaces = (locationSummaries || []).reduce((sum, l) => sum + (l.totalIncluded || 0), 0)
+  const reportBusinesses = (report.businesses ?? [])
+  const totalBusinesses = dbTotalPlaces > 0 ? dbTotalPlaces : reportBusinesses.length
+  const categories = getCategoryBreakdown(reportBusinesses)
+  const dbCategorySet = new Set<string>()
+  for (const loc of (locationSummaries || [])) {
+    for (const c of loc.countsByCategory) dbCategorySet.add(c.category)
+  }
+  const derivedCategoriesCount = dbCategorySet.size > 0 ? dbCategorySet.size : categories.length
   const estimatedRevenuePerPostcode: number | undefined = safeSettings?.estimatedRevenuePerPostcode
   const postcodesCount: number = safeSettings?.postcodesCount ?? 1
-  const postcodes = parsePostcodes(report.postcodes)
-  // Load per-location summaries if available
-  const locationSummaries = await getReportLocationSummaries(report.id)
   const totalCurrentRevenue = (estimatedRevenuePerPostcode ?? 50000) * (postcodes.length || postcodesCount || 1)
   const upliftValue = revenue
   const computedGrowthPercent = Math.round((upliftValue / Math.max(1, totalCurrentRevenue)) * 100)
@@ -87,7 +93,7 @@ export default async function PublicReportView({ report }: { report: any }) {
         </div>
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Categories</p>
-          <p className="text-xl font-semibold">{categories.length}</p>
+          <p className="text-xl font-semibold">{derivedCategoriesCount}</p>
           <p className="text-xs text-gray-600 mt-1">Diverse coverage (e.g., restaurants, gyms, hotels)</p>
         </div>
       </section>
@@ -116,7 +122,11 @@ export default async function PublicReportView({ report }: { report: any }) {
         <section className="space-y-3">
           <h2 className="text-xl font-medium">Map Overview</h2>
           <p className="text-sm text-gray-700">Visual representation of the analyzed car park and nearby business clusters. This informs our partnership targeting and expected demand uplift within the micro-market.</p>
-          <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
+          <div className="w-full h-72 rounded border bg-gray-100 flex items-center justify-center text-gray-500">
+            {locationSummaries[0]?.latitude && locationSummaries[0]?.longitude
+              ? `Map (${locationSummaries[0].latitude.toFixed(3)}, ${locationSummaries[0].longitude.toFixed(3)})`
+              : 'Map placeholder'}
+          </div>
         </section>
       )}
 
@@ -137,10 +147,10 @@ export default async function PublicReportView({ report }: { report: any }) {
           <h2 className="text-xl font-medium">Business Breakdown</h2>
           <p className="text-sm text-gray-700">Distribution of local business types identified near the location. Categories with higher counts typically correlate with stronger on-peak demand, and thus higher parking conversion potential.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {categories.map(([cat, count]) => (
-              <div key={cat} className="rounded border p-3 flex items-center justify-between">
-                <span className="capitalize">{cat}</span>
-                <span className="font-medium">{count}</span>
+            {(locationSummaries[0]?.countsByCategory ?? []).map((entry) => (
+              <div key={entry.category} className="rounded border p-3 flex items-center justify-between">
+                <span className="capitalize">{entry.category}</span>
+                <span className="font-medium">{entry.included}</span>
               </div>
             ))}
           </div>
@@ -221,11 +231,23 @@ export default async function PublicReportView({ report }: { report: any }) {
       )}
 
       {/* Omit card grid if multi-location section is shown */}
-      {!isMulti && (
+      {!isMulti && locationSummaries[0] && (
         <section className="space-y-4">
           <h2 className="text-xl font-medium">Parking Location (Detail)</h2>
-          <p className="text-sm text-gray-700">Per-location outlook using default revenue assumptions and category mix.</p>
-          <div className="rounded border p-4 text-sm text-gray-600">Single location details are summarized above.</div>
+          <div className="rounded border p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-gray-600">Postcode</p>
+              <p className="font-medium">{locationSummaries[0].postcode}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600">Coordinates</p>
+              <p className="font-medium">{locationSummaries[0].latitude?.toFixed(3)}, {locationSummaries[0].longitude?.toFixed(3)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600">Total nearby places</p>
+              <p className="font-medium">{locationSummaries[0].totalPlaces}</p>
+            </div>
+          </div>
         </section>
       )}
 

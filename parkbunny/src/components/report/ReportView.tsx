@@ -1,8 +1,14 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations";
-import CopyLinkButton from "@/components/CopyLinkButton";
+import { getReportLocationSummaries } from "@/lib/placesSummary";
+import { CategoryTileClient } from "@/components/report/ReportViewClient";
 
-export default function ReportView({ report }: { report: any }) {
+export default async function ReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {};
+  const summaries = await getReportLocationSummaries(report.id)
+  const dbTotalPlaces = summaries.reduce((sum, l) => sum + (l.totalIncluded || 0), 0)
+  const dbCategorySet = new Set<string>()
+  for (const loc of summaries) for (const c of loc.countsByCategory) dbCategorySet.add(c.category)
+
   const revenue = calculateRevenuePotential(
     (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
     { ...defaultSettings, ...safeSettings },
@@ -15,51 +21,56 @@ export default function ReportView({ report }: { report: any }) {
           <h1 className="text-2xl font-semibold">{report.name}</h1>
           <p className="text-sm text-gray-600">Postcodes: {report.postcodes}</p>
         </div>
-        {report.shareEnabled && report.shareCode ? (
-          <div className="flex items-center gap-2">
-            <a
-              href={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`}
-              target="_blank"
-              className="text-sm underline"
-            >
-              Public link
-            </a>
-            <CopyLinkButton url={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`} label="Copy" />
-          </div>
-        ) : null}
       </header>
-      <section>
-        <h2 className="text-xl font-medium mb-2">Executive Overview</h2>
-        <p className="text-gray-700">Estimated revenue potential: £{revenue}</p>
-        <p>
+
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div className="rounded border p-4">
+          <p className="text-xs text-gray-600">Projected uplift</p>
+          <p className="text-xl font-semibold">£{revenue}</p>
+        </div>
+        <div className="rounded border p-4">
+          <p className="text-xs text-gray-600">Total businesses</p>
+          <p className="text-xl font-semibold">{dbTotalPlaces}</p>
+        </div>
+        <div className="rounded border p-4">
+          <p className="text-xs text-gray-600">Categories</p>
+          <p className="text-xl font-semibold">{dbCategorySet.size}</p>
+        </div>
+      </section>
+
+      {summaries.length > 0 && (
+        <section className="space-y-4 mt-6">
+          <h2 className="text-xl font-medium">Per-location breakdown</h2>
+          <div className="space-y-6">
+            {summaries.map((loc) => (
+              <div key={loc.id} className="rounded border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{loc.postcode}</p>
+                    <p className="text-xs text-gray-600">{loc.latitude?.toFixed(3)}, {loc.longitude?.toFixed(3)}</p>
+                  </div>
+                  <div className="text-sm text-gray-700">Total places: <span className="font-medium">{loc.totalPlaces}</span></div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                  {loc.countsByCategory.map((c) => (
+                    <CategoryTileClient key={c.category} reportId={report.id} postcode={loc.postcode} category={c.category} count={c.included} total={c.total} />
+                  ))}
+                  <p className="text-xs text-gray-600">Counts show included/total.</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="mt-8">
+        <h2 className="text-xl font-medium mb-2">Assumptions</h2>
+        {safeSettings?.estimatedRevenuePerPostcode && (
+          <p className="text-sm text-gray-600">£{safeSettings.estimatedRevenuePerPostcode} per postcode × {safeSettings.postcodesCount ?? 1} postcode(s)</p>
+        )}
+        <p className="mt-2">
           <a href={`/reports/${report.id}/settings`} className="text-sm underline">Edit settings</a>
         </p>
-        {safeSettings?.estimatedRevenuePerPostcode && (
-          <p className="text-sm text-gray-600">Assumptions: £{safeSettings.estimatedRevenuePerPostcode} per postcode × {safeSettings.postcodesCount ?? 1} postcode(s)</p>
-        )}
-      </section>
-      <section>
-        <h2 className="text-xl font-medium mb-2">Businesses</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left border-b">
-                <th className="py-2 pr-4">Name</th>
-                <th className="py-2 pr-4">Category</th>
-                <th className="py-2 pr-4">Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(report.businesses ?? []).map((b: any) => (
-                <tr key={b.id} className="border-b last:border-0">
-                  <td className="py-2 pr-4">{b.name}</td>
-                  <td className="py-2 pr-4 capitalize">{b.category}</td>
-                  <td className="py-2 pr-4">{b.address}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </section>
     </>
   );

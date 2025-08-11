@@ -1,6 +1,5 @@
 import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
-import mockBusinesses from '@/lib/mockData'
 import { defaultSettings } from '@/lib/calculations'
 import { generateShareCode, hashPassword } from '@/lib/share'
 
@@ -49,15 +48,7 @@ export async function POST(req: Request) {
       shareCode: generateShareCode(),
       sharePasswordHash,
       userId: user.id,
-      businesses: {
-        create: mockBusinesses.map((b) => ({
-          name: b.name,
-          category: b.category,
-          address: b.address,
-          website: b.website,
-          mapsLink: b.mapsLink,
-        })),
-      },
+      // No mock businesses; to be populated from Places integration
     },
   })
 

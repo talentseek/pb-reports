@@ -5,8 +5,9 @@ export type LocationSummary = {
   postcode: string
   latitude: number | null
   longitude: number | null
-  countsByCategory: { category: string; count: number }[]
+  countsByCategory: { category: string; total: number; included: number }[]
   totalPlaces: number
+  totalIncluded: number
 }
 
 export async function getReportLocationSummaries(reportId: string): Promise<LocationSummary[]> {
@@ -16,14 +17,20 @@ export async function getReportLocationSummaries(reportId: string): Promise<Loca
     orderBy: { postcode: 'asc' },
   })
   return locations.map((loc) => {
-    const counts = new Map<string, number>()
+    const totalCounts = new Map<string, number>()
+    const includedCounts = new Map<string, number>()
     for (const link of loc.places) {
       const cat = link.groupedCategory || 'Uncategorized'
-      counts.set(cat, (counts.get(cat) || 0) + 1)
+      totalCounts.set(cat, (totalCounts.get(cat) || 0) + 1)
+      if (link.included) includedCounts.set(cat, (includedCounts.get(cat) || 0) + 1)
     }
-    const countsByCategory = Array.from(counts.entries())
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
+    const allCats = new Set<string>([...totalCounts.keys(), ...includedCounts.keys()])
+    const countsByCategory = Array.from(allCats).map((category) => ({
+      category,
+      total: totalCounts.get(category) || 0,
+      included: includedCounts.get(category) || 0,
+    })).sort((a, b) => b.included - a.included || b.total - a.total)
+    const totalIncluded = loc.places.filter((p) => p.included).length
     return {
       id: loc.id,
       postcode: loc.postcode,
@@ -31,6 +38,7 @@ export async function getReportLocationSummaries(reportId: string): Promise<Loca
       longitude: loc.longitude ?? null,
       countsByCategory,
       totalPlaces: loc.places.length,
+      totalIncluded,
     }
   })
 }
