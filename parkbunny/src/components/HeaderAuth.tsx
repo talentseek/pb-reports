@@ -8,7 +8,6 @@ export default function HeaderAuth() {
       <SignedOut>
         <nav className="space-x-4 text-sm">
           <Link href="/sign-in">Sign in</Link>
-          <Link href="/sign-up">Sign up</Link>
         </nav>
       </SignedOut>
       <SignedIn>
