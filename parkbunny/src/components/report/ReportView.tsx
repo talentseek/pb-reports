@@ -16,6 +16,10 @@ export default async function ReportView({ report }: { report: any }) {
     includedBusinessList,
     { ...defaultSettings, ...safeSettings },
   );
+  const estimatedRevenuePerPostcode: number = safeSettings?.estimatedRevenuePerPostcode ?? 50000
+  const postcodesCount: number = safeSettings?.postcodesCount ?? 1
+  const totalCurrentRevenue = estimatedRevenuePerPostcode * postcodesCount
+  const computedGrowthPercent = Math.round((revenue / Math.max(1, totalCurrentRevenue)) * 100)
 
   return (
     <>
@@ -29,7 +33,7 @@ export default async function ReportView({ report }: { report: any }) {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Projected uplift</p>
-          <p className="text-xl font-semibold">£{revenue}</p>
+          <p className="text-xl font-semibold">£{revenue} <span className="text-sm text-green-700 font-medium">(+{computedGrowthPercent}%)</span></p>
         </div>
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Total businesses</p>

@@ -6,6 +6,8 @@ const PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY
 export type FetchConfig = {
   radiusMiles: number
   maxPerType: number
+  force?: boolean
+  staleHours?: number
 }
 
 function milesToMeters(miles: number): number {
@@ -150,7 +152,21 @@ export async function refreshReportLocations(reportId: string, postcodes: string
     return { ok: false, reason: 'no_api_key' as const }
   }
   const radiusMeters = milesToMeters(cfg.radiusMiles)
+  const staleMs = Math.max(0, Math.round((cfg.staleHours ?? 12) * 60 * 60 * 1000))
   for (const pc of postcodes) {
+    // Check staleness before any external calls
+    const existing = await prisma.reportLocation.findUnique({ where: { reportId_postcode: { reportId, postcode: pc } } as any })
+    if (!cfg.force && existing?.lastFetchedAt) {
+      const age = Date.now() - new Date(existing.lastFetchedAt).getTime()
+      if (age < staleMs) {
+        // Ensure params/radius still updated, but skip API calls
+        await prisma.reportLocation.update({
+          where: { id: existing.id },
+          data: { radiusMeters, params: { maxPerType: cfg.maxPerType } },
+        })
+        continue
+      }
+    }
     // Geocode postcode
     const geo = await geocodePostcode(pc)
     const loc = await prisma.reportLocation.upsert({

@@ -9,11 +9,11 @@ export const defaultSettings = {
     gyms: 0.06,
   },
   signUpRates: {
-    restaurants: 0.2,
-    bars: 0.15,
-    hotels: 0.3,
-    coworking: 0.5,
-    gyms: 0.25,
+    restaurants: 0.05,
+    bars: 0.05,
+    hotels: 0.05,
+    coworking: 0.05,
+    gyms: 0.05,
   },
   estimatedRevenuePerPostcode: 50_000, // default per postcode
   postcodesCount: 1,
@@ -29,18 +29,25 @@ export function calculateRevenuePotential(
   settings: Partial<Settings> = defaultSettings,
 ): number {
   const s: Settings = { ...defaultSettings, ...settings }
-  const numBusinesses = Math.max(1, businesses.length)
   const totalRevenue = Math.max(1, s.estimatedRevenuePerPostcode) * Math.max(1, s.postcodesCount)
-  const basePerBusiness = totalRevenue / numBusinesses
-  let total = 0
-  for (const biz of businesses) {
-    const displayCat = biz.category
-    // Prefer per-display-category override if present, else fall back to legacy keys
-    const uplift = s.categoryUplift[displayCat] ??
-      (s.upliftPercentages as any)[displayCat] ?? 0.06
-    const signUp = s.categorySignUp[displayCat] ??
-      (s.signUpRates as any)[displayCat] ?? 0.2
-    total += basePerBusiness * uplift * signUp
+
+  // Count businesses per category
+  const counts = new Map<string, number>()
+  for (const b of businesses) {
+    const key = String(b.category)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
   }
-  return Math.round(total)
+
+  // Uplift model (requested):
+  // upliftPercentTotal = sum_over_categories(count * signUpRate * upliftPercent)
+  // upliftValue = totalRevenue * upliftPercentTotal
+  let upliftPercentTotal = 0
+  counts.forEach((count, category) => {
+    const uplift = s.categoryUplift[category] ?? (s.upliftPercentages as any)[category] ?? 0.06
+    const signUp = s.categorySignUp[category] ?? (s.signUpRates as any)[category] ?? 0.05
+    upliftPercentTotal += count * signUp * uplift
+  })
+
+  const upliftValue = totalRevenue * upliftPercentTotal
+  return Math.round(upliftValue)
 }
