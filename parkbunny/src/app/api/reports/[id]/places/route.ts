@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
 import { refreshReportLocations } from '@/lib/placesFetch'
 
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
   if (!userId) return new Response('Unauthorized', { status: 401 })
   try {
@@ -13,8 +13,10 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     const settings = (report.settings ?? {}) as any
     const radiusMiles = typeof settings.radiusMiles === 'number' ? settings.radiusMiles : 0.75
     const maxPerType = typeof settings.placesMaxPerType === 'number' ? settings.placesMaxPerType : 10
+    const body = await req.json().catch(() => ({} as any))
+    const force = Boolean(body?.force)
 
-    const result = await refreshReportLocations(report.id, postcodes, { radiusMiles, maxPerType })
+    const result = await refreshReportLocations(report.id, postcodes, { radiusMiles, maxPerType, force, staleHours: 12 })
     if (!result.ok) return new Response('No API key configured', { status: 200 })
     return new Response(null, { status: 204 })
   } catch (e: any) {

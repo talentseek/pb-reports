@@ -163,7 +163,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
                 className="flex-1 rounded border px-3 py-2"
                 type="number"
                 step={0.01}
-                value={(settings.categorySignUp?.[c.category] ?? 0.2).toString()}
+                value={(settings.categorySignUp?.[c.category] ?? 0.05).toString()}
                 onChange={(e) => setSettings((s) => ({ ...s, categorySignUp: { ...(s.categorySignUp ?? {}), [c.category]: Number(e.target.value) } }))}
               />
             </div>

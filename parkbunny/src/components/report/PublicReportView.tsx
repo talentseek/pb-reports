@@ -86,7 +86,7 @@ export default async function PublicReportView({ report }: { report: any }) {
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Projected uplift</p>
-          <p className="text-xl font-semibold">{formatCurrency(upliftValue)}</p>
+          <p className="text-xl font-semibold">{formatCurrency(upliftValue)} <span className="text-sm text-green-700 font-medium">(+{computedGrowthPercent}%)</span></p>
           <p className="text-xs text-gray-600 mt-1">Based on uplift scenarios applied to local business mix</p>
         </div>
         <div className="rounded border p-4">
