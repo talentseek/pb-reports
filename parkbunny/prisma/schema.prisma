@@ -60,6 +60,8 @@ model ReportLocation {
   lastFetchedAt DateTime?
   createdAt  DateTime @default(now())
   places     ReportLocationPlace[]
+
+  @@unique([reportId, postcode], name: "reportId_postcode")
 }
 
 model Place {

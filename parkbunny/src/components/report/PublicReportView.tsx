@@ -1,5 +1,6 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations"
 import DownloadPdfButton from "@/components/report/DownloadPdfButton"
+import { getReportLocationSummaries } from "@/lib/placesSummary"
 
 function getCategoryBreakdown(businesses: any[]) {
   const counts: Record<string, number> = {}
@@ -36,7 +37,7 @@ function formatCurrency(n: number): string {
   }
 }
 
-export default function PublicReportView({ report }: { report: any }) {
+export default async function PublicReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {}
   const revenue = calculateRevenuePotential(
     (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
@@ -48,6 +49,8 @@ export default function PublicReportView({ report }: { report: any }) {
   const estimatedRevenuePerPostcode: number | undefined = safeSettings?.estimatedRevenuePerPostcode
   const postcodesCount: number = safeSettings?.postcodesCount ?? 1
   const postcodes = parsePostcodes(report.postcodes)
+  // Load per-location summaries if available
+  const locationSummaries = await getReportLocationSummaries(report.id)
   const totalCurrentRevenue = (estimatedRevenuePerPostcode ?? 50000) * (postcodes.length || postcodesCount || 1)
   const upliftValue = revenue
   const computedGrowthPercent = Math.round((upliftValue / Math.max(1, totalCurrentRevenue)) * 100)
@@ -169,7 +172,8 @@ export default function PublicReportView({ report }: { report: any }) {
               const current = estimatedRevenuePerPostcode ?? 50000
               const growth = Math.round((current * uplift) / 100)
               const total = current + growth
-              const top3 = categories.slice(0, 3)
+              const loc = locationSummaries.find((l) => l.postcode === pc)
+              const top3 = (loc?.countsByCategory ?? categories.slice(0, 3)).slice(0, 3)
               return (
                 <div key={pc} className="rounded border p-4 space-y-4">
                   <div className="flex items-center justify-between">
@@ -177,7 +181,7 @@ export default function PublicReportView({ report }: { report: any }) {
                       <p className="font-medium text-lg">{pc}</p>
                       <p className="text-xs text-green-700 font-medium">+{uplift}% uplift (indicative)</p>
                     </div>
-                    <div className="w-64 h-32 rounded border bg-gray-100 flex items-center justify-center text-gray-500">Map placeholder</div>
+                    <div className="w-64 h-32 rounded border bg-gray-100 flex items-center justify-center text-gray-500">{loc?.latitude && loc?.longitude ? `Map (${loc.latitude.toFixed(3)}, ${loc.longitude.toFixed(3)})` : 'Map placeholder'}</div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                     <div className="rounded border p-3">
@@ -194,15 +198,19 @@ export default function PublicReportView({ report }: { report: any }) {
                     </div>
                     <div className="rounded border p-3">
                       <p className="text-xs text-gray-600">Top Category</p>
-                      <p className="font-medium capitalize">{top3[0]?.[0] ?? 'tbd'}</p>
+                      <p className="font-medium capitalize">{(Array.isArray(top3[0]) ? (top3[0] as any)[0] : top3[0]?.category) ?? 'tbd'}</p>
                     </div>
                   </div>
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Business Breakdown (placeholder)</p>
                     <ul className="text-sm list-disc pl-4 grid grid-cols-1 md:grid-cols-2 gap-1">
-                      {top3.map(([c, n]) => (
-                        <li key={String(c)} className="capitalize">{c} <span className="text-gray-500">({n})</span></li>
-                      ))}
+                      {top3.map((entry: any, idx: number) => {
+                        const category = Array.isArray(entry) ? entry[0] : entry.category
+                        const count = Array.isArray(entry) ? entry[1] : entry.count
+                        return (
+                          <li key={String(category) + idx} className="capitalize">{category} <span className="text-gray-500">({count})</span></li>
+                        )
+                      })}
                     </ul>
                   </div>
                 </div>
