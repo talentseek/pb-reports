@@ -17,12 +17,15 @@ export const defaultSettings = {
   },
   estimatedRevenuePerPostcode: 50_000, // default per postcode
   postcodesCount: 1,
+  // Optional per-display-category overrides (by display name)
+  categoryUplift: {} as Record<string, number>,
+  categorySignUp: {} as Record<string, number>,
 }
 
 export type Settings = typeof defaultSettings
 
 export function calculateRevenuePotential(
-  businesses: Pick<MockBusiness, 'category'>[],
+  businesses: { category: string }[],
   settings: Partial<Settings> = defaultSettings,
 ): number {
   const s: Settings = { ...defaultSettings, ...settings }
@@ -31,9 +34,12 @@ export function calculateRevenuePotential(
   const basePerBusiness = totalRevenue / numBusinesses
   let total = 0
   for (const biz of businesses) {
-    const category = biz.category as keyof typeof s.upliftPercentages
-    const uplift = s.upliftPercentages[category] ?? 0.05
-    const signUp = s.signUpRates[category] ?? 0.2
+    const displayCat = biz.category
+    // Prefer per-display-category override if present, else fall back to legacy keys
+    const uplift = s.categoryUplift[displayCat] ??
+      (s.upliftPercentages as any)[displayCat] ?? 0.06
+    const signUp = s.categorySignUp[displayCat] ??
+      (s.signUpRates as any)[displayCat] ?? 0.2
     total += basePerBusiness * uplift * signUp
   }
   return Math.round(total)
