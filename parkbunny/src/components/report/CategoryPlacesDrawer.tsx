@@ -1,6 +1,7 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 
 type Place = {
   id: string
@@ -28,6 +29,8 @@ export default function CategoryPlacesDrawer({
   const [places, setPlaces] = useState<Place[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   useEffect(() => {
     const url = new URL(`/api/reports/${reportId}/placesByCategory`, window.location.origin)
@@ -52,6 +55,7 @@ export default function CategoryPlacesDrawer({
       })
       if (!res.ok) throw new Error(await res.text())
       setPlaces((prev) => (prev || []).map((p) => p.id === placeId ? { ...p, included: !current } as any : p))
+      startTransition(() => router.refresh())
     } catch (e: any) {
       setError(e?.message || 'Failed to save')
     } finally {

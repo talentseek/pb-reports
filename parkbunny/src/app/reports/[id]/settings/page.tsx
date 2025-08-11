@@ -8,6 +8,8 @@ type Settings = {
   signUpRates?: Record<string, number>
   estimatedRevenuePerPostcode?: number
   postcodesCount?: number
+  categoryUplift?: Record<string, number>
+  categorySignUp?: Record<string, number>
 }
 
 export default function ReportSettingsPage({ params }: { params: { id: string } }) {
@@ -18,6 +20,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareEnabled, setShareEnabled] = useState<boolean>(false);
   const [sharePassword, setSharePassword] = useState<string>("");
+  const [categoryToggles, setCategoryToggles] = useState<{ category: string; included: boolean; total: number }[]>([])
 
   useEffect(() => {
     let isMounted = true;
@@ -36,23 +39,19 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
         setSettings({
           estimatedRevenuePerPostcode: incoming.estimatedRevenuePerPostcode ?? defaultSettings.estimatedRevenuePerPostcode,
           postcodesCount: incoming.postcodesCount ?? defaultSettings.postcodesCount,
-          upliftPercentages: {
-            restaurants: incoming.upliftPercentages?.restaurants ?? defaultSettings.upliftPercentages.restaurants,
-            bars: incoming.upliftPercentages?.bars ?? defaultSettings.upliftPercentages.bars,
-            hotels: incoming.upliftPercentages?.hotels ?? defaultSettings.upliftPercentages.hotels,
-            coworking: incoming.upliftPercentages?.coworking ?? defaultSettings.upliftPercentages.coworking,
-            gyms: incoming.upliftPercentages?.gyms ?? defaultSettings.upliftPercentages.gyms,
-          },
-          signUpRates: {
-            restaurants: incoming.signUpRates?.restaurants ?? defaultSettings.signUpRates.restaurants,
-            bars: incoming.signUpRates?.bars ?? defaultSettings.signUpRates.bars,
-            hotels: incoming.signUpRates?.hotels ?? defaultSettings.signUpRates.hotels,
-            coworking: incoming.signUpRates?.coworking ?? defaultSettings.signUpRates.coworking,
-            gyms: incoming.signUpRates?.gyms ?? defaultSettings.signUpRates.gyms,
-          },
+          categoryUplift: incoming.categoryUplift || {},
+          categorySignUp: incoming.categorySignUp || {},
         });
       }
     })();
+    // load category summary
+    ;(async () => {
+      const csr = await fetch(`/api/reports/${params.id}/categories`)
+      if (csr.ok) {
+        const data = await csr.json()
+        setCategoryToggles(data.categories)
+      }
+    })()
     return () => {
       isMounted = false;
     };
@@ -74,6 +73,14 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
     } finally {
       setSaving(false);
     }
+  }
+
+  async function saveCategory(cat: string, included: boolean) {
+    await fetch(`/api/reports/${params.id}/categories`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: cat, included }),
+    })
   }
 
   async function updateShare(opts: { enable?: boolean; password?: string; regenerate?: boolean }) {
@@ -115,32 +122,53 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
           value={settings.postcodesCount ?? defaultSettings.postcodesCount}
           onChange={(e) => setSettings((s) => ({ ...s, postcodesCount: Number(e.target.value) }))}
         />
+        <h2 className="font-medium mt-4">Categories</h2>
+        <div className="rounded border divide-y">
+          {categoryToggles.map((c) => (
+            <label key={c.category} className="flex items-center justify-between px-3 py-2 text-sm">
+              <span className="capitalize">{c.category}</span>
+              <span className="flex items-center gap-3">
+                <span className="text-gray-600">{c.included}/{c.total}</span>
+                <input type="checkbox" checked={c.included} onChange={async (e) => {
+                  const next = e.target.checked
+                  setCategoryToggles((prev) => prev.map((x) => x.category === c.category ? { ...x, included: next } : x))
+                  await saveCategory(c.category, next)
+                }} />
+              </span>
+            </label>
+          ))}
+        </div>
+
         <h2 className="font-medium mt-4">Uplift percentages</h2>
-        {(['restaurants','bars','hotels','coworking','gyms'] as const).map((k) => (
-          <div key={k} className="flex items-center gap-2">
-            <label className="w-32 text-sm capitalize">{k}</label>
-            <input
-              className="flex-1 rounded border px-3 py-2"
-              type="number"
-              step={0.01}
-              value={settings.upliftPercentages?.[k] ?? defaultSettings.upliftPercentages[k]}
-              onChange={(e) => setSettings((s) => ({ ...s, upliftPercentages: { ...(s.upliftPercentages ?? {}), [k]: Number(e.target.value) } }))}
-            />
-          </div>
-        ))}
+        <div className="space-y-2">
+          {categoryToggles.map((c) => (
+            <div key={c.category} className="flex items-center gap-2">
+              <label className="w-48 text-sm capitalize">{c.category}</label>
+              <input
+                className="flex-1 rounded border px-3 py-2"
+                type="number"
+                step={0.01}
+                value={(settings.categoryUplift?.[c.category] ?? 0.06).toString()}
+                onChange={(e) => setSettings((s) => ({ ...s, categoryUplift: { ...(s.categoryUplift ?? {}), [c.category]: Number(e.target.value) } }))}
+              />
+            </div>
+          ))}
+        </div>
         <h2 className="font-medium mt-4">Sign-up rates</h2>
-        {(['restaurants','bars','hotels','coworking','gyms'] as const).map((k) => (
-          <div key={k} className="flex items-center gap-2">
-            <label className="w-32 text-sm capitalize">{k}</label>
-            <input
-              className="flex-1 rounded border px-3 py-2"
-              type="number"
-              step={0.01}
-              value={settings.signUpRates?.[k] ?? defaultSettings.signUpRates[k]}
-              onChange={(e) => setSettings((s) => ({ ...s, signUpRates: { ...(s.signUpRates ?? {}), [k]: Number(e.target.value) } }))}
-            />
-          </div>
-        ))}
+        <div className="space-y-2">
+          {categoryToggles.map((c) => (
+            <div key={c.category} className="flex items-center gap-2">
+              <label className="w-48 text-sm capitalize">{c.category}</label>
+              <input
+                className="flex-1 rounded border px-3 py-2"
+                type="number"
+                step={0.01}
+                value={(settings.categorySignUp?.[c.category] ?? 0.2).toString()}
+                onChange={(e) => setSettings((s) => ({ ...s, categorySignUp: { ...(s.categorySignUp ?? {}), [c.category]: Number(e.target.value) } }))}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3">
