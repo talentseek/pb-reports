@@ -9,8 +9,11 @@ export default async function ReportView({ report }: { report: any }) {
   const dbCategorySet = new Set<string>()
   for (const loc of summaries) for (const c of loc.countsByCategory) dbCategorySet.add(c.category)
 
+  const includedBusinessList = summaries.flatMap((loc) =>
+    loc.countsByCategory.flatMap((c) => Array.from({ length: c.included }, () => ({ category: c.category })))
+  )
   const revenue = calculateRevenuePotential(
-    (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
+    includedBusinessList,
     { ...defaultSettings, ...safeSettings },
   );
 

@@ -42,7 +42,10 @@ export default async function PublicReportView({ report }: { report: any }) {
   const postcodes = parsePostcodes(report.postcodes)
   const locationSummaries = await getReportLocationSummaries(report.id)
   const revenue = calculateRevenuePotential(
-    (report.businesses ?? []).map((b: any) => ({ category: b.category as any })),
+    // Use included-only category counts if available
+    (await getReportLocationSummaries(report.id)).flatMap((loc) =>
+      loc.countsByCategory.flatMap((c) => Array.from({ length: c.included }, () => ({ category: c.category })))
+    ),
     { ...defaultSettings, ...safeSettings },
   )
 
