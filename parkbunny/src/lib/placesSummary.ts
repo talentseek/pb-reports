@@ -24,7 +24,9 @@ export async function getReportLocationSummaries(reportId: string): Promise<Loca
       totalCounts.set(cat, (totalCounts.get(cat) || 0) + 1)
       if (link.included) includedCounts.set(cat, (includedCounts.get(cat) || 0) + 1)
     }
-    const allCats = new Set<string>([...totalCounts.keys(), ...includedCounts.keys()])
+    const allCats = new Set<string>()
+    totalCounts.forEach((_v, k) => allCats.add(k))
+    includedCounts.forEach((_v, k) => allCats.add(k))
     const countsByCategory = Array.from(allCats).map((category) => ({
       category,
       total: totalCounts.get(category) || 0,
