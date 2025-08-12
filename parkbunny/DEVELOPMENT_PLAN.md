@@ -1,90 +1,103 @@
 # Development Plan
 
-- [ ] M1: POC UI + Mock Data
+We track implemented work and what remains. Checked items are complete and available in the app.
+
+- [x] M1: POC UI + Mock Data
   - [x] Dashboard list with links to reports
-  - [x] UK postcode validation/normalization/dedupe
-  - [x] Scaffold Next.js 14 App Router with TS & Tailwind
-  - [x] Initialize Prisma (SQLite)
-  - [x] Set up Clerk auth shell
-  - [x] Routes: /dashboard, /reports/new, /reports/[id], /settings
-  - [ ] Components: ReportForm, ReportView (ReportList done)
-  - [ ] Extract ReportForm and ReportView into src/components/report and wire pages
-  - [x] Lib: db client, mockData, calculations
-  - [x] API: POST /api/reports, GET /api/reports, GET /api/reports/[id]
-  - [x] Basic calculation: uplift x signUpRate x base per business
-  - [ ] Basic error/loading states
-- [ ] M2: Persistence + Settings
-  - [x] Defaults surfaced in settings UI when absent
-  - [x] Persist businesses and reports with Prisma
-  - [x] Per-report settings JSON field
-  - [x] Settings page to edit uplift and sign-up rates (and estimatedRevenuePerPostcode)
-  - [x] Use settings in calculations
-- [ ] M3: Polish
-  - [x] Auth-protected routes with Clerk
-  - [ ] Empty states and optimistic UX
-  - [ ] Basic PDF export stub
-  - [ ] Simple tests for API handlers
-- [ ] M4: Post-POC Enhancements
-  - [ ] Google Places API integration (0.75 miles)
-  - [ ] Charts and ROI calculators
-  - [ ] Outreach integration (Unipile)
+  - [x] UK postcode normalization/dedupe
+  - [x] Scaffold Next.js App Router with TS & Tailwind
+  - [x] Initialize Prisma (SQLite for local)
+  - [x] Clerk auth shell (sign-in only; public sign-up removed)
+  - [x] Routes: `/dashboard`, `/reports/new`, `/reports/[id]`, `/reports/[id]/settings`
+  - [x] Components: `ReportForm`, `ReportList`, `ReportView`
+  - [x] Lib: db client, calculations
+  - [x] API: POST/GET `/api/reports`, GET `/api/reports/[id]`
+  - [x] Basic projection: uplift × signUpRate × base, per included business
 
-## Tracking
-- We will check off items as they are implemented and tested.
+- [x] M2: Persistence + Settings
+  - [x] Per-report `settings` JSON with defaults (estimatedRevenuePerPostcode £50k, radiusMiles 0.75, placesMaxPerType 10)
+  - [x] Settings page: uplift/sign-up per category, radius, caps
+  - [x] Calculations use included businesses and per-category overrides
 
-
-- [ ] Public share links (Option A)
-  - [x] Default shared link + password on report creation
-  - [x] DB fields (enabled, code, password hash, expiry, counters)
+- [x] M3: Public Sharing
+  - [x] Default shared link and password on report creation
+  - [x] DB fields: enabled, code, password hash, expiry, counters
   - [x] API to enable/disable/regenerate and set password
-  - [x] Public route /share/[code] with password gate and cookie
-  - [x] Manage link from report settings page
+  - [x] Public route `/share/[code]` with password gate and cookie
   - [ ] View analytics counters in internal UI
-  - [ ] Rate limit password attempts
+  - [ ] Rate-limit password attempts
 
-## P1: Report Pages (Showcase + Internal Summary)
+- [x] M4: Google Places Integration
+  - [x] Schema: `Place`, `ReportLocation`, `ReportLocationPlace` (join + included flag)
+  - [x] Geocode postcode → lat/lng (fallback to Places Text Search)
+  - [x] Nearby/Text Search per category with `placesMaxPerType` caps
+  - [x] Normalized `priceLevel` to integers; stored `parkingOptions`
+  - [x] Caching with staleness window (12h) and Force refresh
+  - [x] Radius enforcement: hard circle + haversine post-filter
+  - [x] De-dup by `placeId` with safe linking per location
 
-- [ ] Shared Report Showcase (/share/[code])
-  - [ ] Executive summary with headline metrics (total businesses, projected revenue range)
-  - [ ] Assumptions section (estimated revenue per postcode × count, uplift %, sign-up rates)
-  - [ ] Business breakdown section (by category), concise and print-friendly
-  - [ ] Basic branding polish and clear sectioning
-  - [ ] Print/export-friendly layout (print CSS; PDF later)
+## Report Pages (Showcase + Internal Summary)
 
-- [ ] Internal Report Summary (/reports/[id])
-  - [ ] Summary panel mirroring public executive summary (readable at a glance)
-  - [ ] Quick actions: edit settings, regenerate link, copy public link/password
-  - [ ] After-create banner showing the public link and copy actions
+- [x] Internal Report Summary (`/reports/[id]`)
+  - [x] Summary panel with projected uplift, totals, per-location breakdowns
+  - [x] Quick actions: settings, refresh places (Normal/Force), copy public link
 
-## P1: Search Controls (implemented)
+- [x] Shared Report Showcase (`/share/[code]`)
+  - [x] Modular shadcn redesign; sections per `reportstructure.md`
+  - [x] Charts: Current vs Potential, Business Type distribution
+  - [x] Maps with markers for included places
+  - [x] Commercial terms table (uniform styling)
+  - [ ] Visual polish and typography pass (Follow-up)
 
-- [x] Default radius 0.75 miles with UI control (min 0.5, max 10) on `/reports/new`
-- [x] Testing cap: max results per category (`placesMaxPerType`, default 10, clamp 1–50) on `/reports/new`
+## Search Controls
 
-## P2: Google Places Data Integration (preview-safe)
+- [x] Default radius 0.75 miles with UI control (min 0.5, max 10)
+- [x] Testing cap: max results per category (`placesMaxPerType`, default 10, clamp 1–50)
+- [x] Strict radius handling across fetch and persistence
 
-- [ ] Category grouping (initial)
-  - Hotels & Accommodation (lodging: hotel, motel, b&b, resort)
-  - Restaurants & Cafes (restaurant, cafe)
-  - Bars & Nightlife (bar, night_club)
-  - Fitness & Wellness (gym, spa)
-  - Offices & Coworking (POI + keywords: coworking, shared workspace, office space)
-  - Events & Conferences (POI + keywords: event venue, conference center, wedding venue)
-  - Entertainment & Venues (POI + keywords: entertainment venue)
-  - Retail & Services (store + keywords: retail space, catering service)
-  - Community & Public (POI + keywords: community center)
-- [ ] Schema
-  - [ ] `Place` (placeId unique, name, types[], rating, priceLevel, lat/lng, minimal normalized fields, raw JSON)
-  - [ ] `ReportLocation` (reportId, postcode, lat/lng, radiusMeters, lastFetchedAt, params)
-  - [ ] `ReportLocationPlace` (join + metadata for category assignment)
-- [ ] Server fetcher (server-only)
-  - [ ] Geocode postcode → lat/lng
-  - [ ] Per-category Nearby/Text Search with `placesMaxPerType` cap
-  - [ ] Place Details fetch with field mask (rating, price_level, hours, contact)
-  - [ ] TTL cache (24h) and backoff
-- [ ] De-duplication
-  - [ ] Dedup across categories and across locations by `placeId`
-- [ ] UI wiring
-  - [ ] Per-postcode sections render real counts and top categories
-  - [ ] Keep overall summary at top
-  - [ ] Fallback to placeholders when cache empty
+## Security & Auth
+
+- [x] Clerk middleware configured (`src/middleware.ts`), app wrapped in `ClerkProvider`
+- [x] Public sign-up removed (no `/sign-up` route; header link removed)
+- [x] Public share page runs without Clerk UI and requires password
+
+## Follow-ups (tracked)
+
+- [ ] Public Showcase: comprehensive visual polish with shadcn, spacing, and responsive typography
+- [ ] View analytics counters (share views) in internal UI
+- [ ] Rate-limit share password attempts
+- [ ] PDF export (client print CSS first; server PDF later)
+- [ ] Tests for API handlers and calculations
+
+## Stage 2: Outreach (Planning)
+
+Goal: Turn discovered nearby businesses into a prioritized outreach pipeline per location and category.
+
+- Data pipeline
+  - [ ] Export outreach-ready list per report/location: business name, category, address, lat/lng, website/phone
+  - [ ] Optional enrichment: website scraping for contact emails, LinkedIn lookup, company sizing
+  - [ ] De-dup across locations; tag with nearest car park and category
+
+- Targeting & templates
+  - [ ] Message templates per category (Hotels, Gyms, Offices, Restaurants, Venues, Retail, Community)
+  - [ ] Personalization tokens: `{business_name}`, `{postcode}`, `{category_benefit}`, `{offer_example}`
+  - [ ] Sequences: intro → value → offer (validated parking / Instant Deals) → close
+
+- Delivery channels
+  - [ ] Email delivery integration (e.g., Resend, Postmark) with rate limiting
+  - [ ] LinkedIn/manual assist workflow (optional Unipile integration)
+  - [ ] Click/response tracking and reply ingestion (mailbox webhook)
+
+- Operator workflow
+  - [ ] Outreach dashboard: status columns (Queued, Contacted, Interested, Live)
+  - [ ] One-click generate unique validation links/codes per merchant
+  - [ ] Auto-attach location and offer type to each outreach item
+
+- Compliance
+  - [ ] GDPR-friendly processing notes; opt-out handling; audit log for mailings
+
+Deliverables for Stage 2
+
+- [ ] Minimal “Outreach” tab on report: export CSV + template preview
+- [ ] Email sending integration behind feature flag
+- [ ] Basic pipeline board per report with manual status updates

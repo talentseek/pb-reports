@@ -15,15 +15,15 @@ Create a web-based system where authenticated ParkBunny users can:
 
 **Stage 1 Focus:**  
 - No Unipile, FullEnrich, or outreach automation.
-- Google Places API integration will come after the UI and mock data flow works.
-- Clerk authentication in place from day one.
+- Google Places API integration implemented with strict radius enforcement (hard circle + haversine post-filter).
+- Clerk authentication in place from day one; public sign-up removed (sign-in only).
 
 ---
 
 ### 2. Tech Stack & Dependencies
 
 **Core**  
-- **Next.js 15** (App Router)  
+- **Next.js 14** (App Router)  
 - **TypeScript**  
 - **Tailwind CSS**  
 - **shadcn/ui** for components  
@@ -250,13 +250,10 @@ export async function POST(req: Request) {
 
 ### 8. Next Steps (Post-POC)
 
-1. **Replace mock data with Google Places API results**:
-   - Fetch businesses within 0.75 miles of postcode.
-   - Store results in DB.
-2. **Add PDF export** using `react-pdf` or server-side `pdfkit`.
-3. **Automated Outreach**:
-   - Integrate Unipile API.
-   - Build outreach sequences.
-4. **Advanced reporting**:
-   - Charts with `recharts`.
-   - ROI calculators.
+1. Public report visual polish (shadcn spacing/typography, imagery) — follow-up task.
+2. Add PDF export (client print CSS first; server-side later).
+3. Stage 2 Outreach (planning):
+   - Export outreach-ready lists per location/category
+   - Message templates and personalization tokens
+   - Delivery channel integration (email first), basic pipeline board
+4. Advanced reporting: richer charts with `recharts`, ROI scenarios.
