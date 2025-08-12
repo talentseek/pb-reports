@@ -14,6 +14,19 @@ function milesToMeters(miles: number): number {
   return Math.round(miles * 1609.34)
 }
 
+function haversineDistanceMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000; // meters
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 function normalizePriceLevel(input: any): number | null {
   if (input == null) return null
   if (typeof input === 'number') return input
@@ -105,7 +118,15 @@ async function placesSearchNearby(lat: number, lng: number, radiusMeters: number
     return []
   }
   const data = await res.json()
-  return (data?.places ?? []) as any[]
+  const places: any[] = data?.places ?? []
+  // Hard filter by radius just in case
+  const filtered = places.filter((p: any) => {
+    const plat = p.location?.latitude
+    const plng = p.location?.longitude
+    if (typeof plat !== 'number' || typeof plng !== 'number') return false
+    return haversineDistanceMeters(lat, lng, plat, plng) <= radiusMeters
+  })
+  return filtered
 }
 
 async function placesSearchText(lat?: number, lng?: number, radiusMeters?: number, textQuery?: string, maxResults: number = 10) {
@@ -113,7 +134,9 @@ async function placesSearchText(lat?: number, lng?: number, radiusMeters?: numbe
   const body = {
     textQuery,
     maxResultCount: Math.max(1, Math.min(maxResults, 20)),
-    ...(lat && lng && radiusMeters ? { locationBias: { circle: { center: { latitude: lat, longitude: lng }, radius: radiusMeters } } } : {}),
+    ...(lat && lng && radiusMeters
+      ? { locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius: radiusMeters } } }
+      : {}),
   }
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -144,7 +167,17 @@ async function placesSearchText(lat?: number, lng?: number, radiusMeters?: numbe
     return []
   }
   const data = await res.json()
-  return (data?.places ?? []) as any[]
+  const places: any[] = data?.places ?? []
+  // When a center is provided, enforce radius filtering, since Text search can sometimes leak beyond bias
+  if (lat != null && lng != null && radiusMeters != null) {
+    return places.filter((p: any) => {
+      const plat = p.location?.latitude
+      const plng = p.location?.longitude
+      if (typeof plat !== 'number' || typeof plng !== 'number') return false
+      return haversineDistanceMeters(lat, lng, plat, plng) <= radiusMeters
+    })
+  }
+  return places
 }
 
 export async function refreshReportLocations(reportId: string, postcodes: string[], cfg: FetchConfig) {
