@@ -16,14 +16,14 @@ export default function PublicRevenueTabs({
   iconForCategory,
 }: any) {
   return (
-    <Card>
+    <Card className="border-primary/20">
       <CardHeader>
-        <CardTitle>Revenue Enhancement Opportunity</CardTitle>
+        <CardTitle className="text-primary">Revenue Enhancement Opportunity</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-gray-700 mb-3">Current vs potential revenue with ParkBunny. The uplift shown reflects the modeled {computedGrowthPercent}% increase across analyzed locations.</p>
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList>
+          <TabsList className="bg-primary/10">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="categories">By Category</TabsTrigger>
             <TabsTrigger value="distribution">Distribution</TabsTrigger>
@@ -62,7 +62,7 @@ export default function PublicRevenueTabs({
                 })}
                 categories={Array.from(dbCategorySet) as string[]}
                 colors={{
-                  'Hotels & Accommodation': '#0ea5e9',
+                  'Hotels & Accommodation': '#D05D8B',
                   'Restaurants & Cafes': '#f59e0b',
                   'Bars & Nightlife': '#a855f7',
                   'Fitness & Wellness': '#10b981',

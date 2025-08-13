@@ -5,26 +5,35 @@ import { Badge } from "@/components/ui/badge"
 export function AncillaryServices() {
   return (
     <section className="space-y-4">
-      <Card>
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
         <CardHeader>
-          <CardTitle>Ancillary Services Revenue Potential</CardTitle>
+          <CardTitle className="text-primary">Ancillary Services Revenue Potential</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-700 mb-3">Subject to site surveys — projected upside from additional services</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[
-              ['Smart Lockers','£36k','Per year recurring revenue'],
-              ['Digital Signage','£4k–£40k','Per year depending on location'],
-              ['WeBuyAnyCar.com','£15k–£20k','Per year per site'],
-              ['Tesla Test Drive Centre','£50k','Per year per site'],
-              ['Waterless Car Wash','£12k–£45k/year','Eco-friendly; minimal water usage'],
-              ['Courier Partnerships','Up to £30k/year','Delivery partnerships'],
-              ['Markets & Events','Flexible activation','Pop-up markets and community events'],
-            ].map(([title,amount,desc]) => (
-              <div key={String(title)} className="rounded border p-4 space-y-1">
-                <p className="font-medium">{title}</p>
-                <p className="text-sm">{amount}</p>
-                <p className="text-xs text-gray-600">{desc}</p>
+              ['Smart Lockers','£36k','Per year recurring revenue','/lockers.png'],
+              ['Digital Signage','£4k–£40k','Per year depending on location','/signage.jpg'],
+              ['WeBuyAnyCar.com','£15k–£20k','Per year per site','/wbac.webp'],
+              ['Tesla Test Drive Centre','£50k','Per year per site','/tesla.jpg'],
+              ['Waterless Car Wash','£12k–£45k/year','Eco-friendly; minimal water usage','/carwash.webp'],
+              ['Courier Partnerships','Up to £30k/year','Delivery partnerships','/courier.png'],
+              ['Markets & Events','Flexible activation','Pop-up markets and community events','/market.webp'],
+            ].map(([title,amount,desc,src]) => (
+              <div key={String(title)} className="rounded border p-4 space-y-2">
+                <div className="w-full h-24 lg:h-28 flex items-center justify-center">
+                  {src ? (
+                    <img src={String(src)} alt={String(title)} className="h-full w-auto object-contain rounded-md" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Image coming soon</div>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium">{title}</p>
+                  <p className="text-sm">{amount}</p>
+                  <p className="text-xs text-gray-600">{desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -41,9 +50,9 @@ export function AncillaryServices() {
 export function CommercialOffer() {
   return (
     <section className="space-y-3">
-      <Card>
+      <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle>Commercial Offer</CardTitle>
+          <CardTitle className="text-primary">Commercial Offer</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-700">ParkBunny deploys a fully managed, no-CapEx model to activate local partnerships and convert demand into measurable parking revenue. We provide multi-location partner management, in-app promotions, and centralized revenue tracking, with rapid time-to-value.</p>
@@ -76,9 +85,9 @@ export function CommercialOffer() {
 export function CommercialTerms() {
   return (
     <section className="space-y-4">
-      <Card>
+      <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle>Commercial Terms</CardTitle>
+          <CardTitle className="text-primary">Commercial Terms</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 mb-4">Transparent, simple pricing aligned to delivery.</p>
@@ -100,7 +109,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Transaction fee</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="text-xl font-semibold leading-tight">1.5%</div>
+                        <div className="text-2xl font-semibold leading-tight text-primary">1.5%</div>
                         <div className="text-xs text-gray-600">Per booking</div>
                       </TableCell>
                     </TableRow>
@@ -109,7 +118,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Convenience fee</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="text-xl font-semibold leading-tight">25p</div>
+                        <div className="text-2xl font-semibold leading-tight text-primary">25p</div>
                         <div className="text-xs text-gray-600">Per booking</div>
                       </TableCell>
                     </TableRow>
@@ -118,7 +127,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Signage & installation</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="text-xl font-semibold leading-tight">FREE</div>
+                        <div className="text-2xl font-semibold leading-tight">FREE</div>
                         <div className="text-xs text-gray-600">Provided at no cost</div>
                       </TableCell>
                     </TableRow>
@@ -144,7 +153,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Pilot length</div>
                         <div className="text-xs text-gray-600">Risk‑free trial</div>
                       </TableCell>
-                      <TableCell className="text-right text-sm font-medium">4 months</TableCell>
+                      <TableCell className="text-right text-sm font-medium text-primary">4 months</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>

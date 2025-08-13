@@ -5,11 +5,11 @@ const PublicLocationMap = dynamic(() => import("@/components/report/PublicLocati
 
 export function SingleMap({ center, markers, apiKey }: any) {
   return (
-    <Card>
-      <CardHeader><CardTitle>Map Overview</CardTitle></CardHeader>
+    <Card className="border-primary/20">
+      <CardHeader><CardTitle className="text-primary">Map Overview</CardTitle></CardHeader>
       <CardContent>
         <p className="text-sm text-gray-700 mb-3">Visual representation of the analyzed car park and nearby business clusters. This informs our partnership targeting and expected demand uplift within the micro-market.</p>
-        <div className="w-full h-80 rounded border bg-gray-100">
+        <div className="w-full h-96 rounded border bg-gray-100">
           {center?.lat && center?.lng ? (
             <PublicLocationMap apiKey={apiKey} center={center} markers={markers} />
           ) : (
@@ -41,7 +41,7 @@ export function MultiLocationSection({
           const markers = markersByPostcode?.[pc] ?? []
           const top3 = (loc?.countsByCategory ?? []).slice(0,3)
           return (
-            <Card key={pc}>
+            <Card key={pc} className="border-primary/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -50,7 +50,7 @@ export function MultiLocationSection({
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="w-full h-80 border rounded bg-gray-100">
+                <div className="w-full h-[28rem] border rounded bg-gray-100">
                   {loc?.latitude && loc?.longitude ? (
                     <PublicLocationMap apiKey={apiKey} center={{ lat: loc.latitude as number, lng: loc.longitude as number }} markers={markers} />
                   ) : (
@@ -75,10 +75,10 @@ export function MultiLocationSection({
                       const pct = Math.round(entry.included * signUp * uplift * 1000) / 10
                       return (
                         <div key={entry.category} className="rounded border p-2 flex items-center justify-between">
-                          <span className="capitalize flex items-center gap-2">{iconForCategory(entry.category)} {entry.category}</span>
+                          <span className="capitalize flex items-center gap-2 text-primary">{iconForCategory(entry.category)} <span className="text-gray-900">{entry.category}</span></span>
                             <span className="text-sm text-right">
                             <span className="mr-2 font-medium">{entry.included}</span>
-                              <span className="font-medium">+{pct}%</span>
+                              <span className="font-medium text-primary">+{pct}%</span>
                           </span>
                         </div>
                       )

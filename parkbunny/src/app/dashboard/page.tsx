@@ -26,6 +26,8 @@ export default async function DashboardPage() {
         </Link>
       </header>
       <ReportList reports={reports} />
+
+      {null}
     </main>
   );
 }
