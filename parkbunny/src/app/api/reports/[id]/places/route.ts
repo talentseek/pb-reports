@@ -6,7 +6,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const { userId } = await auth()
   if (!userId) return new Response('Unauthorized', { status: 401 })
   try {
-    const report = await prisma.report.findFirst({ where: { id: params.id, user: { clerkId: userId } } })
+    const report = await prisma.report.findFirst({ where: { id: params.id } })
     if (!report) return new Response('Not found', { status: 404 })
 
     const postcodes = String(report.postcodes).split(',').map((s) => s.trim()).filter(Boolean)
