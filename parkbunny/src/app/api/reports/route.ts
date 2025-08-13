@@ -7,8 +7,8 @@ export async function GET() {
   const { userId } = await auth()
   if (!userId) return new Response('Unauthorized', { status: 401 })
 
+  // Return all reports regardless of owner
   const reports = await prisma.report.findMany({
-    where: { user: { clerkId: userId } },
     orderBy: { createdAt: 'desc' },
   })
   return Response.json(reports)

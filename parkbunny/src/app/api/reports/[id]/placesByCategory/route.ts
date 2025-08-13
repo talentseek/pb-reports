@@ -16,7 +16,7 @@ export async function GET(
     if (!category) return new NextResponse('Missing category', { status: 400 })
 
     const report = await prisma.report.findFirst({
-      where: { id: params.id, user: { clerkId: userId } },
+      where: { id: params.id },
       select: { id: true },
     })
     if (!report) return new NextResponse('Not found', { status: 404 })
@@ -65,7 +65,7 @@ export async function PATCH(
     if (!body?.placeId) return new NextResponse('Missing placeId', { status: 400 })
 
     const report = await prisma.report.findFirst({
-      where: { id: params.id, user: { clerkId: userId } },
+      where: { id: params.id },
       select: { id: true },
     })
     if (!report) return new NextResponse('Not found', { status: 404 })

@@ -7,7 +7,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const body = await req.json()
   // Body is a partial settings object; merge into existing JSON
-  const report = await prisma.report.findFirst({ where: { id: params.id, user: { clerkId: userId } } })
+  const report = await prisma.report.findFirst({ where: { id: params.id } })
   if (!report) return new Response('Not found', { status: 404 })
 
   const nextSettings = { ...(report.settings as object | null ?? {}), ...body }

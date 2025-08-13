@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { userId } = await auth()
   if (!userId) return new NextResponse('Unauthorized', { status: 401 })
-  const report = await prisma.report.findFirst({ where: { id: params.id, user: { clerkId: userId } }, select: { id: true } })
+  const report = await prisma.report.findFirst({ where: { id: params.id }, select: { id: true } })
   if (!report) return new NextResponse('Not found', { status: 404 })
 
   const locations = await prisma.reportLocation.findMany({ where: { reportId: report.id }, select: { id: true } })
@@ -38,7 +38,7 @@ export async function PATCH(
   if (!userId) return new NextResponse('Unauthorized', { status: 401 })
   const body = await req.json().catch(() => null) as { category: string; included: boolean }
   if (!body?.category) return new NextResponse('Missing category', { status: 400 })
-  const report = await prisma.report.findFirst({ where: { id: params.id, user: { clerkId: userId } }, select: { id: true } })
+  const report = await prisma.report.findFirst({ where: { id: params.id }, select: { id: true } })
   if (!report) return new NextResponse('Not found', { status: 404 })
   const locations = await prisma.reportLocation.findMany({ where: { reportId: report.id }, select: { id: true } })
   await prisma.reportLocationPlace.updateMany({

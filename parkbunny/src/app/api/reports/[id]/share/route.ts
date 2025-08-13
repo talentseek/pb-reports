@@ -14,7 +14,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     regenerate?: boolean
   }
 
-  const report = await prisma.report.findFirst({ where: { id: params.id, user: { clerkId: userId } } })
+  const report = await prisma.report.findFirst({ where: { id: params.id } })
   if (!report) return new Response('Not found', { status: 404 })
 
   const data: any = {}
