@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import dynamic from "next/dynamic"
+
+const FeedbackWidget = dynamic(() => import("@/components/FeedbackWidget"), { ssr: false })
 
 export default function DashboardHelpPage() {
   return (
@@ -108,6 +111,15 @@ export default function DashboardHelpPage() {
             <p>
               Need help? <a href="mailto:hello@parkbunny.app" className="underline">hello@parkbunny.app</a>
             </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-primary/20 lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-primary">Bugs & Feature Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FeedbackWidget />
           </CardContent>
         </Card>
       </div>

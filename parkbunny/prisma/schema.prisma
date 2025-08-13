@@ -9,6 +9,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum FeedbackType {
+  BUG
+  FEATURE
+}
+
+enum FeedbackStatus {
+  OPEN
+  DONE
+}
+
 model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
@@ -95,4 +105,16 @@ model ReportLocationPlace {
   createdAt       DateTime @default(now())
 
   @@unique([locationId, placeId])
+}
+
+model Feedback {
+  id          String          @id @default(cuid())
+  type        FeedbackType
+  title       String
+  details     String?
+  status      FeedbackStatus  @default(OPEN)
+  createdAt   DateTime        @default(now())
+  createdById String?
+  createdByEmail String?
+  completedAt DateTime?
 }
