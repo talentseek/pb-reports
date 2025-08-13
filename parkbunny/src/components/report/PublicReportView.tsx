@@ -157,9 +157,9 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       {/* Locations & Inputs */}
       <section className="space-y-2">
-        <Card>
+        <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle>Locations & Inputs</CardTitle>
+            <CardTitle className="text-primary">Locations & Inputs</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto rounded border">
@@ -169,7 +169,7 @@ export default async function PublicReportView({ report }: { report: any }) {
                     <TableHead>Postcode</TableHead>
                     <TableHead>Latitude</TableHead>
                     <TableHead>Longitude</TableHead>
-                    <TableHead>Spaces</TableHead>
+                    <TableHead>Local businesses</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -178,13 +178,23 @@ export default async function PublicReportView({ report }: { report: any }) {
                       <TableCell>{l.postcode}</TableCell>
                       <TableCell>{typeof l.latitude==='number'? l.latitude.toFixed(5) : '—'}</TableCell>
                       <TableCell>{typeof l.longitude==='number'? l.longitude.toFixed(5) : '—'}</TableCell>
-                      <TableCell>—</TableCell>
+                      <TableCell>{
+                        typeof (l as any).totalIncluded === 'number'
+                          ? (l as any).totalIncluded
+                          : (typeof (l as any).totalPlaces === 'number' ? (l as any).totalPlaces : '—')
+                      }</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
-            <div className="mt-2 text-xs text-gray-600">Methodology: Nearby partners identified via Places APIs (category + radius filters) and scored for parking demand potential.</div>
+            <p className="mt-2 text-sm text-gray-700">
+              Methodology: We evaluate local commercial activity and visitor anchors within defined catchments around each postcode.
+              Businesses are categorised into demand‑driver groups, de‑duplicated, and filtered by distance to reflect realistic
+              walking/drive patterns. We weight opportunity using simple quality and relevance signals (e.g., prominence and fit
+              to parking use‑cases) and model potential uplift using configurable sign‑up and attach‑rate assumptions. Counts shown
+              reflect only the businesses included for modelling.
+            </p>
           </CardContent>
         </Card>
       </section>
@@ -194,8 +204,8 @@ export default async function PublicReportView({ report }: { report: any }) {
       {/* Category Breakdown (Detail) - only for single location */}
       {!isMulti && (
         <section className="space-y-3">
-          <Card>
-            <CardHeader><CardTitle>Business Breakdown</CardTitle></CardHeader>
+          <Card className="border-primary/20">
+            <CardHeader><CardTitle className="text-primary">Business Breakdown</CardTitle></CardHeader>
             <CardContent>
               <p className="text-sm text-gray-700 mb-3">Distribution of local business types identified near the location. Categories with higher counts typically correlate with stronger on-peak demand, and thus higher parking conversion potential.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -204,10 +214,10 @@ export default async function PublicReportView({ report }: { report: any }) {
                   const pct = Math.round(entry.included * signUp * uplift * 1000) / 10
                   return (
                     <div key={entry.category} className="rounded border p-3 flex items-center justify-between">
-                      <span className="capitalize flex items-center gap-2">{iconForCategory(entry.category)} {entry.category}</span>
+                      <span className="capitalize flex items-center gap-2 text-primary">{iconForCategory(entry.category)} <span className="text-gray-900">{entry.category}</span></span>
                       <span className="font-medium text-right">
                         <span className="mr-2">{entry.included}</span>
-                        <span className="">+{pct}%</span>
+                        <span className="text-primary">+{pct}%</span>
                       </span>
                     </div>
                   )
@@ -272,15 +282,15 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       {/* Partnership Opportunity Model */}
       <section className="space-y-3">
-        <Card>
+        <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle>Partnership Opportunity Model</CardTitle>
+            <CardTitle className="text-primary">Partnership Opportunity Model</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array.from(dbCategorySet).map((cat) => (
                 <div key={cat} className="rounded border p-4 space-y-2">
-                  <p className="font-medium flex items-center gap-2">{iconForCategory(cat)} {cat}</p>
+                  <p className="font-medium flex items-center gap-2 text-primary">{iconForCategory(cat)} <span className="text-gray-900">{cat}</span></p>
                   <ul className="text-sm list-disc pl-5 text-gray-700">
                     {cat === 'Hotels & Accommodation' || cat === 'Offices & Coworking' ? (
                       <>
@@ -288,7 +298,7 @@ export default async function PublicReportView({ report }: { report: any }) {
                         <li>Recurring passes for employees/guests to lift weekday or overnight occupancy</li>
                       </>
                     ) : null}
-                    {cat === 'Restaurants & Cafes' || cat === 'Entertainment & Venues' || cat === 'Retail & Services' ? (
+                    {cat === 'Restaurants & Cafes' || cat === 'Entertainment & Venues' || cat === 'Retail & Services' || cat === 'Bars & Nightlife' ? (
                       <>
                         <li>Merchant‑funded validated parking to drive visits</li>
                         <li>Instant Deals for time‑of‑day offers (pre‑theatre, lunch rush)</li>
@@ -297,16 +307,19 @@ export default async function PublicReportView({ report }: { report: any }) {
                     {cat === 'Fitness & Wellness' ? (
                       <>
                         <li>Member passes or session‑based validation aligned to peak hours</li>
+                        <li>Intro offers to shift demand to shoulder periods</li>
                       </>
                     ) : null}
                     {cat === 'Events & Conferences' ? (
                       <>
                         <li>Event‑aligned promos and pre‑book offers</li>
+                        <li>Bundle parking with tickets or registration flows</li>
                       </>
                     ) : null}
                     {cat === 'Community & Public' ? (
                       <>
                         <li>Community partner validations for recurring activities</li>
+                        <li>Concession rates for volunteers and attendees</li>
                       </>
                     ) : null}
                   </ul>
@@ -319,9 +332,9 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       {/* Uplift & Revenue Scenarios */}
       <section className="space-y-3">
-        <Card>
+        <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle>Uplift & Revenue Scenarios</CardTitle>
+            <CardTitle className="text-primary">Uplift & Revenue Scenarios</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -334,12 +347,25 @@ export default async function PublicReportView({ report }: { report: any }) {
                   { label: 'Scenario B (Expected)', value: expected },
                   { label: 'Scenario C (Stretch)', value: stretch },
                 ]
-                return items.map((it) => (
-                  <div key={it.label} className="rounded border p-4">
-                    <p className="text-sm text-gray-600">{it.label}</p>
-                    <p className="text-xl font-semibold">{formatCurrency(it.value)}</p>
-                  </div>
-                ))
+                return items.map((it) => {
+                  let description: string | null = null
+                  if (it.label.includes('Conservative')) {
+                    description = 'Limited number of local sign‑ups across early partner categories; focus on validated parking and simple offers to prove traction.'
+                  } else if (it.label.includes('Expected')) {
+                    description = `Example: ${formatCurrency(it.value)}. Expected number of local sign‑ups across priority categories with steady validation rates and periodic time‑of‑day offers.`
+                  } else if (it.label.includes('Stretch')) {
+                    description = `Example: ${formatCurrency(it.value)}. Greater partner coverage plus ancillary services (e.g., lockers, car wash, events) generating incremental revenue and marketing lift.`
+                  }
+                  return (
+                    <div key={it.label} className="rounded border p-4">
+                      <p className="text-sm text-gray-600">{it.label}</p>
+                      <p className="text-xl font-semibold text-primary">{formatCurrency(it.value)}</p>
+                      {description ? (
+                        <p className="text-xs text-gray-600 mt-1">{description}</p>
+                      ) : null}
+                    </div>
+                  )
+                })
               })()}
             </div>
             <p className="text-xs text-gray-600 mt-2">Drivers: partner sign‑ups, offer redemption/validation, off‑peak pricing optimisation, and repeat behaviour (loyalty).</p>
@@ -347,162 +373,35 @@ export default async function PublicReportView({ report }: { report: any }) {
         </Card>
       </section>
 
-      {/* What Makes ParkBunny Different */}
-      <section className="space-y-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>What Makes ParkBunny Different</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm list-disc pl-5 text-gray-700 space-y-1">
-              <li>Beyond “pay and leave”: Instant Local Deals to reward drivers and lift merchant footfall</li>
-              <li>Direct comms + real‑time control: target offers, adjust tariffs, view behaviour analytics across sites</li>
-              <li>Multi‑location rollout: centralised partner management, signage, codes/validation, merchant onboarding</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </section>
+      <WhatMakesDifferent />
 
-      {/* Activation Plan */}
-      <section className="space-y-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Activation Plan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm list-disc pl-5 text-gray-700 space-y-1">
-              <li>Weeks 0–2: site checks, signage assets, shortlist & outreach to top categories; enable validated/discounted links</li>
-              <li>Weeks 3–4: first offers live; event‑aligned promos; test off‑peak pricing</li>
-              <li>Weeks 5–6: expand partners; optimise offers by time of day; push loyalty nudges in‑app</li>
-            </ul>
-            <p className="text-xs text-gray-600 mt-2">Success metrics: +paid sessions vs. baseline, partner count, validation/redemption rate, repeat sessions, off‑peak fill.</p>
-          </CardContent>
-        </Card>
-      </section>
+      <ActivationPlan />
 
-      {/* Measurement & Reporting */}
-      <section className="space-y-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Measurement & Reporting</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm list-disc pl-5 text-gray-700 space-y-1">
-              <li>Core KPIs: paid sessions, conversion from partner clicks/validations, avg stay, yield by hour/day, repeat rate</li>
-              <li>Partner KPIs: redemptions, new vs returning mix, top‑performing offers</li>
-              <li>Operator dashboard: tariff edits, offer scheduling, multi‑site comparisons (monthly PDF + live)</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </section>
+      <MeasurementReporting />
 
-      {/* Compliance & Good Practice */}
-      <section className="space-y-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Compliance & Good Practice</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm list-disc pl-5 text-gray-700 space-y-1">
-              <li>Clear signage & terms (Code of Practice alignment)</li>
-              <li>Privacy: ANPR/CCTV and app data handled under UK GDPR/DPA; proportionate, transparent use</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </section>
+      <ComplianceGoodPractice />
 
       
 
-      {/* Ancillary Services Revenue Potential */}
-      <section className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Ancillary Services Revenue Potential</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-700 mb-3">Subject to site surveys — projected upside from additional services</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Smart Lockers</p>
-                <p className="text-sm">£36k</p>
-                <p className="text-xs text-gray-600">Per year recurring revenue</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Digital Signage</p>
-                <p className="text-sm">£4k–£40k</p>
-                <p className="text-xs text-gray-600">Per year depending on location</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">WeBuyAnyCar.com</p>
-                <p className="text-sm">£15k–£20k</p>
-                <p className="text-xs text-gray-600">Per year per site</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Tesla Test Drive Centre</p>
-                <p className="text-sm">£50k</p>
-                <p className="text-xs text-gray-600">Per year per site</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Waterless Car Wash</p>
-                <p className="text-sm">£12k–£45k/year</p>
-                <p className="text-xs text-gray-600">Eco-friendly car washing; minimal water usage</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Courier Partnerships</p>
-                <p className="text-sm">Up to £30k/year per site</p>
-                <p className="text-xs text-gray-600">Delivery partnerships for efficient logistics</p>
-              </div>
-              <div className="rounded border p-4 space-y-1">
-                <p className="font-medium">Markets & Events</p>
-                <p className="text-sm">Flexible activation</p>
-                <p className="text-xs text-gray-600">Pop-up markets and community events</p>
-              </div>
-            </div>
-            <div className="rounded border p-4 text-xs text-gray-600 mt-4">
-              <p className="font-medium">Implementation Notes</p>
-              <p>All opportunities subject to site survey and feasibility assessment. Partnership negotiations and planning permissions may apply.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      <AncillaryServices />
 
-      {/* Commercial Offer (Close) */}
-      <section className="space-y-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Commercial Offer</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-700">ParkBunny deploys a fully managed, no-CapEx model to activate local partnerships and convert demand into measurable parking revenue. We provide multi-location partner management, in-app promotions, and centralized revenue tracking, with rapid time-to-value.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
-              <div className="rounded border p-4">
-                <p className="font-medium">What we deliver</p>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  <li>Partner sourcing and onboarding</li>
-                  <li>Instant deals and demand activation</li>
-                  <li>Analytics and uplift reporting</li>
-                  <li>Ancillary services feasibility & rollouts</li>
-                </ul>
-              </div>
-              <div className="rounded border p-4">
-                <p className="font-medium">Next steps</p>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  <li>Confirm target locations and priorities</li>
-                  <li>Site surveys and partner pipeline build</li>
-                  <li>Pilot activation (4–6 weeks) and measure uplift</li>
-                  <li>Scale to full estate</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      <CommercialOffer />
 
       <CommercialTerms />
 
       {/* Footer */}
-      <footer className="border-t pt-6 text-xs text-gray-600">
-        <p>ParkBunny • Contact: jon.sprank@parkbunny.app</p>
+      <footer className="border-t pt-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="ParkBunny" className="h-6 w-auto" />
+            <p className="text-xs text-gray-600">© {new Date().getFullYear()} ParkBunny</p>
+          </div>
+          <div className="text-xs text-gray-600">
+            <a href="mailto:hello@parkbunny.app" className="underline">hello@parkbunny.app</a>
+            <span className="mx-2">•</span>
+            <a href="https://parkbunny.app" target="_blank" className="underline">parkbunny.app</a>
+          </div>
+        </div>
       </footer>
     </div>
   )
