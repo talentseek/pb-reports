@@ -43,6 +43,11 @@ export async function POST(req: Request) {
         placesMaxPerType: typeof placesMaxPerType === 'number' ? Math.max(1, Math.min(50, Math.floor(placesMaxPerType))) : 10,
         upliftPercentages: defaultSettings.upliftPercentages,
         signUpRates: defaultSettings.signUpRates,
+        // Commercial terms defaults
+        transactionFeePercent: 1.5,
+        convenienceFeePence: 25,
+        // Store plaintext for convenience (can be changed later)
+        sharePasswordPlain: defaultSharePassword,
       },
       shareEnabled: true,
       shareCode: generateShareCode(),
