@@ -14,7 +14,7 @@ export default async function ReportViewPage({ params }: { params: { id: string 
   }
 
   const report = await prisma.report.findFirst({
-    where: { id: params.id, user: { clerkId: user!.id } },
+    where: { id: params.id },
     include: { businesses: true },
   });
   if (!report) {
