@@ -82,7 +82,7 @@ export function CommercialOffer() {
   )
 }
 
-export function CommercialTerms() {
+export function CommercialTerms({ transactionFeePercent = 1.5, convenienceFeePence = 25 }: { transactionFeePercent?: number; convenienceFeePence?: number }) {
   return (
     <section className="space-y-4">
       <Card className="border-primary/20">
@@ -109,7 +109,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Transaction fee</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="text-2xl font-semibold leading-tight text-primary">1.5%</div>
+                        <div className="text-2xl font-semibold leading-tight text-primary">{transactionFeePercent}%</div>
                         <div className="text-xs text-gray-600">Per booking</div>
                       </TableCell>
                     </TableRow>
@@ -118,7 +118,7 @@ export function CommercialTerms() {
                         <div className="text-sm">Convenience fee</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="text-2xl font-semibold leading-tight text-primary">25p</div>
+                        <div className="text-2xl font-semibold leading-tight text-primary">{convenienceFeePence}p</div>
                         <div className="text-xs text-gray-600">Per booking</div>
                       </TableCell>
                     </TableRow>

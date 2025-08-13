@@ -10,6 +10,9 @@ type Settings = {
   postcodesCount?: number
   categoryUplift?: Record<string, number>
   categorySignUp?: Record<string, number>
+  transactionFeePercent?: number
+  convenienceFeePence?: number
+  sharePasswordPlain?: string
 }
 
 export default function ReportSettingsPage({ params }: { params: { id: string } }) {
@@ -41,6 +44,9 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
           postcodesCount: incoming.postcodesCount ?? defaultSettings.postcodesCount,
           categoryUplift: incoming.categoryUplift || {},
           categorySignUp: incoming.categorySignUp || {},
+          transactionFeePercent: incoming.transactionFeePercent ?? 1.5,
+          convenienceFeePence: incoming.convenienceFeePence ?? 25,
+          sharePasswordPlain: incoming.sharePasswordPlain || undefined,
         });
       }
     })();
@@ -189,7 +195,34 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
             <input className="rounded border px-3 py-2 flex-1" type="text" value={sharePassword} onChange={(e) => setSharePassword(e.target.value)} />
             <button type="button" onClick={() => updateShare({ password: sharePassword })} className="rounded border px-3 py-2">Set</button>
           </div>
+          {settings.sharePasswordPlain ? (
+            <p className="text-xs text-gray-600 mt-1">Current password: <span className="font-medium">{settings.sharePasswordPlain}</span></p>
+          ) : null}
         </div>
+      <hr className="my-6" />
+      <h2 className="text-xl font-semibold">Commercial Terms</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm">Transaction fee (%)</label>
+          <input
+            className="w-full rounded border px-3 py-2"
+            type="number"
+            step={0.1}
+            value={settings.transactionFeePercent ?? 1.5}
+            onChange={(e) => setSettings((s) => ({ ...s, transactionFeePercent: Number(e.target.value) }))}
+          />
+        </div>
+        <div>
+          <label className="block text-sm">Convenience fee (pence)</label>
+          <input
+            className="w-full rounded border px-3 py-2"
+            type="number"
+            step={1}
+            value={settings.convenienceFeePence ?? 25}
+            onChange={(e) => setSettings((s) => ({ ...s, convenienceFeePence: Number(e.target.value) }))}
+          />
+        </div>
+      </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => updateShare({ regenerate: true })} className="rounded border px-3 py-2">Regenerate link</button>
           {shareUrl && <a href={shareUrl} target="_blank" className="text-sm underline">{shareUrl}</a>}

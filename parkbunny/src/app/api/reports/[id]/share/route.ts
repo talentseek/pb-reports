@@ -20,7 +20,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const data: any = {}
   if (typeof enable === 'boolean') data.shareEnabled = enable
   if (typeof regenerate === 'boolean' && regenerate === true) data.shareCode = generateShareCode()
-  if (typeof password === 'string' && password.length > 0) data.sharePasswordHash = await hashPassword(password)
+  if (typeof password === 'string' && password.length > 0) {
+    data.sharePasswordHash = await hashPassword(password)
+    // also store plaintext in settings for display to admins
+    const settings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {}
+    data.settings = { ...settings, sharePasswordPlain: password }
+  }
   if (expiresAt === null) data.shareExpiresAt = null
   if (typeof expiresAt === 'string') data.shareExpiresAt = new Date(expiresAt)
   if (!report.shareCode && (data.shareEnabled || regenerate)) data.shareCode = generateShareCode()

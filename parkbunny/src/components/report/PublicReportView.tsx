@@ -387,7 +387,10 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       <CommercialOffer />
 
-      <CommercialTerms />
+      <CommercialTerms
+        transactionFeePercent={Number.isFinite((safeSettings as any).transactionFeePercent) ? (safeSettings as any).transactionFeePercent : 1.5}
+        convenienceFeePence={Number.isFinite((safeSettings as any).convenienceFeePence) ? (safeSettings as any).convenienceFeePence : 25}
+      />
 
       {/* Footer */}
       <footer className="border-t pt-8">

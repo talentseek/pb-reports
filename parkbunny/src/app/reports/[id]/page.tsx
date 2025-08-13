@@ -38,6 +38,12 @@ export default async function ReportViewPage({ params }: { params: { id: string 
           ) : (
             <p className="text-sm text-gray-500">Sharing disabled</p>
           )}
+          {(() => {
+            const s: any = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : null
+            return s?.sharePasswordPlain ? (
+              <p className="text-xs text-gray-600 mt-1">Current password: <span className="font-medium">{s.sharePasswordPlain}</span></p>
+            ) : null
+          })()}
         </div>
         <div className="flex items-center gap-3">
           {report.shareEnabled && report.shareCode ? (
