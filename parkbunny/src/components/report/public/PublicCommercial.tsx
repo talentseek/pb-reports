@@ -13,12 +13,12 @@ export function AncillaryServices() {
           <p className="text-sm text-gray-700 mb-3">Subject to site surveys — projected upside from additional services</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[
-              ['Smart Lockers','£36k','Per year recurring revenue','/lockers.png'],
+              ['Smart Lockers','£1k–£36k','Per year recurring revenue','/lockers.png'],
               ['Digital Signage','£4k–£40k','Per year depending on location','/signage.jpg'],
               ['WeBuyAnyCar.com','£15k–£20k','Per year per site','/wbac.webp'],
               ['Tesla Test Drive Centre','£50k','Per year per site','/tesla.jpg'],
               ['Waterless Car Wash','£12k–£45k/year','Eco-friendly; minimal water usage','/carwash.webp'],
-              ['Courier Partnerships','Up to £30k/year','Delivery partnerships','/courier.png'],
+              ['Last Mile Logistics','Up to £30k/year','Delivery partnerships','/courier.png'],
               ['Markets & Events','Flexible activation','Pop-up markets and community events','/market.webp'],
             ].map(([title,amount,desc,src]) => (
               <div key={String(title)} className="rounded border p-4 space-y-2">
