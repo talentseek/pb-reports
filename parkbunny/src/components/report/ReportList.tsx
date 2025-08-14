@@ -62,9 +62,9 @@ export default function ReportList({ reports, isArchived = false }: ReportListPr
                     ? `${r.user.firstName} ${r.user.lastName}`
                     : r.user.firstName 
                     ? r.user.firstName
-                    : r.user.email.includes('@example.invalid') 
+                    : r.user.email && r.user.email.includes('@example.invalid') 
                     ? `User ${r.user.clerkId.slice(-6)}` 
-                    : r.user.email
+                    : r.user.email || `User ${r.user.clerkId.slice(-6)}`
                   }
                 </span>
               </p>
