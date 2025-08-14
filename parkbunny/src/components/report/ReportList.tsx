@@ -14,11 +14,6 @@ type ReportListProps = {
     locations?: { id: string; status: 'PENDING' | 'LIVE' }[];
     user?: { 
       email: string; 
-      clerkId: string;
-      firstName?: string | null;
-      lastName?: string | null;
-      username?: string | null;
-      createdAt?: Date | null;
     };
     archived?: boolean;
   }[];
@@ -57,22 +52,7 @@ export default function ReportList({ reports, isArchived = false }: ReportListPr
                 </span>
               </div>
             )}
-            {r.user && (
-              <p className="text-xs text-gray-500 mt-1">
-                Created by: <span className="font-medium">
-                  {r.user.firstName && r.user.lastName 
-                    ? `${r.user.firstName} ${r.user.lastName}`
-                    : r.user.firstName 
-                    ? r.user.firstName
-                    : r.user.username
-                    ? `@${r.user.username}`
-                    : r.user.email && !r.user.email.includes('@example.invalid')
-                    ? r.user.email
-                    : `User ${r.user.clerkId.slice(-4)}`
-                  }
-                </span>
-              </p>
-            )}
+
           </div>
           <div className="flex items-center gap-3">
             {r.shareEnabled && r.shareCode ? (
