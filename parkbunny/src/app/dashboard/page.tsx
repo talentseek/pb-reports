@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { currentUser, clerkClient } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/db";
 import DashboardClient from "@/components/DashboardClient";
@@ -34,48 +34,10 @@ export default async function DashboardPage() {
     },
   });
 
-  // Get unique user IDs to fetch from Clerk
-  const uniqueUserIds = [...new Set(reports.map(r => r.user?.clerkId).filter(Boolean))];
-  
-  // Fetch user information from Clerk
-  const clerkUsers = await Promise.all(
-    uniqueUserIds.map(async (clerkId) => {
-      try {
-        const user = await clerkClient.users.getUser(clerkId);
-        return {
-          clerkId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.emailAddresses[0]?.emailAddress,
-          username: user.username,
-          createdAt: user.createdAt
-        };
-      } catch (error) {
-        console.error(`Failed to fetch user ${clerkId}:`, error);
-                 return {
-           clerkId,
-           firstName: null,
-           lastName: null,
-           email: null,
-           username: null,
-           createdAt: null
-         };
-      }
-    })
-  );
-
-  // Create a map for quick lookup
-  const userMap = new Map(clerkUsers.map(u => [u.clerkId, u]));
-
-  // Enhance reports with user information
+    // Convert null user to undefined to match the expected type
   const reportsWithUserInfo = reports.map(report => ({
     ...report,
-    user: report.user ? {
-      ...report.user,
-      ...userMap.get(report.user.clerkId),
-      // Preserve the original email from database if Clerk email is null
-      email: userMap.get(report.user.clerkId)?.email || report.user.email
-    } : undefined
+    user: report.user || undefined
   }));
 
   return (
