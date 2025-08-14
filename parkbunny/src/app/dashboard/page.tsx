@@ -46,16 +46,20 @@ export default async function DashboardPage() {
           clerkId,
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.emailAddresses[0]?.emailAddress
+          email: user.emailAddresses[0]?.emailAddress,
+          username: user.username,
+          createdAt: user.createdAt
         };
       } catch (error) {
         console.error(`Failed to fetch user ${clerkId}:`, error);
-        return {
-          clerkId,
-          firstName: null,
-          lastName: null,
-          email: null
-        };
+                 return {
+           clerkId,
+           firstName: null,
+           lastName: null,
+           email: null,
+           username: null,
+           createdAt: null
+         };
       }
     })
   );

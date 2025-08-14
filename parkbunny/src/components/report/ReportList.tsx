@@ -17,6 +17,8 @@ type ReportListProps = {
       clerkId: string;
       firstName?: string | null;
       lastName?: string | null;
+      username?: string | null;
+      createdAt?: Date | null;
     };
     archived?: boolean;
   }[];
@@ -62,9 +64,11 @@ export default function ReportList({ reports, isArchived = false }: ReportListPr
                     ? `${r.user.firstName} ${r.user.lastName}`
                     : r.user.firstName 
                     ? r.user.firstName
-                    : r.user.email && r.user.email.includes('@example.invalid') 
-                    ? `User ${r.user.clerkId.slice(-6)}` 
-                    : r.user.email || `User ${r.user.clerkId.slice(-6)}`
+                    : r.user.username
+                    ? `@${r.user.username}`
+                    : r.user.email && !r.user.email.includes('@example.invalid')
+                    ? r.user.email
+                    : `User ${r.user.clerkId.slice(-4)}`
                   }
                 </span>
               </p>
