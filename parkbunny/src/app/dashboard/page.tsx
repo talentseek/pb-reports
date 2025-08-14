@@ -72,7 +72,9 @@ export default async function DashboardPage() {
     ...report,
     user: report.user ? {
       ...report.user,
-      ...userMap.get(report.user.clerkId)
+      ...userMap.get(report.user.clerkId),
+      // Preserve the original email from database if Clerk email is null
+      email: userMap.get(report.user.clerkId)?.email || report.user.email
     } : undefined
   }));
 
