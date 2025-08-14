@@ -14,12 +14,9 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body as { status: 'PENDING' | 'LIVE' };
 
-    // Verify the report exists and belongs to the user
+    // Verify the report exists (any authenticated user can access all reports)
     const report = await prisma.report.findFirst({
-      where: { 
-        id: params.id,
-        user: { clerkId: userId }
-      },
+      where: { id: params.id },
     });
 
     if (!report) {
