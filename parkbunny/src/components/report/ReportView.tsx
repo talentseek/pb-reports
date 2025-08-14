@@ -1,6 +1,7 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations";
 import { getReportLocationSummaries } from "@/lib/placesSummary";
 import { CategoryTileClient } from "@/components/report/ReportViewClient";
+import LocationStatusButton from "@/components/LocationStatusButton";
 
 export default async function ReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {};
@@ -30,7 +31,7 @@ export default async function ReportView({ report }: { report: any }) {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Projected uplift</p>
           <p className="text-xl font-semibold">£{revenue} <span className="text-sm font-medium">(+{computedGrowthPercent}%)</span></p>
@@ -42,6 +43,12 @@ export default async function ReportView({ report }: { report: any }) {
         <div className="rounded border p-4">
           <p className="text-xs text-gray-600">Categories</p>
           <p className="text-xl font-semibold">{dbCategorySet.size}</p>
+        </div>
+        <div className="rounded border p-4">
+          <p className="text-xs text-gray-600">Location Status</p>
+          <p className="text-xl font-semibold">
+            {summaries.filter(l => l.status === 'LIVE').length} Live / {summaries.length} Total
+          </p>
         </div>
       </section>
 
@@ -56,7 +63,15 @@ export default async function ReportView({ report }: { report: any }) {
                     <p className="font-medium">{loc.postcode}</p>
                     <p className="text-xs text-gray-600">{loc.latitude?.toFixed(3)}, {loc.longitude?.toFixed(3)}</p>
                   </div>
-                  <div className="text-sm text-gray-700">Total places: <span className="font-medium">{loc.totalPlaces}</span></div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-gray-700">Total places: <span className="font-medium">{loc.totalPlaces}</span></div>
+                    <LocationStatusButton 
+                      locationId={loc.id}
+                      reportId={report.id}
+                      status={loc.status}
+                      postcode={loc.postcode}
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   {loc.countsByCategory.map((c) => (

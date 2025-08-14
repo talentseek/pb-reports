@@ -1,5 +1,3 @@
-// Prisma schema for ParkBunny POC (per-report settings)
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,6 +5,106 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  createdAt DateTime @default(now())
+  reports   Report[]
+}
+
+model Report {
+  id                String           @id @default(cuid())
+  name              String
+  postcodes         String
+  settings          Json
+  createdAt         DateTime         @default(now())
+  userId            String?
+  shareCode         String?          @unique
+  shareEnabled      Boolean          @default(false)
+  shareExpiresAt    DateTime?
+  shareLastViewedAt DateTime?
+  sharePasswordHash String?
+  shareViewCount    Int              @default(0)
+  archived          Boolean          @default(false)
+  businesses        Business[]
+  user              User?            @relation(fields: [userId], references: [id])
+  locations         ReportLocation[]
+}
+
+model Business {
+  id       String  @id @default(cuid())
+  name     String
+  category String
+  address  String
+  website  String?
+  mapsLink String?
+  reportId String?
+  report   Report? @relation(fields: [reportId], references: [id])
+}
+
+model ReportLocation {
+  id            String                @id @default(cuid())
+  reportId      String
+  postcode      String
+  latitude      Float?
+  longitude     Float?
+  radiusMeters  Int?
+  params        Json?
+  lastFetchedAt DateTime?
+  createdAt     DateTime              @default(now())
+  status        LocationStatus        @default(PENDING)
+  report        Report                @relation(fields: [reportId], references: [id])
+  places        ReportLocationPlace[]
+
+  @@unique([reportId, postcode], name: "reportId_postcode")
+}
+
+model Place {
+  id             String                @id @default(cuid())
+  placeId        String                @unique
+  name           String
+  types          String
+  rating         Float?
+  priceLevel     Int?
+  lat            Float?
+  lng            Float?
+  address        String?
+  website        String?
+  phone          String?
+  status         String?
+  raw            Json?
+  createdAt      DateTime              @default(now())
+  parkingOptions Json?
+  links          ReportLocationPlace[]
+}
+
+model ReportLocationPlace {
+  id              String         @id @default(cuid())
+  locationId      String
+  placeId         String
+  groupedCategory String?
+  matchedKeyword  String?
+  createdAt       DateTime       @default(now())
+  included        Boolean        @default(true)
+  location        ReportLocation @relation(fields: [locationId], references: [id])
+  place           Place          @relation(fields: [placeId], references: [id])
+
+  @@unique([locationId, placeId])
+}
+
+model Feedback {
+  id             String         @id @default(cuid())
+  type           FeedbackType
+  title          String
+  details        String?
+  status         FeedbackStatus @default(OPEN)
+  createdAt      DateTime       @default(now())
+  createdById    String?
+  createdByEmail String?
+  completedAt    DateTime?
 }
 
 enum FeedbackType {
@@ -19,103 +117,7 @@ enum FeedbackStatus {
   DONE
 }
 
-model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  reports   Report[]
-  createdAt DateTime @default(now())
-}
-
-model Report {
-  id         String      @id @default(cuid())
-  name       String
-  postcodes  String
-  businesses Business[]
-  settings   Json
-  createdAt  DateTime    @default(now())
-  archived   Boolean     @default(false)
-  user       User?       @relation(fields: [userId], references: [id])
-  userId     String?
-  // Public share fields
-  shareEnabled      Boolean   @default(false)
-  shareCode         String?   @unique
-  sharePasswordHash String?
-  shareExpiresAt    DateTime?
-  shareViewCount    Int       @default(0)
-  shareLastViewedAt DateTime?
-
-  locations ReportLocation[]
-}
-
-model Business {
-  id        String  @id @default(cuid())
-  name      String
-  category  String
-  address   String
-  website   String?
-  mapsLink  String?
-  report    Report? @relation(fields: [reportId], references: [id])
-  reportId  String?
-}
-
-model ReportLocation {
-  id         String   @id @default(cuid())
-  report     Report   @relation(fields: [reportId], references: [id])
-  reportId   String
-  postcode   String
-  latitude   Float?
-  longitude  Float?
-  radiusMeters Int?
-  params     Json?
-  lastFetchedAt DateTime?
-  createdAt  DateTime @default(now())
-  places     ReportLocationPlace[]
-
-  @@unique([reportId, postcode], name: "reportId_postcode")
-}
-
-model Place {
-  id        String   @id @default(cuid())
-  placeId   String   @unique
-  name      String
-  types     String
-  rating    Float?
-  priceLevel Int?
-  lat       Float?
-  lng       Float?
-  address   String?
-  website   String?
-  phone     String?
-  status    String?
-  parkingOptions Json?
-  raw       Json?
-  createdAt DateTime @default(now())
-  links     ReportLocationPlace[]
-}
-
-model ReportLocationPlace {
-  id              String         @id @default(cuid())
-  location        ReportLocation @relation(fields: [locationId], references: [id])
-  locationId      String
-  place           Place          @relation(fields: [placeId], references: [id])
-  placeId         String
-  groupedCategory String?
-  matchedKeyword  String?
-  included        Boolean        @default(true)
-  createdAt       DateTime @default(now())
-
-  @@unique([locationId, placeId])
-}
-
-model Feedback {
-  id          String          @id @default(cuid())
-  type        FeedbackType
-  title       String
-  details     String?
-  status      FeedbackStatus  @default(OPEN)
-  createdAt   DateTime        @default(now())
-  createdById String?
-  createdByEmail String?
-  completedAt DateTime?
+enum LocationStatus {
+  PENDING
+  LIVE
 }

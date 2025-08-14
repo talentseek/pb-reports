@@ -5,6 +5,7 @@ export type LocationSummary = {
   postcode: string
   latitude: number | null
   longitude: number | null
+  status: 'PENDING' | 'LIVE'
   countsByCategory: { category: string; total: number; included: number }[]
   totalPlaces: number
   totalIncluded: number
@@ -38,6 +39,7 @@ export async function getReportLocationSummaries(reportId: string): Promise<Loca
       postcode: loc.postcode,
       latitude: loc.latitude ?? null,
       longitude: loc.longitude ?? null,
+      status: loc.status,
       countsByCategory,
       totalPlaces: loc.places.length,
       totalIncluded,
