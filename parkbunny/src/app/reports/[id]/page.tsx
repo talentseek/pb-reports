@@ -21,6 +21,21 @@ export default async function ReportViewPage({ params }: { params: { id: string 
     notFound();
   }
 
+  // Check if report is archived
+  if (report.archived) {
+    return (
+      <main className="mx-auto max-w-4xl p-6 space-y-6">
+        <div className="rounded border p-8 text-center space-y-4">
+          <h1 className="text-2xl font-semibold text-gray-600">Report Archived</h1>
+          <p className="text-gray-600">This report has been archived and is no longer accessible.</p>
+          <Link href="/dashboard" className="inline-flex items-center justify-center rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90">
+            Back to Dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const postcodesCount = String(report.postcodes).split(',').map((s) => s.trim()).filter(Boolean).length
   const settings = (report.settings ?? {}) as any
   const maxPerType = typeof settings.placesMaxPerType === 'number' ? settings.placesMaxPerType : 10

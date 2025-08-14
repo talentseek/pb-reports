@@ -9,8 +9,15 @@ export default async function DashboardPage() {
   if (!user) redirect("/sign-in");
 
   const reports = await prisma.report.findMany({
+    where: { archived: false },
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true },
+    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true, settings: true },
+  });
+
+  const archivedReports = await prisma.report.findMany({
+    where: { archived: true },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true, settings: true },
   });
 
   return (
@@ -24,9 +31,19 @@ export default async function DashboardPage() {
           Create New Report
         </Link>
       </header>
-      <ReportList reports={reports} />
-
-      {null}
+      {reports.length === 0 && archivedReports.length === 0 ? (
+        <ReportList reports={reports} />
+      ) : (
+        <>
+          <ReportList reports={reports} />
+          {archivedReports.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-medium text-gray-600">Archived Reports</h2>
+              <ReportList reports={archivedReports} isArchived={true} />
+            </div>
+          )}
+        </>
+      )}
     </main>
   );
 }
