@@ -79,6 +79,7 @@ model Place {
   createdAt      DateTime              @default(now())
   parkingOptions Json?
   links          ReportLocationPlace[]
+  campaigns      CampaignBusiness[]
 }
 
 model ReportLocationPlace {
@@ -93,6 +94,27 @@ model ReportLocationPlace {
   place           Place          @relation(fields: [placeId], references: [id])
 
   @@unique([locationId, placeId])
+}
+
+model Campaign {
+  id          String            @id @default(cuid())
+  name        String
+  businessType String
+  postcode    String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  businesses  CampaignBusiness[]
+}
+
+model CampaignBusiness {
+  id         String   @id @default(cuid())
+  campaignId String
+  placeId    String
+  createdAt  DateTime @default(now())
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  place      Place    @relation(fields: [placeId], references: [id])
+
+  @@unique([campaignId, placeId])
 }
 
 model Feedback {
