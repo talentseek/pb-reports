@@ -58,21 +58,34 @@ export default async function DashboardPage() {
     }))
   );
 
-  // Calculate total businesses (this would need to be calculated from places data)
-  // For now, we'll use a placeholder - this should be calculated from actual places data
-  const totalBusinesses = reports.reduce((total, report) => {
-    // This is a placeholder - in reality, you'd sum up all places from all locations
-    return total + (report.locations.length * 50); // Assuming ~50 businesses per location
-  }, 0);
+  // Get actual business data from the database
+  const businessData = await prisma.reportLocationPlace.groupBy({
+    by: ['groupedCategory'],
+    _count: {
+      id: true
+    }
+  });
 
-  // Get businesses by category (placeholder - would need actual places data)
-  const businessesByCategory = {
-    "Retail": Math.floor(totalBusinesses * 0.3),
-    "Food & Beverage": Math.floor(totalBusinesses * 0.25),
-    "Services": Math.floor(totalBusinesses * 0.2),
-    "Healthcare": Math.floor(totalBusinesses * 0.15),
-    "Other": Math.floor(totalBusinesses * 0.1)
-  };
+  // Calculate total businesses
+  const totalBusinesses = businessData.reduce((total, item) => total + item._count.id, 0);
+
+  // Create businesses by category object
+  const businessesByCategory = businessData.reduce((acc, item) => {
+    acc[item.groupedCategory || 'Other'] = item._count.id;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // If no businesses found, show placeholder data
+  if (totalBusinesses === 0) {
+    const placeholderTotal = reports.reduce((total, report) => total + report.locations.length * 50, 0);
+    businessesByCategory["Hotels & Accommodation"] = Math.floor(placeholderTotal * 0.2);
+    businessesByCategory["Restaurants & Cafes"] = Math.floor(placeholderTotal * 0.25);
+    businessesByCategory["Bars & Nightlife"] = Math.floor(placeholderTotal * 0.15);
+    businessesByCategory["Fitness & Wellness"] = Math.floor(placeholderTotal * 0.1);
+    businessesByCategory["Offices & Coworking"] = Math.floor(placeholderTotal * 0.1);
+    businessesByCategory["Retail & Services"] = Math.floor(placeholderTotal * 0.1);
+    businessesByCategory["Other"] = Math.floor(placeholderTotal * 0.1);
+  }
 
   return (
     <main className="mx-auto max-w-7xl p-6 space-y-6">
