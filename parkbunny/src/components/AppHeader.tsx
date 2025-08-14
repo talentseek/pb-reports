@@ -31,6 +31,14 @@ export default function AppHeader() {
           >
             Reports
           </Link>
+          <Link 
+            href="/outreach" 
+            className={`text-sm font-medium transition-colors hover:text-primary ${
+              pathname?.startsWith('/outreach') ? 'text-primary' : 'text-muted-foreground'
+            }`}
+          >
+            Outreach
+          </Link>
           <Link href="/dashboard/help" className="text-sm underline">Help & Guide</Link>
           <HeaderAuth />
         </nav>
