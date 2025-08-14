@@ -20,6 +20,7 @@ export default function FeedbackWidget() {
   const [details, setDetails] = useState('')
   const [contact, setContact] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
   const openCount = useMemo(() => items.filter(i => i.status === 'OPEN').length, [items])
 
@@ -65,6 +66,16 @@ export default function FeedbackWidget() {
     if (!res.ok) setItems(prev)
   }
 
+  function toggleExpanded(id: string) {
+    const newExpanded = new Set(expandedItems)
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id)
+    } else {
+      newExpanded.add(id)
+    }
+    setExpandedItems(newExpanded)
+  }
+
   return (
     <div className="space-y-4">
       <div>
@@ -93,17 +104,33 @@ export default function FeedbackWidget() {
         </div>
         <ul className="divide-y">
           {items.map(i => (
-            <li key={i.id} className="p-3 flex items-center justify-between">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] uppercase rounded px-1.5 py-0.5 border ${i.type === 'BUG' ? 'border-red-300 text-red-700' : 'border-blue-300 text-blue-700'}`}>{i.type}</span>
-                  <span className={`text-xs rounded px-1 py-0.5 border ${i.status === 'DONE' ? 'border-green-300 text-green-700' : 'border-amber-300 text-amber-700'}`}>{i.status}</span>
+            <li key={i.id} className="p-3">
+              <div className="flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] uppercase rounded px-1.5 py-0.5 border ${i.type === 'BUG' ? 'border-red-300 text-red-700' : 'border-blue-300 text-blue-700'}`}>{i.type}</span>
+                    <span className={`text-xs rounded px-1 py-0.5 border ${i.status === 'DONE' ? 'border-green-300 text-green-700' : 'border-amber-300 text-amber-700'}`}>{i.status}</span>
+                  </div>
+                  <p className="text-sm font-medium mt-1">{i.title}</p>
+                  {i.details && (
+                    <div className="mt-2">
+                      <div className={`text-xs text-gray-600 ${expandedItems.has(i.id) ? '' : 'line-clamp-2'}`}>
+                        {i.details}
+                      </div>
+                      {i.details.length > 150 && (
+                        <button 
+                          onClick={() => toggleExpanded(i.id)}
+                          className="text-xs text-blue-600 hover:text-blue-800 mt-1 underline"
+                        >
+                          {expandedItems.has(i.id) ? 'Show less' : 'Show more'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm font-medium truncate mt-1">{i.title}</p>
-                {i.details ? <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">{i.details}</p> : null}
-              </div>
-              <div className="flex items-center gap-2 ml-4 shrink-0">
-                <button onClick={() => toggle(i.id)} className="text-xs rounded border px-2 py-1 hover:bg-gray-50">{i.status === 'DONE' ? 'Reopen' : 'Mark done'}</button>
+                <div className="flex items-center gap-2 ml-4 shrink-0">
+                  <button onClick={() => toggle(i.id)} className="text-xs rounded border px-2 py-1 hover:bg-gray-50">{i.status === 'DONE' ? 'Reopen' : 'Mark done'}</button>
+                </div>
               </div>
             </li>
           ))}
