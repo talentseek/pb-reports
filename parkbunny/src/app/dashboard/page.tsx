@@ -27,7 +27,8 @@ export default async function DashboardPage() {
       },
       user: {
         select: {
-          email: true
+          email: true,
+          clerkId: true
         }
       }
     },
