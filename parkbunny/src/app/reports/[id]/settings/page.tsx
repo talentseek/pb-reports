@@ -32,6 +32,12 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       if (!res.ok) return;
       const data = await res.json();
       if (isMounted) {
+        // Check if report is archived
+        if (data.archived) {
+          router.push('/dashboard');
+          return;
+        }
+        
         const incoming = (data.settings ?? {}) as Settings;
         setShareEnabled(Boolean(data.shareEnabled));
         setShareUrl(data.shareCode ? `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${data.shareCode}` : null);

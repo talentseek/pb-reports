@@ -1,0 +1,27 @@
+{
+  "name": "ParkBunny - Parking Revenue Enhancement Platform",
+  "short_name": "ParkBunny",
+  "description": "Transform parking into a dynamic revenue stream. Activate local businesses and reward drivers with no CapEx and unmatched operator control.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "en-GB",
+  "dir": "ltr"
+}

@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://parkbunny.app/sitemap.xml
+
+# Disallow private areas
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /reports/
+Disallow: /settings/
+Disallow: /sign-in/
+Disallow: /sign-up/
+
+# Allow public share pages
+Allow: /share/
