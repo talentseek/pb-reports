@@ -11,13 +11,41 @@ export default async function DashboardPage() {
   const reports = await prisma.report.findMany({
     where: { archived: false },
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true, settings: true },
+    select: { 
+      id: true, 
+      name: true, 
+      postcodes: true, 
+      createdAt: true, 
+      shareEnabled: true, 
+      shareCode: true, 
+      settings: true,
+      locations: {
+        select: {
+          id: true,
+          status: true
+        }
+      }
+    },
   });
 
   const archivedReports = await prisma.report.findMany({
     where: { archived: true },
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, postcodes: true, createdAt: true, shareEnabled: true, shareCode: true, settings: true },
+    select: { 
+      id: true, 
+      name: true, 
+      postcodes: true, 
+      createdAt: true, 
+      shareEnabled: true, 
+      shareCode: true, 
+      settings: true,
+      locations: {
+        select: {
+          id: true,
+          status: true
+        }
+      }
+    },
   });
 
   return (
