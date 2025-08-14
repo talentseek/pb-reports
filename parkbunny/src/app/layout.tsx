@@ -66,6 +66,9 @@ export default function RootLayout({
       <html lang="en">
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link rel="icon" href="/icon.webp" type="image/webp" />
+          <link rel="apple-touch-icon" href="/icon.webp" />
         </head>
         <body className={inter.className}>
           <AppHeader />
