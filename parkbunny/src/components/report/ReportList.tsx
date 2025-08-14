@@ -12,6 +12,8 @@ type ReportListProps = {
     shareCode?: string | null; 
     settings?: any;
     locations?: { id: string; status: 'PENDING' | 'LIVE' }[];
+    user?: { email: string };
+    archived?: boolean;
   }[];
   isArchived?: boolean;
 };
@@ -47,6 +49,11 @@ export default function ReportList({ reports, isArchived = false }: ReportListPr
                   {r.locations.filter(loc => loc.status === 'LIVE').length} Live / {r.locations.length} Total
                 </span>
               </div>
+            )}
+            {r.user && (
+              <p className="text-xs text-gray-500 mt-1">
+                Created by: <span className="font-medium">{r.user.email}</span>
+              </p>
             )}
           </div>
           <div className="flex items-center gap-3">
