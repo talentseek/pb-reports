@@ -38,14 +38,18 @@ export async function POST(request: NextRequest) {
         postcode: postcode,
         businesses: {
           create: businessIds.map((businessId: string) => ({
-            placeId: businessId
+            reportLocationPlaceId: businessId
           }))
         }
       },
       include: {
         businesses: {
           include: {
-            place: true
+            reportLocationPlace: {
+              include: {
+                place: true
+              }
+            }
           }
         }
       }
@@ -74,7 +78,11 @@ export async function GET() {
       include: {
         businesses: {
           include: {
-            place: true
+            reportLocationPlace: {
+              include: {
+                place: true
+              }
+            }
           }
         }
       },

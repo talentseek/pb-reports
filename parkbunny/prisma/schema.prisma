@@ -79,19 +79,19 @@ model Place {
   createdAt      DateTime              @default(now())
   parkingOptions Json?
   links          ReportLocationPlace[]
-  campaigns      CampaignBusiness[]
 }
 
 model ReportLocationPlace {
-  id              String         @id @default(cuid())
+  id              String               @id @default(cuid())
   locationId      String
   placeId         String
   groupedCategory String?
   matchedKeyword  String?
-  createdAt       DateTime       @default(now())
-  included        Boolean        @default(true)
-  location        ReportLocation @relation(fields: [locationId], references: [id])
-  place           Place          @relation(fields: [placeId], references: [id])
+  createdAt       DateTime             @default(now())
+  included        Boolean              @default(true)
+  location        ReportLocation       @relation(fields: [locationId], references: [id])
+  place           Place                @relation(fields: [placeId], references: [id])
+  campaigns       CampaignBusiness[]
 
   @@unique([locationId, placeId])
 }
@@ -107,14 +107,14 @@ model Campaign {
 }
 
 model CampaignBusiness {
-  id         String   @id @default(cuid())
-  campaignId String
-  placeId    String
-  createdAt  DateTime @default(now())
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  place      Place    @relation(fields: [placeId], references: [id])
+  id                    String               @id @default(cuid())
+  campaignId            String
+  reportLocationPlaceId String
+  createdAt             DateTime             @default(now())
+  campaign              Campaign             @relation(fields: [campaignId], references: [id])
+  reportLocationPlace   ReportLocationPlace  @relation(fields: [reportLocationPlaceId], references: [id])
 
-  @@unique([campaignId, placeId])
+  @@unique([campaignId, reportLocationPlaceId])
 }
 
 model Feedback {
