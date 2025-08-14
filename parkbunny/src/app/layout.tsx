@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     siteName: 'ParkBunny',
     images: [
       {
-        url: '/icon.webp',
-        width: 1200,
-        height: 630,
+        url: '/favicon.ico',
+        width: 512,
+        height: 512,
         alt: 'ParkBunny - Parking Revenue Enhancement Platform',
       },
     ],
@@ -42,15 +42,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "ParkBunny - Parking Revenue Enhancement Platform",
     description: "Transform parking into a dynamic revenue stream. Activate local businesses and reward drivers with no CapEx and unmatched operator control.",
-    images: ['/icon.webp'],
+    images: ['/favicon.ico'],
     creator: '@parkbunny',
   },
   icons: {
-    icon: [
-      { url: '/icon.webp', type: 'image/webp' },
-      { url: '/favicon.ico', type: 'image/x-icon' },
-    ],
-    apple: '/icon.webp',
+    icon: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   manifest: '/manifest.json',
 };
@@ -66,9 +63,6 @@ export default function RootLayout({
       <html lang="en">
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-          <link rel="icon" href="/favicon.ico" sizes="any" />
-          <link rel="icon" href="/icon.webp" type="image/webp" />
-          <link rel="apple-touch-icon" href="/icon.webp" />
         </head>
         <body className={inter.className}>
           <AppHeader />
