@@ -23,7 +23,11 @@ export default async function CampaignPage({
     include: {
       businesses: {
         include: {
-          place: true
+          reportLocationPlace: {
+            include: {
+              place: true
+            }
+          }
         }
       }
     }
@@ -90,33 +94,33 @@ export default async function CampaignPage({
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-sm">
-                      {business.place.name}
+                      {business.reportLocationPlace.place.name}
                     </h3>
-                    {business.place.address && (
+                    {business.reportLocationPlace.place.address && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {business.place.address}
+                        {business.reportLocationPlace.place.address}
                       </p>
                     )}
                   </div>
                   
                   <div className="flex items-center gap-2 ml-4">
-                    {business.place.rating && (
+                    {business.reportLocationPlace.place.rating && (
                       <Badge variant="outline" className="text-xs">
-                        ⭐ {business.place.rating}
+                        ⭐ {business.reportLocationPlace.place.rating}
                       </Badge>
                     )}
-                    {business.place.priceLevel !== null && (
+                    {business.reportLocationPlace.place.priceLevel !== null && (
                       <Badge variant="outline" className="text-xs">
-                        {getPriceLevelText(business.place.priceLevel)}
+                        {getPriceLevelText(business.reportLocationPlace.place.priceLevel)}
                       </Badge>
                     )}
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4 mt-2">
-                  {business.place.website && (
+                  {business.reportLocationPlace.place.website && (
                     <a 
-                      href={business.place.website} 
+                      href={business.reportLocationPlace.place.website} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-xs text-blue-600 hover:text-blue-800"
@@ -124,9 +128,9 @@ export default async function CampaignPage({
                       Website
                     </a>
                   )}
-                  {business.place.phone && (
+                  {business.reportLocationPlace.place.phone && (
                     <span className="text-xs text-muted-foreground">
-                      📞 {business.place.phone}
+                      📞 {business.reportLocationPlace.place.phone}
                     </span>
                   )}
                 </div>

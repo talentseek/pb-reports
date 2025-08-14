@@ -14,7 +14,11 @@ export default async function CampaignsPage() {
     include: {
       businesses: {
         include: {
-          place: true
+          reportLocationPlace: {
+            include: {
+              place: true
+            }
+          }
         }
       }
     },
