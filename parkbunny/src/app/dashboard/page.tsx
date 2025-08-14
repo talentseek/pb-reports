@@ -2,7 +2,7 @@ import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/db";
-import DashboardTabs from "@/components/DashboardTabs";
+import DashboardOverview from "@/components/DashboardOverview";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -86,8 +86,7 @@ export default async function DashboardPage() {
         </Link>
       </header>
       
-      <DashboardTabs 
-        reports={reportsWithUserInfo}
+      <DashboardOverview 
         stats={{
           totalReports,
           activeReports,
