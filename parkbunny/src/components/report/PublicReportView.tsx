@@ -169,6 +169,7 @@ export default async function PublicReportView({ report }: { report: any }) {
                     <TableHead>Postcode</TableHead>
                     <TableHead>Latitude</TableHead>
                     <TableHead>Longitude</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Local businesses</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -178,6 +179,15 @@ export default async function PublicReportView({ report }: { report: any }) {
                       <TableCell>{l.postcode}</TableCell>
                       <TableCell>{typeof l.latitude==='number'? l.latitude.toFixed(5) : '—'}</TableCell>
                       <TableCell>{typeof l.longitude==='number'? l.longitude.toFixed(5) : '—'}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          l.status === 'LIVE' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {l.status}
+                        </span>
+                      </TableCell>
                       <TableCell>{
                         typeof (l as any).totalIncluded === 'number'
                           ? (l as any).totalIncluded
