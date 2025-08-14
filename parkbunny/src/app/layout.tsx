@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: 'ParkBunny',
     images: [
       {
-        url: '/favicon.ico',
+        url: '/android-chrome-512x512.png',
         width: 512,
         height: 512,
         alt: 'ParkBunny - Parking Revenue Enhancement Platform',
@@ -42,14 +42,19 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "ParkBunny - Parking Revenue Enhancement Platform",
     description: "Transform parking into a dynamic revenue stream. Activate local businesses and reward drivers with no CapEx and unmatched operator control.",
-    images: ['/favicon.ico'],
+    images: ['/android-chrome-512x512.png'],
     creator: '@parkbunny',
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico',
   },
-  manifest: '/manifest.json',
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -63,6 +68,11 @@ export default function RootLayout({
       <html lang="en">
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+          <link rel="manifest" href="/site.webmanifest" />
         </head>
         <body className={inter.className}>
           <AppHeader />
