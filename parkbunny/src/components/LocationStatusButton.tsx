@@ -19,6 +19,7 @@ export default function LocationStatusButton({ locationId, reportId, status, pos
     setLoading(true);
     try {
       const newStatus = currentStatus === 'PENDING' ? 'LIVE' : 'PENDING';
+      
       const response = await fetch(`/api/reports/${reportId}/locations/${locationId}/status`, {
         method: "PATCH",
         headers: {
@@ -28,9 +29,11 @@ export default function LocationStatusButton({ locationId, reportId, status, pos
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update location status");
+        const errorText = await response.text();
+        throw new Error(`Failed to update location status: ${response.status} ${errorText}`);
       }
 
+      const result = await response.json();
       setCurrentStatus(newStatus);
     } catch (error) {
       console.error("Error updating location status:", error);
