@@ -49,9 +49,18 @@ export const PLACE_CATEGORIES: PlaceCategory[] = [
   },
 ]
 
-export function groupForPlace(types: string[], name: string): string | null {
+export function groupForPlace(types: string | string[], name: string): string | null {
   const lowerName = name.toLowerCase()
-  const lowerTypes = types.map((t) => t.toLowerCase())
+  
+  // Handle both string and array types
+  let lowerTypes: string[] = []
+  if (Array.isArray(types)) {
+    lowerTypes = types.map((t) => t.toLowerCase())
+  } else if (typeof types === 'string') {
+    // Split by comma and clean up
+    lowerTypes = types.split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 0)
+  }
+  
   for (const cat of PLACE_CATEGORIES) {
     if (cat.includedTypes && cat.includedTypes.some((t) => lowerTypes.includes(t))) {
       return cat.group

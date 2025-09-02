@@ -73,12 +73,25 @@ model Place {
   lng            Float?
   address        String?
   website        String?
-  phone          String?
   status         String?
   raw            Json?
   createdAt      DateTime              @default(now())
   parkingOptions Json?
   links          ReportLocationPlace[]
+  
+  // Enrichment fields
+  email          String?
+  phone          String?
+  socialLinks    Json?
+  enrichedAt     DateTime?
+  enrichmentStatus EnrichmentStatus    @default(NOT_ENRICHED)
+  
+  // Comprehensive Outscraper data
+  allEmails      Json?  // Array of all emails found with sources
+  allPhones      Json?  // Array of all phone numbers found with sources
+  contactPeople  Json?  // Array of contact people with names, titles, LinkedIn profiles
+  businessDetails Json?  // Company size, industry, founded date, etc.
+  siteData       Json?  // Website metadata, descriptions, etc.
 }
 
 model ReportLocationPlace {
@@ -101,6 +114,7 @@ model Campaign {
   name        String
   businessType String
   postcode    String
+  status      CampaignStatus    @default(CREATED)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   businesses  CampaignBusiness[]
@@ -142,4 +156,19 @@ enum FeedbackStatus {
 enum LocationStatus {
   PENDING
   LIVE
+}
+
+enum EnrichmentStatus {
+  NOT_ENRICHED
+  ENRICHING
+  ENRICHED
+  FAILED
+}
+
+enum CampaignStatus {
+  CREATED
+  ENRICHING
+  ENRICHED
+  READY_TO_LAUNCH
+  LAUNCHED
 }
