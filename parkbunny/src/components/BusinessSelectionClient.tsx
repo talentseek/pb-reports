@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { StepIndicator } from '@/components/ui/step-indicator';
 import { useRouter } from 'next/navigation';
 
 type Place = {
@@ -94,8 +95,21 @@ export default function BusinessSelectionClient({
     return '£'.repeat(level);
   };
 
+  const steps = [
+    { id: 'select', title: 'Select Businesses', description: 'Choose businesses for your campaign' },
+    { id: 'enrich', title: 'Enrich Data', description: 'Gather contact information' },
+    { id: 'launch', title: 'Launch Campaign', description: 'Send outreach messages' }
+  ];
+
   return (
     <div className="space-y-6">
+      {/* Step Indicator */}
+      <Card>
+        <CardContent className="pt-6">
+          <StepIndicator steps={steps} currentStep={1} />
+        </CardContent>
+      </Card>
+
       {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
