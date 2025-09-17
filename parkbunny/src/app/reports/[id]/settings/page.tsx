@@ -25,6 +25,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
   const [shareEnabled, setShareEnabled] = useState<boolean>(false);
   const [sharePassword, setSharePassword] = useState<string>("");
   const [categoryToggles, setCategoryToggles] = useState<{ category: string; included: boolean; total: number }[]>([])
+  const [reportName, setReportName] = useState<string>("");
 
   useEffect(() => {
     let isMounted = true;
@@ -40,6 +41,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
         }
         
         const incoming = (data.settings ?? {}) as Settings;
+        setReportName(data.name || "");
         setShareEnabled(Boolean(data.shareEnabled));
         setShareUrl(data.shareCode ? `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${data.shareCode}` : null);
         if (data.shareEnabled && data.shareCode && !data.sharePasswordHash) {
@@ -76,6 +78,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
     setError(null);
     try {
       const payload = {
+        name: reportName.trim(),
         ...settings,
         placesMaxPerType: Math.max(1, Math.min(100, settings.placesMaxPerType ?? 10)),
       }
@@ -125,7 +128,16 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
     <main className="mx-auto max-w-2xl p-6 space-y-4">
       <h1 className="text-2xl font-semibold">Report Settings</h1>
       <div className="space-y-3">
-        <h2 className="font-medium">Revenue</h2>
+        <h2 className="font-medium">Report Information</h2>
+        <label className="block text-sm">Report Name</label>
+        <input
+          className="w-full rounded border px-3 py-2"
+          type="text"
+          value={reportName}
+          onChange={(e) => setReportName(e.target.value)}
+          placeholder="Enter report name"
+        />
+        <h2 className="font-medium mt-4">Revenue</h2>
         <label className="block text-sm">Estimated revenue per postcode (£)</label>
         <input
           className="w-full rounded border px-3 py-2"
