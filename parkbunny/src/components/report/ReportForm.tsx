@@ -50,13 +50,13 @@ export default function ReportForm() {
           className="mt-1 w-full rounded border px-3 py-2"
           type="number"
           min={1}
-          max={50}
+          max={100}
           step={1}
           value={placesMaxPerType}
           onChange={(e) => setPlacesMaxPerType(Number(e.target.value))}
           required
         />
-        <p className="text-xs text-gray-500 mt-1">Default 10. Lower this to reduce API calls and costs during testing.</p>
+        <p className="text-xs text-gray-500 mt-1">Default 10. Lower this to reduce API calls and costs during testing. You can raise it up to 100 when needed.</p>
       </div>
       <div>
         <label className="block text-sm font-medium">Search radius (miles)</label>

@@ -52,7 +52,7 @@ We track implemented work and what remains. Checked items are complete and avail
 ## Search Controls
 
 - [x] Default radius 0.75 miles with UI control (min 0.5, max 10)
-- [x] Testing cap: max results per category (`placesMaxPerType`, default 10, clamp 1–50)
+- [x] Testing cap: max results per category (`placesMaxPerType`, default 10, clamp 1–100)
 - [x] Strict radius handling across fetch and persistence
 
 ## Security & Auth

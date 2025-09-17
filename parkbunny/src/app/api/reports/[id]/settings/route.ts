@@ -6,6 +6,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (!userId) return new Response('Unauthorized', { status: 401 })
 
   const body = await req.json()
+  if (typeof body?.placesMaxPerType === 'number') {
+    body.placesMaxPerType = Math.max(1, Math.min(100, Math.floor(body.placesMaxPerType)))
+  }
   // Body is a partial settings object; merge into existing JSON
   const report = await prisma.report.findFirst({ where: { id: params.id } })
   if (!report) return new Response('Not found', { status: 404 })

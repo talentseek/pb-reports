@@ -13,6 +13,7 @@ type Settings = {
   transactionFeePercent?: number
   convenienceFeePence?: number
   sharePasswordPlain?: string
+  placesMaxPerType?: number
 }
 
 export default function ReportSettingsPage({ params }: { params: { id: string } }) {
@@ -48,6 +49,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
         setSettings({
           estimatedRevenuePerPostcode: incoming.estimatedRevenuePerPostcode ?? defaultSettings.estimatedRevenuePerPostcode,
           postcodesCount: incoming.postcodesCount ?? defaultSettings.postcodesCount,
+          placesMaxPerType: Math.max(1, Math.min(100, incoming.placesMaxPerType ?? 10)),
           categoryUplift: incoming.categoryUplift || {},
           categorySignUp: incoming.categorySignUp || {},
           transactionFeePercent: incoming.transactionFeePercent ?? 1.5,
@@ -73,10 +75,14 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
     setSaving(true);
     setError(null);
     try {
+      const payload = {
+        ...settings,
+        placesMaxPerType: Math.max(1, Math.min(100, settings.placesMaxPerType ?? 10)),
+      }
       const res = await fetch(`/api/reports/${params.id}/settings`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(await res.text());
       router.push(`/reports/${params.id}`);
@@ -134,6 +140,20 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
           value={settings.postcodesCount ?? defaultSettings.postcodesCount}
           onChange={(e) => setSettings((s) => ({ ...s, postcodesCount: Number(e.target.value) }))}
         />
+        <label className="block text-sm mt-3">Max results per category</label>
+        <input
+          className="w-full rounded border px-3 py-2"
+          type="number"
+          min={1}
+          max={100}
+          value={settings.placesMaxPerType ?? 10}
+          onChange={(e) => {
+            const next = Number(e.target.value)
+            const clamped = Number.isFinite(next) ? Math.max(1, Math.min(100, next)) : 10
+            setSettings((s) => ({ ...s, placesMaxPerType: clamped }))
+          }}
+        />
+        <p className="text-xs text-gray-600 mt-1">Default 10. Raise up to 100 if you need deeper discovery; higher values consume more Google Places quota.</p>
         <h2 className="font-medium mt-4">Categories</h2>
         <div className="rounded border divide-y">
           {categoryToggles.map((c) => (
