@@ -12,7 +12,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const postcodes = String(report.postcodes).split(',').map((s) => s.trim()).filter(Boolean)
     const settings = (report.settings ?? {}) as any
     const radiusMiles = typeof settings.radiusMiles === 'number' ? settings.radiusMiles : 0.75
-    const maxPerType = typeof settings.placesMaxPerType === 'number' ? settings.placesMaxPerType : 10
+    const maxPerType = typeof settings.placesMaxPerType === 'number' ? Math.max(1, Math.min(100, settings.placesMaxPerType)) : 10
     const body = await req.json().catch(() => ({} as any))
     const force = Boolean(body?.force)
 

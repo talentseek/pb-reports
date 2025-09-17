@@ -13,18 +13,15 @@ export default function RefreshPlacesButton({ reportId, postcodesCount, categori
     const pcs = Math.max(1, postcodesCount || 1)
     const cats = Math.max(1, categoriesCount || 8)
     const mpt = Math.max(1, maxPerType || 10)
-    // Heuristic call counts (conservative):
-    // - One Nearby/Text search per category per postcode
-    // - Up to min(20, maxPerType) details per category per postcode
-    const searches = pcs * cats
-    const details = pcs * cats * Math.min(20, mpt)
+    const pageSize = 20
+    const searchesPerCategory = Math.ceil(mpt / pageSize)
+    const searches = pcs * cats * searchesPerCategory
     // Pricing assumptions (USD per call) – conservative
-    const NEARBY_PER_CALL_USD = 0.032 // ~$32 / 1k
-    const DETAILS_PER_CALL_USD = 0.017 // ~$17 / 1k
+    const NEARBY_PER_CALL_USD = 0.032 // ~$32 / 1k requests
     // FX + buffer (overestimate):
     const USD_TO_GBP = 0.78
     const BUFFER = 1.25
-    const costUSD = searches * NEARBY_PER_CALL_USD + details * DETAILS_PER_CALL_USD
+    const costUSD = searches * NEARBY_PER_CALL_USD
     const costGBP = costUSD * USD_TO_GBP * BUFFER
     return `≈ £${costGBP.toFixed(2)} per refresh (est.)`
   }
