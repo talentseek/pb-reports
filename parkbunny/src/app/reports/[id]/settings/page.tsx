@@ -14,6 +14,8 @@ type Settings = {
   convenienceFeePence?: number
   sharePasswordPlain?: string
   placesMaxPerType?: number
+  useCustomCommercialTerms?: boolean
+  customCommercialTermsText?: string
 }
 
 export default function ReportSettingsPage({ params }: { params: { id: string } }) {
@@ -57,6 +59,8 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
           transactionFeePercent: incoming.transactionFeePercent ?? 1.5,
           convenienceFeePence: incoming.convenienceFeePence ?? 25,
           sharePasswordPlain: incoming.sharePasswordPlain || undefined,
+          useCustomCommercialTerms: incoming.useCustomCommercialTerms ?? false,
+          customCommercialTermsText: incoming.customCommercialTermsText || '',
         });
       }
     })();
@@ -239,27 +243,57 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
         </div>
       <hr className="my-6" />
       <h2 className="text-xl font-semibold">Commercial Terms</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm">Transaction fee (%)</label>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
           <input
-            className="w-full rounded border px-3 py-2"
-            type="number"
-            step={0.1}
-            value={settings.transactionFeePercent ?? 1.5}
-            onChange={(e) => setSettings((s) => ({ ...s, transactionFeePercent: Number(e.target.value) }))}
+            type="checkbox"
+            id="useCustomCommercialTerms"
+            checked={settings.useCustomCommercialTerms ?? false}
+            onChange={(e) => setSettings((s) => ({ ...s, useCustomCommercialTerms: e.target.checked }))}
+            className="h-4 w-4"
           />
+          <label htmlFor="useCustomCommercialTerms" className="text-sm font-medium">
+            Use custom commercial terms
+          </label>
         </div>
-        <div>
-          <label className="block text-sm">Convenience fee (pence)</label>
-          <input
-            className="w-full rounded border px-3 py-2"
-            type="number"
-            step={1}
-            value={settings.convenienceFeePence ?? 25}
-            onChange={(e) => setSettings((s) => ({ ...s, convenienceFeePence: Number(e.target.value) }))}
-          />
-        </div>
+        
+        {settings.useCustomCommercialTerms ? (
+          <div>
+            <label className="block text-sm mb-2">Custom commercial terms (freeform)</label>
+            <textarea
+              className="w-full rounded border px-3 py-2 min-h-[150px] font-sans"
+              placeholder="Enter your custom commercial terms here..."
+              value={settings.customCommercialTermsText ?? ''}
+              onChange={(e) => setSettings((s) => ({ ...s, customCommercialTermsText: e.target.value }))}
+            />
+            <p className="text-xs text-gray-600 mt-1">
+              This will replace the standard transaction and convenience fee display in the report.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm">Transaction fee (%)</label>
+              <input
+                className="w-full rounded border px-3 py-2"
+                type="number"
+                step={0.1}
+                value={settings.transactionFeePercent ?? 1.5}
+                onChange={(e) => setSettings((s) => ({ ...s, transactionFeePercent: Number(e.target.value) }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm">Convenience fee (pence)</label>
+              <input
+                className="w-full rounded border px-3 py-2"
+                type="number"
+                step={1}
+                value={settings.convenienceFeePence ?? 25}
+                onChange={(e) => setSettings((s) => ({ ...s, convenienceFeePence: Number(e.target.value) }))}
+              />
+            </div>
+          </div>
+        )}
       </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => updateShare({ regenerate: true })} className="rounded border px-3 py-2">Regenerate link</button>

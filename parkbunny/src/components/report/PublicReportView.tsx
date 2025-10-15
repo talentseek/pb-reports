@@ -400,6 +400,8 @@ export default async function PublicReportView({ report }: { report: any }) {
       <CommercialTerms
         transactionFeePercent={Number.isFinite((safeSettings as any).transactionFeePercent) ? (safeSettings as any).transactionFeePercent : 1.5}
         convenienceFeePence={Number.isFinite((safeSettings as any).convenienceFeePence) ? (safeSettings as any).convenienceFeePence : 25}
+        useCustomCommercialTerms={Boolean((safeSettings as any).useCustomCommercialTerms)}
+        customCommercialTermsText={String((safeSettings as any).customCommercialTermsText || '')}
       />
 
       {/* Footer */}

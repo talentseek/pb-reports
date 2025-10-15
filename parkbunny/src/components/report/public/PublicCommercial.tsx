@@ -82,7 +82,17 @@ export function CommercialOffer() {
   )
 }
 
-export function CommercialTerms({ transactionFeePercent = 1.5, convenienceFeePence = 25 }: { transactionFeePercent?: number; convenienceFeePence?: number }) {
+export function CommercialTerms({ 
+  transactionFeePercent = 1.5, 
+  convenienceFeePence = 25, 
+  useCustomCommercialTerms = false, 
+  customCommercialTermsText = '' 
+}: { 
+  transactionFeePercent?: number; 
+  convenienceFeePence?: number;
+  useCustomCommercialTerms?: boolean;
+  customCommercialTermsText?: string;
+}) {
   return (
     <section className="space-y-4">
       <Card className="border-primary/20">
@@ -90,82 +100,92 @@ export function CommercialTerms({ transactionFeePercent = 1.5, convenienceFeePen
           <CardTitle className="text-primary">Commercial Terms</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-600 mb-4">Transparent, simple pricing aligned to delivery.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Fee structure */}
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Transparent Fee Structure</p>
-              <div className="overflow-x-auto rounded border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead className="text-right">Value</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        <div className="text-sm">Transaction fee</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="text-2xl font-semibold leading-tight text-primary">{transactionFeePercent}%</div>
-                        <div className="text-xs text-gray-600">Per booking</div>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="text-sm">Convenience fee</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="text-2xl font-semibold leading-tight text-primary">{convenienceFeePence}p</div>
-                        <div className="text-xs text-gray-600">Per booking</div>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="text-sm">Signage & installation</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="text-2xl font-semibold leading-tight">FREE</div>
-                        <div className="text-xs text-gray-600">Provided at no cost</div>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+          {useCustomCommercialTerms && customCommercialTermsText ? (
+            <div className="prose prose-sm max-w-none">
+              <div className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+                {customCommercialTermsText}
               </div>
             </div>
+          ) : (
+            <>
+              <p className="text-sm text-gray-600 mb-4">Transparent, simple pricing aligned to delivery.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Fee structure */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Transparent Fee Structure</p>
+                  <div className="overflow-x-auto rounded border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Item</TableHead>
+                          <TableHead className="text-right">Value</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            <div className="text-sm">Transaction fee</div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="text-2xl font-semibold leading-tight text-primary">{transactionFeePercent}%</div>
+                            <div className="text-xs text-gray-600">Per booking</div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="text-sm">Convenience fee</div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="text-2xl font-semibold leading-tight text-primary">{convenienceFeePence}p</div>
+                            <div className="text-xs text-gray-600">Per booking</div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="text-sm">Signage & installation</div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="text-2xl font-semibold leading-tight">FREE</div>
+                            <div className="text-xs text-gray-600">Provided at no cost</div>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
 
-            {/* Pilot program */}
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Pilot Program</p>
-              <div className="overflow-x-auto rounded border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead className="text-right">Value</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        <div className="text-sm">Pilot length</div>
-                        <div className="text-xs text-gray-600">Risk‑free trial</div>
-                      </TableCell>
-                      <TableCell className="text-right text-sm font-medium text-primary">4 months</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                {/* Pilot program */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Pilot Program</p>
+                  <div className="overflow-x-auto rounded border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Item</TableHead>
+                          <TableHead className="text-right">Value</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            <div className="text-sm">Pilot length</div>
+                            <div className="text-xs text-gray-600">Risk‑free trial</div>
+                          </TableCell>
+                          <TableCell className="text-right text-sm font-medium text-primary">4 months</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1 list-disc pl-5">
+                    <li>AI‑generated signage mockups</li>
+                    <li>Monthly transparent reporting</li>
+                    <li>Dedicated control panel access</li>
+                    <li>Real‑time tariff updates</li>
+                  </ul>
+                </div>
               </div>
-              <ul className="text-sm text-gray-700 space-y-1 list-disc pl-5">
-                <li>AI‑generated signage mockups</li>
-                <li>Monthly transparent reporting</li>
-                <li>Dedicated control panel access</li>
-                <li>Real‑time tariff updates</li>
-              </ul>
-            </div>
-          </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </section>
