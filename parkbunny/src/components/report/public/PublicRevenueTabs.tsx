@@ -62,6 +62,14 @@ export default function PublicRevenueTabs({
                 })}
                 categories={Array.from(dbCategorySet) as string[]}
                 colors={{
+                  "Lodging (Hotels)": '#D05D8B',
+                  "Shopping (Retail)": '#d946ef',
+                  "Services": '#64748b',
+                  "Food and Drink": '#f59e0b',
+                  "Health and Wellness": '#10b981',
+                  "Entertainment and Recreation": '#22c55e',
+                  "Sports": '#3b82f6',
+                  // Legacy
                   'Hotels & Accommodation': '#D05D8B',
                   'Restaurants & Cafes': '#f59e0b',
                   'Bars & Nightlife': '#a855f7',

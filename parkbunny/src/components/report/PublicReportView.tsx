@@ -46,6 +46,14 @@ function formatCurrency(n: number): string {
 
 function iconForCategory(cat: string): string {
   switch (cat) {
+    case 'Lodging (Hotels)': return '🏨'
+    case 'Shopping (Retail)': return '🛍️'
+    case 'Services': return '🛠️'
+    case 'Food and Drink': return '🍽️'
+    case 'Health and Wellness': return '🧘'
+    case 'Entertainment and Recreation': return '🎭'
+    case 'Sports': return '⚽'
+    // Legacy
     case 'Hotels & Accommodation': return '🏨'
     case 'Restaurants & Cafes': return '🍽️'
     case 'Bars & Nightlife': return '🍸'
@@ -96,10 +104,10 @@ export default async function PublicReportView({ report }: { report: any }) {
   const singleMarkers = !isMulti && postcodes[0] ? await getMarkersForLocation(report.id, postcodes[0]) : []
   const multiMarkers: Record<string, any[]> = isMulti
     ? Object.fromEntries(
-        await Promise.all(
-          postcodes.map(async (pc) => [pc, await getMarkersForLocation(report.id, pc)])
-        )
+      await Promise.all(
+        postcodes.map(async (pc) => [pc, await getMarkersForLocation(report.id, pc)])
       )
+    )
     : {}
   const categoryContributionRows = (locationSummaries || [])
     .reduce((acc: { category: string; value: number }[], loc) => {
@@ -111,15 +119,15 @@ export default async function PublicReportView({ report }: { report: any }) {
       }
       return acc
     }, [])
-    .sort((a,b)=> b.value - a.value)
-    .slice(0,8)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8)
   const topCategories = Array.from(dbCategorySet)
     .map((c) => ({
       name: c,
-      included: (locationSummaries || []).reduce((s,l)=> s + ((l.countsByCategory.find(x=>x.category===c)?.included)||0), 0),
+      included: (locationSummaries || []).reduce((s, l) => s + ((l.countsByCategory.find(x => x.category === c)?.included) || 0), 0),
     }))
-    .sort((a,b)=> b.included - a.included)
-    .slice(0,3)
+    .sort((a, b) => b.included - a.included)
+    .slice(0, 3)
 
   return (
     <div className="space-y-12">
@@ -127,7 +135,7 @@ export default async function PublicReportView({ report }: { report: any }) {
         reportName={report.name || 'Client'}
         locationCount={locationCount}
         postcodes={report.postcodes}
-        topCategoryLabels={topCategories.map((c)=> `${iconForCategory(c.name)} ${c.name}`)}
+        topCategoryLabels={topCategories.map((c) => `${iconForCategory(c.name)} ${c.name}`)}
       />
 
       <HeadlineMetrics
@@ -177,14 +185,13 @@ export default async function PublicReportView({ report }: { report: any }) {
                   {locationSummaries.map((l) => (
                     <TableRow key={l.id}>
                       <TableCell>{l.postcode}</TableCell>
-                      <TableCell>{typeof l.latitude==='number'? l.latitude.toFixed(5) : '—'}</TableCell>
-                      <TableCell>{typeof l.longitude==='number'? l.longitude.toFixed(5) : '—'}</TableCell>
+                      <TableCell>{typeof l.latitude === 'number' ? l.latitude.toFixed(5) : '—'}</TableCell>
+                      <TableCell>{typeof l.longitude === 'number' ? l.longitude.toFixed(5) : '—'}</TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          l.status === 'LIVE' 
-                            ? 'bg-green-100 text-green-800' 
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${l.status === 'LIVE'
+                            ? 'bg-green-100 text-green-800'
                             : 'bg-yellow-100 text-yellow-800'
-                        }`}>
+                          }`}>
                           {l.status}
                         </span>
                       </TableCell>
@@ -260,7 +267,7 @@ export default async function PublicReportView({ report }: { report: any }) {
           markersByPostcode={multiMarkers}
           estimatedRevenuePerPostcode={estimatedRevenuePerPostcode}
           iconForCategory={iconForCategory}
-          rateForCategory={(cat:string)=> rateForCategory(safeSettings, cat)}
+          rateForCategory={(cat: string) => rateForCategory(safeSettings, cat)}
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
         />
       )}
@@ -391,7 +398,7 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       <ComplianceGoodPractice />
 
-      
+
 
       <AncillaryServices />
 
