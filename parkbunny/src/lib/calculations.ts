@@ -2,6 +2,14 @@ import type { MockBusiness } from './mockData'
 
 export const defaultSettings = {
   upliftPercentages: {
+    "Lodging (Hotels)": 0.05,
+    "Shopping (Retail)": 0.06,
+    "Services": 0.05,
+    "Food and Drink": 0.08,
+    "Health and Wellness": 0.06,
+    "Entertainment and Recreation": 0.07,
+    "Sports": 0.06,
+    // Legacy support
     restaurants: 0.08,
     bars: 0.08,
     hotels: 0.05,
@@ -9,6 +17,14 @@ export const defaultSettings = {
     gyms: 0.06,
   },
   signUpRates: {
+    "Lodging (Hotels)": 0.05,
+    "Shopping (Retail)": 0.05,
+    "Services": 0.05,
+    "Food and Drink": 0.05,
+    "Health and Wellness": 0.05,
+    "Entertainment and Recreation": 0.05,
+    "Sports": 0.05,
+    // Legacy support
     restaurants: 0.05,
     bars: 0.05,
     hotels: 0.05,

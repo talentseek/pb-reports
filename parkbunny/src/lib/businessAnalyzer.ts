@@ -57,14 +57,14 @@ export class BusinessAnalyzer {
 
   private calculateComplexity(business: any, category: string | null): number {
     let score = 0;
-    
+
     // Website sophistication
     if (business.website) {
       if (business.website.includes('corporate')) score += 3;
       if (business.website.includes('investor')) score += 2;
       if (business.website.includes('press')) score += 1;
     }
-    
+
     // Business name indicators
     const lowerName = business.name.toLowerCase();
     if (lowerName.includes('ltd') || lowerName.includes('limited')) score += 1;
@@ -72,7 +72,7 @@ export class BusinessAnalyzer {
     if (lowerName.includes('corp') || lowerName.includes('corporation')) score += 2;
     if (lowerName.includes('international')) score += 3;
     if (lowerName.includes('global')) score += 3;
-    
+
     // Address indicators
     if (business.address) {
       const lowerAddress = business.address.toLowerCase();
@@ -80,59 +80,59 @@ export class BusinessAnalyzer {
       if (lowerAddress.includes('main office')) score += 2;
       if (lowerAddress.includes('corporate')) score += 2;
     }
-    
+
     // Category-based complexity
-    if (category === 'Hotels & Accommodation') {
+    if (category === 'Lodging (Hotels)' || category === 'Hotels & Accommodation') {
       // Hotels can be simple B&Bs or complex international chains
-      if (business.name.toLowerCase().includes('hilton') || 
-          business.name.toLowerCase().includes('ihg') ||
-          business.name.toLowerCase().includes('marriott')) {
+      if (business.name.toLowerCase().includes('hilton') ||
+        business.name.toLowerCase().includes('ihg') ||
+        business.name.toLowerCase().includes('marriott')) {
         score += 2;
       }
     }
-    
+
     return Math.min(Math.max(score, 1), 10); // Ensure 1-10 scale
   }
 
   private detectChainStatus(business: any): 'INDEPENDENT' | 'REGIONAL_CHAIN' | 'NATIONAL_CHAIN' | 'INTERNATIONAL_CHAIN' {
     const lowerName = business.name.toLowerCase();
     const lowerAddress = business.address?.toLowerCase() || '';
-    
+
     // Check for international indicators
-    if (lowerName.includes('international') || 
-        lowerName.includes('global') || 
-        lowerName.includes('worldwide') ||
-        lowerAddress.includes('headquarters')) {
+    if (lowerName.includes('international') ||
+      lowerName.includes('global') ||
+      lowerName.includes('worldwide') ||
+      lowerAddress.includes('headquarters')) {
       return 'INTERNATIONAL_CHAIN';
     }
-    
+
     // Check for national indicators
-    if (lowerName.includes('ltd') || 
-        lowerName.includes('limited') || 
-        lowerName.includes('plc') ||
-        lowerName.includes('uk') ||
-        lowerName.includes('britain')) {
+    if (lowerName.includes('ltd') ||
+      lowerName.includes('limited') ||
+      lowerName.includes('plc') ||
+      lowerName.includes('uk') ||
+      lowerName.includes('britain')) {
       return 'NATIONAL_CHAIN';
     }
-    
+
     // Check for regional indicators
-    if (lowerName.includes('regional') || 
-        lowerName.includes('area') ||
-        (Array.isArray(business.types) ? business.types.includes('chain') : business.types.includes('chain'))) {
+    if (lowerName.includes('regional') ||
+      lowerName.includes('area') ||
+      (Array.isArray(business.types) ? business.types.includes('chain') : business.types.includes('chain'))) {
       return 'REGIONAL_CHAIN';
     }
-    
+
     // Default to independent
     return 'INDEPENDENT';
   }
 
   private getOptimalStrategy(
-    complexity: number, 
-    chainStatus: string, 
+    complexity: number,
+    chainStatus: string,
     category: string | null
   ): EnrichmentStrategy[] {
     const strategies: EnrichmentStrategy[] = [];
-    
+
     if (complexity >= 7 || chainStatus === 'INTERNATIONAL_CHAIN') {
       // Large chains: Focus on Google Search for local contacts
       strategies.push({
@@ -176,7 +176,7 @@ export class BusinessAnalyzer {
         description: 'Supplement with basic search queries'
       });
     }
-    
+
     return strategies;
   }
 
@@ -186,64 +186,77 @@ export class BusinessAnalyzer {
       `${business.name} ${location} contact`,
       `${business.name} ${location} phone`
     ];
-    
+
     // Add category-specific queries
     if (category) {
       switch (category) {
+        case 'Lodging (Hotels)':
         case 'Hotels & Accommodation':
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} reception`);
           baseQueries.push(`${business.name} ${location} general manager`);
           break;
-          
+
+        case 'Food and Drink':
         case 'Restaurants & Cafes':
           baseQueries.push(`${business.name} ${location} owner`);
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} head chef`);
           break;
-          
-        case 'Bars & Nightlife':
+
+        case 'Bars & Nightlife': // Legacy
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} owner`);
           baseQueries.push(`${business.name} ${location} licensee`);
           break;
-          
+
+        case 'Services':
         case 'Offices & Coworking':
           baseQueries.push(`${business.name} ${location} director`);
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} contact`);
           break;
-          
+
+        case 'Shopping (Retail)':
         case 'Retail & Services':
           baseQueries.push(`${business.name} ${location} store manager`);
           baseQueries.push(`${business.name} ${location} owner`);
           baseQueries.push(`${business.name} ${location} supervisor`);
           break;
-          
+
+        case 'Health and Wellness':
         case 'Fitness & Wellness':
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} owner`);
           baseQueries.push(`${business.name} ${location} trainer`);
           break;
-          
+
+        case 'Entertainment and Recreation':
         case 'Events & Conferences':
+        case 'Entertainment & Venues':
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} coordinator`);
           baseQueries.push(`${business.name} ${location} contact`);
           break;
-          
+
+        case 'Sports':
+          baseQueries.push(`${business.name} ${location} manager`);
+          baseQueries.push(`${business.name} ${location} coach`);
+          baseQueries.push(`${business.name} ${location} secretary`);
+          break;
+
         default:
           baseQueries.push(`${business.name} ${location} manager`);
           baseQueries.push(`${business.name} ${location} contact`);
       }
     }
-    
+
     return baseQueries;
   }
 
   private extractLocation(address?: string | null): string {
     if (!address) return 'hull'; // Default to Hull
-    
+
     // Try to extract city/town from address
     const addressParts = address.toLowerCase().split(',');
     for (const part of addressParts) {
@@ -256,7 +269,7 @@ export class BusinessAnalyzer {
       if (trimmed.includes('birmingham')) return 'birmingham';
       if (trimmed.includes('london')) return 'london';
     }
-    
+
     return 'hull'; // Default fallback
   }
 }

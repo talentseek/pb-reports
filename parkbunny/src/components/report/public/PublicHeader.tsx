@@ -6,6 +6,14 @@ import { PLACE_CATEGORIES } from "@/lib/placesCategories"
 
 function iconForCategory(cat: string): string {
   switch (cat) {
+    case 'Lodging (Hotels)': return '🏨'
+    case 'Shopping (Retail)': return '🛍️'
+    case 'Services': return '🛠️'
+    case 'Food and Drink': return '🍽️'
+    case 'Health and Wellness': return '🧘'
+    case 'Entertainment and Recreation': return '🎭'
+    case 'Sports': return '⚽'
+    // Legacy
     case 'Hotels & Accommodation': return '🏨'
     case 'Restaurants & Cafes': return '🍽️'
     case 'Bars & Nightlife': return '🍸'
@@ -38,7 +46,7 @@ export default function PublicHeader({
           <div>
             <h1 className="text-2xl sm:text-3xl font-semibold">Revenue Enhancement Report</h1>
             <p className="text-sm text-gray-600">Prepared for: {reportName || 'Client'}</p>
-            <p className="text-xs text-gray-600 mt-1">Scope: {locationCount} location{locationCount>1?'s':''} • Postcodes analyzed: {postcodes} • Report date: {new Date().toLocaleDateString('en-GB')}</p>
+            <p className="text-xs text-gray-600 mt-1">Scope: {locationCount} location{locationCount > 1 ? 's' : ''} • Postcodes analyzed: {postcodes} • Report date: {new Date().toLocaleDateString('en-GB')}</p>
           </div>
         </div>
         <DownloadPdfButton />
