@@ -19,6 +19,33 @@ export default function PublicLocationMap({ center, markers, apiKey }: { center:
       const bounds = new g.maps.LatLngBounds()
       const infoWindow = new g.maps.InfoWindow()
 
+      // Add car park marker at center with custom icon
+      const carParkMarker = new g.maps.Marker({
+        position: center,
+        map,
+        title: 'Car Park Location',
+        icon: {
+          url: '/parking-icon.png',
+          scaledSize: new g.maps.Size(60, 60),
+          anchor: new g.maps.Point(30, 30),
+        },
+        zIndex: 1000, // Ensure it appears above other markers
+      })
+
+      // Add click listener for car park marker
+      carParkMarker.addListener('click', () => {
+        const content = `
+          <div style="font-family: system-ui, -apple-system, sans-serif; padding: 8px; max-width: 250px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #1f2937;">🅿️ Car Park Location</h3>
+            <p style="margin: 0; font-size: 13px; color: #4b5563;">This is the analyzed car park location. Nearby businesses are shown as smaller markers.</p>
+          </div>
+        `
+        infoWindow.setContent(content)
+        infoWindow.open(map, carParkMarker)
+      })
+
+      bounds.extend(center)
+
       for (const m of markers) {
         const marker = new g.maps.Marker({ position: { lat: m.lat, lng: m.lng }, map, title: m.title })
         bounds.extend(marker.getPosition()!)
