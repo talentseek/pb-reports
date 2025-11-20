@@ -47,7 +47,7 @@ export async function getReportLocationSummaries(reportId: string): Promise<Loca
   })
 }
 
-export type LocationMarker = { lat: number; lng: number; title: string; category: string }
+export type LocationMarker = { lat: number; lng: number; title: string; category: string; address?: string; website?: string }
 
 export async function getMarkersForLocation(reportId: string, postcode: string): Promise<LocationMarker[]> {
   const location = await prisma.reportLocation.findFirst({
@@ -60,7 +60,14 @@ export async function getMarkersForLocation(reportId: string, postcode: string):
     const lat = link.place.lat
     const lng = link.place.lng
     if (typeof lat === 'number' && typeof lng === 'number') {
-      markers.push({ lat, lng, title: link.place.name, category: link.groupedCategory || 'Uncategorized' })
+      markers.push({
+        lat,
+        lng,
+        title: link.place.name,
+        category: link.groupedCategory || 'Uncategorized',
+        address: link.place.address || undefined,
+        website: link.place.website || undefined,
+      })
     }
   }
   return markers
