@@ -11,13 +11,13 @@ export default async function DashboardPage() {
   // Fetch all reports for stats
   const reports = await prisma.report.findMany({
     orderBy: { createdAt: "desc" },
-    select: { 
-      id: true, 
-      name: true, 
-      postcodes: true, 
-      createdAt: true, 
-      shareEnabled: true, 
-      shareCode: true, 
+    select: {
+      id: true,
+      name: true,
+      postcodes: true,
+      createdAt: true,
+      shareEnabled: true,
+      shareCode: true,
       settings: true,
       archived: true,
       locations: {
@@ -48,15 +48,17 @@ export default async function DashboardPage() {
   const totalReports = reports.length;
   const activeReports = reports.filter(r => !r.archived).length;
   const archivedReports = reports.filter(r => r.archived).length;
-  
-  // Get all locations for map
-  const allLocations = reports.flatMap(report => 
-    report.locations.map(location => ({
-      ...location,
-      reportName: report.name,
-      status: location.status
-    }))
-  );
+
+  // Get all locations for map (only from active reports)
+  const allLocations = reports
+    .filter(report => !report.archived)
+    .flatMap(report =>
+      report.locations.map(location => ({
+        ...location,
+        reportName: report.name,
+        status: location.status
+      }))
+    );
 
   // Get actual business data from the database
   const businessData = await prisma.reportLocationPlace.groupBy({
@@ -98,8 +100,8 @@ export default async function DashboardPage() {
           Create New Report
         </Link>
       </header>
-      
-      <DashboardOverview 
+
+      <DashboardOverview
         stats={{
           totalReports,
           activeReports,
