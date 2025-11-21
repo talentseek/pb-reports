@@ -8,7 +8,7 @@ export type PlaceCategory = {
 export const PLACE_CATEGORIES: PlaceCategory[] = [
   {
     group: "Lodging (Hotels)",
-    includedTypes: ["lodging", "hotel", "motel", "bed_and_breakfast", "resort", "guest_house"],
+    includedTypes: ["lodging", "hotel", "motel", "bed_and_breakfast", "resort_hotel", "guest_house"],
     keywords: ["hotel", "motel", "bed and breakfast", "resort", "guest house", "inn", "hostel"],
   },
   {
