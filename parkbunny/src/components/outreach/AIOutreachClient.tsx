@@ -83,10 +83,10 @@ export default function AIOutreachClient({ locationId, postcode, reportName, bus
     const enrichmentProgress = (enrichedCount / businesses.length) * 100
     const outreachProgress = (contactedCount / businesses.length) * 100
 
-    // Mock stats
-    const mockResponseRate = 38
-    const mockMeetingsBooked = Math.floor(businesses.length * 0.15)
-    const mockRevenuePotential = businesses.length * 250
+    // Mock stats - contact method breakdown
+    const contactedViaEmail = Math.floor(businesses.length * 0.7)
+    const contactedViaLinkedIn = Math.floor(businesses.length * 0.5)
+    const contactedViaPhone = Math.floor(businesses.length * 0.3)
 
     return (
         <main className="mx-auto max-w-7xl p-6 space-y-6">
@@ -168,8 +168,8 @@ export default function AIOutreachClient({ locationId, postcode, reportName, bus
                                 <div className="h-5 w-5 rounded-full bg-gray-200" />
                             )}
                             <div>
-                                <p className="font-medium">Results</p>
-                                <p className="text-sm text-muted-foreground">{mockResponseRate}% response</p>
+                                <p className="font-medium">Complete</p>
+                                <p className="text-sm text-muted-foreground">Campaign sent</p>
                             </div>
                         </div>
                     </CardContent>
@@ -268,7 +268,7 @@ export default function AIOutreachClient({ locationId, postcode, reportName, bus
             {/* Stats Dashboard */}
             {showStats && (
                 <div className="space-y-4">
-                    <h2 className="text-2xl font-bold">📊 Campaign Results</h2>
+                    <h2 className="text-2xl font-bold">📊 Outreach Summary</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Card>
                             <CardHeader>
@@ -282,51 +282,51 @@ export default function AIOutreachClient({ locationId, postcode, reportName, bus
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-sm font-medium text-muted-foreground">Response Rate</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">📧 Email</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-3xl font-bold text-green-600">{mockResponseRate}%</p>
-                                <p className="text-xs text-muted-foreground mt-1">+15% vs industry avg</p>
+                                <p className="text-3xl font-bold">{contactedViaEmail}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Messages sent</p>
                             </CardContent>
                         </Card>
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-sm font-medium text-muted-foreground">Meetings Booked</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">💼 LinkedIn</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-3xl font-bold">{mockMeetingsBooked}</p>
-                                <p className="text-xs text-muted-foreground mt-1">This week</p>
+                                <p className="text-3xl font-bold">{contactedViaLinkedIn}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Messages sent</p>
                             </CardContent>
                         </Card>
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-sm font-medium text-muted-foreground">Revenue Potential</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">📞 Phone</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-3xl font-bold">£{mockRevenuePotential.toLocaleString()}</p>
-                                <p className="text-xs text-muted-foreground mt-1">Monthly recurring</p>
+                                <p className="text-3xl font-bold">{contactedViaPhone}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Calls logged</p>
                             </CardContent>
                         </Card>
                     </div>
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Top Performing Categories</CardTitle>
+                            <CardTitle>Businesses Contacted by Category</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
                                 {Array.from(new Set(businesses.map(b => b.category))).slice(0, 5).map((category, idx) => {
                                     const count = businesses.filter(b => b.category === category).length
-                                    const mockResponseRate = 30 + (idx * 5)
+                                    const contactMethods = idx % 3 === 0 ? '📧 💼' : idx % 3 === 1 ? '📧 📞' : '💼 📞'
                                     return (
                                         <div key={category} className="flex items-center justify-between p-2 border rounded">
                                             <div>
                                                 <p className="font-medium text-sm">{category}</p>
-                                                <p className="text-xs text-muted-foreground">{count} businesses</p>
+                                                <p className="text-xs text-muted-foreground">{count} businesses contacted</p>
                                             </div>
-                                            <Badge variant="secondary">{mockResponseRate}% response</Badge>
+                                            <Badge variant="secondary">{contactMethods}</Badge>
                                         </div>
                                     )
                                 })}

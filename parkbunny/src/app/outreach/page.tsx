@@ -12,12 +12,11 @@ function getMockProgress(locationId: string, totalBusinesses: number) {
   const seed = locationId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const enrichmentProgress = Math.min(100, (seed % 40) + 60); // 60-100%
   const contacted = Math.floor(totalBusinesses * (0.5 + (seed % 50) / 100)); // 50-100%
-  const responseRate = Math.min(100, (seed % 30) + 15); // 15-45%
 
   const statuses = ['Not Started', 'In Progress', 'Complete'];
   const status = totalBusinesses > 0 ? statuses[seed % 3] : 'Not Started';
 
-  return { enrichmentProgress, contacted, responseRate, status };
+  return { enrichmentProgress, contacted, status };
 }
 
 export default async function OutreachPage() {
@@ -55,12 +54,20 @@ export default async function OutreachPage() {
             Automated business discovery, enrichment, and personalized outreach
           </p>
         </div>
-        <Link
-          href="/outreach/campaigns"
-          className="inline-flex items-center justify-center rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
-        >
-          View Campaigns
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/outreach/inbox"
+            className="inline-flex items-center justify-center rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90"
+          >
+            📬 Inbox
+          </Link>
+          <Link
+            href="/outreach/campaigns"
+            className="inline-flex items-center justify-center rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
+          >
+            View Campaigns
+          </Link>
+        </div>
       </header>
 
       {liveLocations.length === 0 ? (
@@ -128,14 +135,6 @@ export default async function OutreachPage() {
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium">📧 Contacted</span>
                         <span className="text-muted-foreground">{mockData.contacted} / {includedBusinesses}</span>
-                      </div>
-
-                      {/* Response Rate */}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">💬 Response Rate</span>
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          {mockData.responseRate}%
-                        </Badge>
                       </div>
 
                       <div className="text-xs text-muted-foreground pt-2 border-t">
