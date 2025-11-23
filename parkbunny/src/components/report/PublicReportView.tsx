@@ -1,5 +1,6 @@
 import { calculateRevenuePotential, defaultSettings } from "@/lib/calculations"
 import { getReportLocationSummaries, getMarkersForLocation } from "@/lib/placesSummary"
+import Image from "next/image"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table"
 import PublicHeader from "@/components/report/public/PublicHeader"
@@ -415,7 +416,7 @@ export default async function PublicReportView({ report }: { report: any }) {
       <footer className="border-t pt-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="ParkBunny" className="h-6 w-auto" />
+            <Image src="/logo.png" alt="ParkBunny" width={100} height={24} className="h-6 w-auto" />
             <p className="text-xs text-gray-600">© {new Date().getFullYear()} ParkBunny</p>
           </div>
           <div className="text-xs text-gray-600">

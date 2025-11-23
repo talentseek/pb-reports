@@ -122,7 +122,7 @@ export default function DashboardLocationMap({ center, locations, apiKey }: Dash
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}`;
     s.onload = init;
     document.head.appendChild(s);
-  }, [apiKey, center?.lat, center?.lng, locations]);
+  }, [apiKey, center, locations]);
 
   return <div ref={ref} className="w-full h-80 rounded-md" />;
 }
