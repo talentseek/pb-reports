@@ -65,6 +65,13 @@ export default async function ReportViewPage({ params }: { params: { id: string 
             <CopyLinkButton url={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/share/${report.shareCode}`} label="Copy" />
           ) : null}
           <RefreshPlacesButton reportId={report.id} postcodesCount={postcodesCount} categoriesCount={categoriesCount} maxPerType={maxPerType} />
+          <a
+            href={`/api/reports/${report.id}/export`}
+            download
+            className="text-sm px-3 py-1 rounded bg-secondary text-secondary-foreground hover:opacity-90"
+          >
+            📥 Export JSON
+          </a>
           <Link href={`/reports/${report.id}/settings`} className="text-sm underline">Manage</Link>
         </div>
       </div>
