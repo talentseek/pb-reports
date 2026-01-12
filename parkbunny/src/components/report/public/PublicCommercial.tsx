@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table"
+import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 
 export function AncillaryServices() {
@@ -22,9 +23,9 @@ export function AncillaryServices() {
               ['Markets & Events','Flexible activation','Pop-up markets and community events','/market.webp'],
             ].map(([title,amount,desc,src]) => (
               <div key={String(title)} className="rounded border p-4 space-y-2">
-                <div className="w-full h-24 lg:h-28 flex items-center justify-center">
+                <div className="w-full h-24 lg:h-28 flex items-center justify-center relative">
                   {src ? (
-                    <img src={String(src)} alt={String(title)} className="h-full w-auto object-contain rounded-md" />
+                    <Image src={String(src)} alt={String(title)} fill className="object-contain rounded-md" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Image coming soon</div>
                   )}

@@ -141,7 +141,7 @@ export default function PublicLocationMap({ center, markers, apiKey }: { center:
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}`
     s.onload = init
     document.head.appendChild(s)
-  }, [apiKey, center?.lat, center?.lng, markers])
+  }, [apiKey, center, markers])
 
   return <div ref={ref} className="w-full h-80" />
 }

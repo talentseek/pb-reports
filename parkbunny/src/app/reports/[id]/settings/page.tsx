@@ -75,7 +75,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
     return () => {
       isMounted = false;
     };
-  }, [params.id]);
+  }, [params.id, router]);
 
   async function onSave() {
     setSaving(true);
