@@ -63,13 +63,24 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
                     {/* Form Side */}
                     <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                         <div className="text-center mb-8">
-                            <div className="relative w-32 h-32 mx-auto mb-4">
-                                <Image
-                                    src="/logo.png"
-                                    alt="ParkBunny"
-                                    fill
-                                    className="object-contain"
-                                />
+                            <div className="flex items-center justify-center gap-6 mb-6">
+                                <div className="relative w-24 h-16">
+                                    <Image
+                                        src="/groupnexus.jpeg"
+                                        alt="Group Nexus"
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
+                                <div className="w-px h-10 bg-slate-200"></div>
+                                <div className="relative w-20 h-16">
+                                    <Image
+                                        src="/logo.png"
+                                        alt="ParkBunny"
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
                             </div>
                             <h1 className="text-2xl font-bold text-slate-800">Group Nexus</h1>
                             <p className="text-slate-500 text-sm mt-2">Enter access code to view proposal.</p>
@@ -105,9 +116,14 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
         <div className="flex flex-col h-screen text-slate-800 font-sans">
             {/* Header */}
             <header className="bg-white border-b border-slate-200 p-4 flex items-center justify-between shadow-sm z-20">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 relative">
-                        <Image src="/logo.png" alt="ParkBunny" fill className="object-contain" />
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 pr-4 border-r border-slate-200">
+                        <div className="w-12 h-8 relative">
+                            <Image src="/groupnexus.jpeg" alt="Group Nexus" fill className="object-contain" />
+                        </div>
+                        <div className="w-8 h-8 relative">
+                            <Image src="/logo.png" alt="ParkBunny" fill className="object-contain" />
+                        </div>
                     </div>
                     <div>
                         <h1 className="text-xl font-bold text-slate-900 leading-tight">Last Mile Logistics Lockers</h1>
