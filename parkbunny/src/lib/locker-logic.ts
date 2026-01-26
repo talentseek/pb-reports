@@ -1,21 +1,23 @@
-import path from 'path'
-import * as xlsx from 'xlsx'
-import fs from 'fs'
+import lockersData from './lockers-data.json'
 
-export type LockerSite = {
+// Make this type match the JSON structure roughly but keep our internal full type
+type RawLockerData = {
     id: string
     name: string
     address: string
     city: string
     postcode: string
     spaces: number
+}
+
+export type LockerSite = RawLockerData & {
     lat: number | null
     lng: number | null
     distanceToCentre: number | null
     price: number
 }
 
-// Pre-fetched city coordinates from Nominatim (Step 47)
+// Pre-fetched city coordinates from Nominatim
 const cityCache: Record<string, { lat: number; lng: number }> = {
     "St Austell": { "lat": 50.338466, "lng": -4.7882104 },
     "Luton": { "lat": 51.8784385, "lng": -0.4152837 },
@@ -94,11 +96,8 @@ const cityCache: Record<string, { lat: number; lng: number }> = {
     "Ellesmere  Port": { "lat": 53.2789347, "lng": -2.9022507 }
 }
 
-/**
- * Calculates the Haversine distance between two points in miles.
- */
 function getDistanceFromLatLonInMiles(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 3958.8 // Radius of the earth in miles
+    const R = 3958.8
     const dLat = deg2rad(lat2 - lat1)
     const dLon = deg2rad(lon2 - lon1)
     const a =
@@ -113,90 +112,37 @@ function deg2rad(deg: number) {
     return deg * (Math.PI / 180)
 }
 
-/**
- * Validates a UK postcode format roughly.
- */
-function isValidPostcode(p: string) {
-    return /[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}/i.test(p)
-}
-
+// NOTE: No file reading here anymore! using Imported JSON
 export async function getLockerData(): Promise<LockerSite[]> {
-    console.log('[LockerLogic] Starting data load')
-
-    // Attempt multiple paths
-    const candidates = [
-        path.join(process.cwd(), 'public', 'lockers.xlsx'),
-        path.join(process.cwd(), '..', 'public', 'lockers.xlsx'),
-        path.resolve('./public/lockers.xlsx')
-    ]
-
-    let filePath = ''
-    let fileFound = false
-
-    for (const p of candidates) {
-        console.log('[LockerLogic] Checking path:', p)
-        if (fs.existsSync(p)) {
-            filePath = p
-            fileFound = true
-            console.log('[LockerLogic] Found file at:', p)
-            break
-        }
-    }
-
-    if (!fileFound) {
-        console.error('[LockerLogic] File NOT found in any candidate path.')
-        // List cwd to help debug
-        try {
-            console.log('[LockerLogic] CWD Listing:', fs.readdirSync(process.cwd()))
-            console.log('[LockerLogic] CWD/public Listing:', fs.existsSync(path.join(process.cwd(), 'public')) ? fs.readdirSync(path.join(process.cwd(), 'public')) : 'public folder missing')
-        } catch (e) { console.error('Error listing dirs', e) }
-
-        throw new Error(`File lockers.xlsx not found. CWD: ${process.cwd()}`)
-    }
-
-    const workbook = xlsx.readFile(filePath)
-    const sheetName = workbook.SheetNames[0]
-    console.log('[LockerLogic] Sheet:', sheetName)
-    const sheet = workbook.Sheets[sheetName]
-
-    // Header at row 5 (0-indexed)
-    const rawData = xlsx.utils.sheet_to_json<any>(sheet, { range: 5 })
-    console.log('[LockerLogic] Raw Rows:', rawData.length)
-
+    console.log('[LockerLogic] Loading data from JSON import...')
     const sites: LockerSite[] = []
 
     // Batch Postcode Lookup
     const postcodesToLookup = new Set<string>()
 
-    rawData.forEach((row, index) => {
-        const postcode = row['Postcode']?.toString().toUpperCase().trim()
-        if (postcode && isValidPostcode(postcode)) {
-            postcodesToLookup.add(postcode)
-        }
+    lockersData.forEach((row) => {
+        if (row.postcode) postcodesToLookup.add(row.postcode)
     })
 
     console.log(`[LockerLogic] Found ${postcodesToLookup.size} unique postcodes to lookup`)
 
+    // We still need to geocode because JSON only has names/address
+    // If we wanted to go 100% static we should have geocoded in the extraction script.
+    // But for now, we only extracted the raw data.
     const postcodeMap = await bulkGeocodePostcodes(Array.from(postcodesToLookup))
 
-    for (let index = 0; index < rawData.length; index++) {
-        const row = rawData[index]
-        const name = row['Site: Site Name'] || `Site ${index}`
-        const postcode = row['Postcode']?.toString().toUpperCase().trim()
+    for (let index = 0; index < lockersData.length; index++) {
+        const row = lockersData[index]
 
-        // Skip completely empty rows
-        if (!name && !postcode && !row['City/Town']) continue
+        const siteLat = row.postcode ? (postcodeMap[row.postcode]?.lat || null) : null
+        const siteLng = row.postcode ? (postcodeMap[row.postcode]?.lng || null) : null
 
-        const siteLat = postcode ? (postcodeMap[postcode]?.lat || null) : null
-        const siteLng = postcode ? (postcodeMap[postcode]?.lng || null) : null
-
-        const city = row['City/Town'] ? row['City/Town'].toString().trim() : 'Unknown'
+        const city = row.city || 'Unknown'
 
         // Determine City Centre Location
         let cityLat = siteLat
         let cityLng = siteLng
 
-        // Try to get hardcoded city coordinates
         const cityCoords = cityCache[city] || null
         if (cityCoords) {
             cityLat = cityCoords.lat
@@ -205,32 +151,22 @@ export async function getLockerData(): Promise<LockerSite[]> {
 
         let distance = 0
         if (siteLat && siteLng && cityLat && cityLng) {
-            // If coordinates differ, calc distance
             if (Math.abs(siteLat - cityLat) > 0.0001 || Math.abs(siteLng - cityLng) > 0.0001) {
                 distance = getDistanceFromLatLonInMiles(siteLat, siteLng, cityLat, cityLng)
             }
         }
 
-        // Pricing Logic: Linear 
-        // 0 miles -> £1600
-        // 5 miles -> £900
-        // >5 miles -> £900
+        // Pricing Logic
         let price = 900
         if (distance < 5) {
-            const priceDropPerMile = (1600 - 900) / 5 // 140
+            const priceDropPerMile = (1600 - 900) / 5
             price = 1600 - (distance * priceDropPerMile)
         }
 
-        // Round to nearest 10
         price = Math.round(price / 10) * 10
 
         sites.push({
-            id: `site-${index}`,
-            name,
-            address: row['Address Line 1'] || 'Unknown Address',
-            city,
-            postcode: postcode || 'N/A',
-            spaces: Number(row['Number Of Spaces']) || 0,
+            ...row,
             lat: siteLat,
             lng: siteLng,
             distanceToCentre: distance,
@@ -239,29 +175,31 @@ export async function getLockerData(): Promise<LockerSite[]> {
     }
 
     console.log(`[LockerLogic] Returned ${sites.length} sites`)
-
     return sites
 }
 
 async function bulkGeocodePostcodes(postcodes: string[]) {
-    // postcodes.io allows batch lookups
+    // 5-second cache check? or just run it. 
+    // In serverless, caching in memory is only per-request/warm lambda.
+    // It's fine for 89 items.
+
     const results: Record<string, { lat: number, lng: number }> = {}
 
-    // Chunk into 100s
     for (let i = 0; i < postcodes.length; i += 100) {
         const chunk = postcodes.slice(i, i + 100)
         try {
             const res = await fetch('https://api.postcodes.io/postcodes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ postcodes: chunk })
+                body: JSON.stringify({ postcodes: chunk }),
+                cache: 'force-cache', // Try to use Next.js Data Cache
+                next: { revalidate: 86400 } // Cache for 24 hours
             })
             const data = await res.json()
             if (data.status === 200 && data.result) {
-                // Check if result is array or what
                 if (Array.isArray(data.result)) {
                     data.result.forEach((item: any) => {
-                        if (item.result) { // item.result contains lat/long
+                        if (item.result) {
                             results[item.query] = {
                                 lat: item.result.latitude,
                                 lng: item.result.longitude
