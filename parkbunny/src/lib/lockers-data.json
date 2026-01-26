@@ -1,0 +1,714 @@
+[
+  {
+    "id": "site-0",
+    "name": "White River Place",
+    "address": "White River Place",
+    "city": "St Austell",
+    "postcode": "PL25 5AZ",
+    "spaces": 550
+  },
+  {
+    "id": "site-1",
+    "name": "Luton Point",
+    "address": "The Mall",
+    "city": "Luton",
+    "postcode": "LU1 2LJ",
+    "spaces": 2007
+  },
+  {
+    "id": "site-2",
+    "name": "Aylesbury Shopping Park",
+    "address": "Cambridge Close",
+    "city": "Aylesbury",
+    "postcode": "HP20 1DG",
+    "spaces": 672
+  },
+  {
+    "id": "site-3",
+    "name": "Mayflower Retail Park",
+    "address": "Gardiners Link",
+    "city": "Basildon",
+    "postcode": "SS14 3HZ",
+    "spaces": 791
+  },
+  {
+    "id": "site-4",
+    "name": "Whiteley Shopping Centre",
+    "address": "Whiteley Way",
+    "city": "Fareham",
+    "postcode": "PO15 7PD",
+    "spaces": 1527
+  },
+  {
+    "id": "site-5",
+    "name": "Botley",
+    "address": "Botley Road",
+    "city": "Oxford",
+    "postcode": "OX2 0HA",
+    "spaces": 227
+  },
+  {
+    "id": "site-6",
+    "name": "Crown Wharf Retail Park",
+    "address": "Wolverhampton St",
+    "city": "Walsall",
+    "postcode": "WS2 8LL",
+    "spaces": 607
+  },
+  {
+    "id": "site-7",
+    "name": "Prospect Place",
+    "address": "Prospect Place",
+    "city": "Dartford",
+    "postcode": "DA1 1DY",
+    "spaces": 611
+  },
+  {
+    "id": "site-8",
+    "name": "Nugent",
+    "address": "506 Cray Avenue",
+    "city": "Orpington",
+    "postcode": "BR5 3RP",
+    "spaces": 376
+  },
+  {
+    "id": "site-9",
+    "name": "Forster Square",
+    "address": "Valley Rd",
+    "city": "Bradford",
+    "postcode": "BD1 4RN",
+    "spaces": 395
+  },
+  {
+    "id": "site-10",
+    "name": "Tollgate",
+    "address": "Tollgate Retail Park",
+    "city": "Colchester",
+    "postcode": "CO3 8RH",
+    "spaces": 423
+  },
+  {
+    "id": "site-11",
+    "name": "Wheatley",
+    "address": "Wheatley Hall Road",
+    "city": "Doncaster",
+    "postcode": "DN2 4PE",
+    "spaces": 747
+  },
+  {
+    "id": "site-12",
+    "name": "Elk Mill Shopping Park",
+    "address": "Broadway",
+    "city": "Oldham",
+    "postcode": "OL2 5HX",
+    "spaces": 0
+  },
+  {
+    "id": "site-13",
+    "name": "Mostyn Champneys",
+    "address": "Mostyn Broadway",
+    "city": "Llandudno",
+    "postcode": "LL30 1RY",
+    "spaces": 1002
+  },
+  {
+    "id": "site-14",
+    "name": "Cornerhouse",
+    "address": "Cornerhouse Park",
+    "city": "Barrow-in-Furness",
+    "postcode": "LA14 2GN",
+    "spaces": 254
+  },
+  {
+    "id": "site-15",
+    "name": "Crownpoint",
+    "address": "Ashton Rd",
+    "city": "Denton",
+    "postcode": "M34 3JP",
+    "spaces": 808
+  },
+  {
+    "id": "site-16",
+    "name": "Hindpool",
+    "address": "Hindpool Road",
+    "city": "Barrow-in-Furness",
+    "postcode": "LA14 2PD",
+    "spaces": 208
+  },
+  {
+    "id": "site-17",
+    "name": "Surrey Quays Shopping Centre",
+    "address": "Redriff Road",
+    "city": "London",
+    "postcode": "SE16 7LL",
+    "spaces": 1328
+  },
+  {
+    "id": "site-18",
+    "name": "Giltbrook",
+    "address": "Giltbrook Retail Park",
+    "city": "Nottingham",
+    "postcode": "NG16 2RP",
+    "spaces": 2300
+  },
+  {
+    "id": "site-19",
+    "name": "Orbital Shopping Park",
+    "address": "Thamesdown Drive",
+    "city": "Swindon",
+    "postcode": "SN25 4AN",
+    "spaces": 625
+  },
+  {
+    "id": "site-20",
+    "name": "St Peter's Retail Park",
+    "address": "St Peter's Way",
+    "city": "Mansfield",
+    "postcode": "NG18 1BE",
+    "spaces": 324
+  },
+  {
+    "id": "site-21",
+    "name": "Glasgow Fort Retail Park",
+    "address": "Junction 10, M8",
+    "city": "Glasgow",
+    "postcode": "G34 9DL",
+    "spaces": 2535
+  },
+  {
+    "id": "site-22",
+    "name": "Ealing Broadway Shopping",
+    "address": "Ealing Broadway",
+    "city": "Ealing, London",
+    "postcode": "W5 5JY",
+    "spaces": 0
+  },
+  {
+    "id": "site-23",
+    "name": "Broadgate House",
+    "address": "Exchange House, 12 Exchange Square",
+    "city": "London",
+    "postcode": "EC2A 2BQ",
+    "spaces": 80
+  },
+  {
+    "id": "site-24",
+    "name": "Broughton Shopping Park",
+    "address": "Chester Road",
+    "city": "Broughton, Chester",
+    "postcode": "CH4 0DP",
+    "spaces": 0
+  },
+  {
+    "id": "site-25",
+    "name": "New Mersey",
+    "address": "Speke Road",
+    "city": "Liverpool",
+    "postcode": "L24 8QB",
+    "spaces": 0
+  },
+  {
+    "id": "site-26",
+    "name": "The Orchard Centre",
+    "address": "The Orchard centre",
+    "city": "Didcot",
+    "postcode": "OX11 7LG",
+    "spaces": 0
+  },
+  {
+    "id": "site-27",
+    "name": "Bubble Retail Park",
+    "address": "The Bubble Retail Park, Plymouth Rd",
+    "city": "Liskeard",
+    "postcode": "PL14 3WQ",
+    "spaces": 185
+  },
+  {
+    "id": "site-28",
+    "name": "Morfa Shopping Park",
+    "address": "Brunel Way, Bon-y-maen",
+    "city": "Swansea",
+    "postcode": "SA1 7BP",
+    "spaces": 1100
+  },
+  {
+    "id": "site-29",
+    "name": "Westside Retail Park",
+    "address": "Leeds Road",
+    "city": "Leeds",
+    "postcode": "LS20 9NE",
+    "spaces": 513
+  },
+  {
+    "id": "site-30",
+    "name": "Abbotsinch Retail Park",
+    "address": "Washington Road",
+    "city": "Paisley",
+    "postcode": "PA3 4EP",
+    "spaces": 1098
+  },
+  {
+    "id": "site-31",
+    "name": "Riverside Retail Park",
+    "address": "Albion Way",
+    "city": "Norwich",
+    "postcode": "NR1 1WR",
+    "spaces": 582
+  },
+  {
+    "id": "site-32",
+    "name": "Ashford Retail Park",
+    "address": "Barrey Road",
+    "city": "Ashford",
+    "postcode": "TN24 0SG",
+    "spaces": 535
+  },
+  {
+    "id": "site-33",
+    "name": "Foss Island Retail Park",
+    "address": "Foss Islands Road",
+    "city": "York",
+    "postcode": "YO31 7UP",
+    "spaces": 212
+  },
+  {
+    "id": "site-34",
+    "name": "Dunleavy Drive Retail Park",
+    "address": "Dunleavy Drive",
+    "city": "Cardiff",
+    "postcode": "CF11 0SR",
+    "spaces": 135
+  },
+  {
+    "id": "site-35",
+    "name": "Riverway Retail Park",
+    "address": "Riverway",
+    "city": "Irvine",
+    "postcode": "KA12 8AG",
+    "spaces": 0
+  },
+  {
+    "id": "site-36",
+    "name": "Manchester Fort Shopping Park",
+    "address": "Cheetham Hill Road",
+    "city": "Manchester",
+    "postcode": "M8 8EP",
+    "spaces": 0
+  },
+  {
+    "id": "site-37",
+    "name": "Castle Dene Shopping Centre",
+    "address": "Yoden Way",
+    "city": "Peterlee",
+    "postcode": "SR8 1AL",
+    "spaces": 779
+  },
+  {
+    "id": "site-38",
+    "name": "New Square West Bromwich",
+    "address": "New Square",
+    "city": "West Bromwich",
+    "postcode": "B70 7PP",
+    "spaces": 0
+  },
+  {
+    "id": "site-39",
+    "name": "Straiton Retail Park",
+    "address": "11 Straiton Mains",
+    "city": "Edinburgh",
+    "postcode": "EH20 9PW",
+    "spaces": 228
+  },
+  {
+    "id": "site-40",
+    "name": "Cannon Lane Retail Park",
+    "address": "Cannon Lane Retail Park",
+    "city": "Tonbridge",
+    "postcode": "TN9 1PP",
+    "spaces": 0
+  },
+  {
+    "id": "site-41",
+    "name": "Main Street Shopping Centre",
+    "address": "Main Street",
+    "city": "Glasgow",
+    "postcode": "G78 1SL",
+    "spaces": 20
+  },
+  {
+    "id": "site-42",
+    "name": "Parkway Retail Park",
+    "address": "Holdenhurst Road",
+    "city": "Bournemouth",
+    "postcode": "BH8 8AY",
+    "spaces": 88
+  },
+  {
+    "id": "site-43",
+    "name": "Airport Retail Park",
+    "address": "London Road",
+    "city": "Coventry",
+    "postcode": "CV3 4RP",
+    "spaces": 553
+  },
+  {
+    "id": "site-44",
+    "name": "St Margaret's Way Retail Park",
+    "address": "Devonshire Road",
+    "city": "Leicester",
+    "postcode": "LE4 0BG",
+    "spaces": 358
+  },
+  {
+    "id": "site-45",
+    "name": "Treliske Retail Park",
+    "address": "2 Treliske Retail Park",
+    "city": "Truro",
+    "postcode": "TR1 3LN",
+    "spaces": 341
+  },
+  {
+    "id": "site-46",
+    "name": "Cannon Park Shopping Park",
+    "address": "22 Cannon Park Centre, Lynchgate Road",
+    "city": "Coventry",
+    "postcode": "CV4 7EH",
+    "spaces": 372
+  },
+  {
+    "id": "site-47",
+    "name": "Hatters Way Retail Park",
+    "address": "Hatters Way",
+    "city": "Luton",
+    "postcode": "LU4 8FD",
+    "spaces": 373
+  },
+  {
+    "id": "site-48",
+    "name": "Shop Stop CLapham Junction",
+    "address": "1-20 St John's Hill, Battersea",
+    "city": "London",
+    "postcode": "SW11 1RU",
+    "spaces": 16
+  },
+  {
+    "id": "site-49",
+    "name": "Craigleith Retail Park",
+    "address": "South Groathill Road",
+    "city": "Edingburgh",
+    "postcode": "EH4 2LN",
+    "spaces": 471
+  },
+  {
+    "id": "site-50",
+    "name": "Metz Retail Park",
+    "address": "Eastbrook Road",
+    "city": "Gloucestershire",
+    "postcode": "GL4 3DB",
+    "spaces": 217
+  },
+  {
+    "id": "site-51",
+    "name": "Borehamwood Shopping Park",
+    "address": "Theobald Street",
+    "city": "Borehamwood",
+    "postcode": "WD6 4PR",
+    "spaces": 580
+  },
+  {
+    "id": "site-52",
+    "name": "Trafford Retail Park",
+    "address": "Trescott Road",
+    "city": "Redditch",
+    "postcode": "B98 7AH",
+    "spaces": 250
+  },
+  {
+    "id": "site-53",
+    "name": "Woodfields Retail Park",
+    "address": "Peel Way",
+    "city": "Bury",
+    "postcode": "BL9 5BY",
+    "spaces": 1012
+  },
+  {
+    "id": "site-54",
+    "name": "Alban Retail Park",
+    "address": "London Road",
+    "city": "Bedford",
+    "postcode": "MK42 0NW",
+    "spaces": 270
+  },
+  {
+    "id": "site-55",
+    "name": "Suffolk Retail Park",
+    "address": "London Road",
+    "city": "Ipswich",
+    "postcode": "IP1 2EJ",
+    "spaces": 402
+  },
+  {
+    "id": "site-56",
+    "name": "Tower Retail Park",
+    "address": "Crayford Road",
+    "city": "Dartford",
+    "postcode": "DA1 4LD",
+    "spaces": 395
+  },
+  {
+    "id": "site-57",
+    "name": "Alexandra Road Car Park - Hounslow",
+    "address": "High Street Quarter, Unity Square Hounslow",
+    "city": "London",
+    "postcode": "TW31EL",
+    "spaces": 0
+  },
+  {
+    "id": "site-58",
+    "name": "Beaumont Shopping Park",
+    "address": "25 Beaumont Way",
+    "city": "Leicester",
+    "postcode": "LE4 1DS",
+    "spaces": 304
+  },
+  {
+    "id": "site-59",
+    "name": "Broadfields Retail Park",
+    "address": "Bicester Road",
+    "city": "Aylesbury",
+    "postcode": "HP19 8BU",
+    "spaces": 414
+  },
+  {
+    "id": "site-60",
+    "name": "Castlepoint Shopping Park",
+    "address": "Castlepoint Shopping Park Castle Lane West",
+    "city": "Bournemouth",
+    "postcode": "BH8 9HL",
+    "spaces": 0
+  },
+  {
+    "id": "site-61",
+    "name": "Totton Retail Park",
+    "address": "Commercial Road",
+    "city": "Totton",
+    "postcode": "SO40 3AG",
+    "spaces": 135
+  },
+  {
+    "id": "site-62",
+    "name": "Valentine Retail park",
+    "address": "Valentine Rd",
+    "city": "Lincoln",
+    "postcode": "LN6 7BH",
+    "spaces": 550
+  },
+  {
+    "id": "site-63",
+    "name": "Broadfields Service Yard",
+    "address": "Bicester Road",
+    "city": "Aylesbury",
+    "postcode": "HP19 8BU",
+    "spaces": 0
+  },
+  {
+    "id": "site-64",
+    "name": "Bookers Cash & Carry",
+    "address": "Off Curricle St",
+    "city": "Acton, London",
+    "postcode": "W3 7YA",
+    "spaces": 50
+  },
+  {
+    "id": "site-65",
+    "name": "The Broad Centre",
+    "address": "Station Road",
+    "city": "Nottingham",
+    "postcode": "NG17 5FH",
+    "spaces": 234
+  },
+  {
+    "id": "site-66",
+    "name": "The Arena at Stockley Park",
+    "address": "The Arena",
+    "city": "Hayes",
+    "postcode": "UB11 1AA",
+    "spaces": 146
+  },
+  {
+    "id": "site-67",
+    "name": "Arun Retail Park",
+    "address": "Shripney Rd",
+    "city": "Bognor Regis",
+    "postcode": "PO22 9NF",
+    "spaces": 235
+  },
+  {
+    "id": "site-68",
+    "name": "Kettering  Retail Park",
+    "address": "Kettering Retail Park",
+    "city": "Kettering",
+    "postcode": "NN15 6YA",
+    "spaces": 458
+  },
+  {
+    "id": "site-69",
+    "name": "Colne View Retail Park",
+    "address": "Cowdray Avenue",
+    "city": "Colchester",
+    "postcode": "CO1 1YN",
+    "spaces": 296
+  },
+  {
+    "id": "site-70",
+    "name": "Monkswood Retail Park",
+    "address": "Elder Way",
+    "city": "Stevenage",
+    "postcode": "SG1 1TL",
+    "spaces": 263
+  },
+  {
+    "id": "site-71",
+    "name": "Springkerse Retail Park",
+    "address": "Kerse Road",
+    "city": "Stirling",
+    "postcode": "FK7 7TL",
+    "spaces": 335
+  },
+  {
+    "id": "site-72",
+    "name": "Darlington College",
+    "address": "Central Park",
+    "city": "Darlington",
+    "postcode": "DL1 1DR",
+    "spaces": 150
+  },
+  {
+    "id": "site-73",
+    "name": "RAF Museum London",
+    "address": "Grahame Park Way",
+    "city": "London",
+    "postcode": "NW9 5LL",
+    "spaces": 300
+  },
+  {
+    "id": "site-74",
+    "name": "Victoria Centre ",
+    "address": "Victoria Road",
+    "city": "Consett",
+    "postcode": "DH8 5JU",
+    "spaces": 92
+  },
+  {
+    "id": "site-75",
+    "name": "Allen House",
+    "address": "The Maltings, Station Road, Sawbridgeworth, Hertfordshire",
+    "city": "Sawbridgeworth",
+    "postcode": "CM21 9JX",
+    "spaces": 60
+  },
+  {
+    "id": "site-76",
+    "name": "Netherfield Neighbourhood Centre",
+    "address": "Farthing Grove",
+    "city": "Milton Keynes",
+    "postcode": "MK6 4JH",
+    "spaces": 110
+  },
+  {
+    "id": "site-77",
+    "name": "Great Linford St Leger",
+    "address": "St Leger Dr",
+    "city": "Milton Keynes",
+    "postcode": "MK14 5HA",
+    "spaces": 68
+  },
+  {
+    "id": "site-78",
+    "name": "Rushden Lakes",
+    "address": "Rushden Lakes",
+    "city": "Northamptonshire",
+    "postcode": "NN10 6FH",
+    "spaces": 1913
+  },
+  {
+    "id": "site-79",
+    "name": "Banbury Gateway Shopping Park",
+    "address": "Acorn Way",
+    "city": "Banbury",
+    "postcode": "OX16 3ER",
+    "spaces": 587
+  },
+  {
+    "id": "site-80",
+    "name": "South Aylesford Retail Park",
+    "address": "London Road East",
+    "city": "Aylesford",
+    "postcode": "ME20 7TP",
+    "spaces": 528
+  },
+  {
+    "id": "site-81",
+    "name": "Gallagher Retail Park ",
+    "address": "Gallagher Retail Park, Tewkesbury Rd",
+    "city": "Cheltenham",
+    "postcode": "GL51 9RR",
+    "spaces": 454
+  },
+  {
+    "id": "site-82",
+    "name": "Victoria Retail Park",
+    "address": "Victoria Retail Park",
+    "city": "Nottingham",
+    "postcode": "NG4 2PE",
+    "spaces": 773
+  },
+  {
+    "id": "site-83",
+    "name": "Queensgate Centre",
+    "address": "Edinburgh Way",
+    "city": "Harlow",
+    "postcode": "CM20 2DA",
+    "spaces": 674
+  },
+  {
+    "id": "site-84",
+    "name": "Ocean Retail Park",
+    "address": "Burrfields Road",
+    "city": "Portsmouth",
+    "postcode": "PO3 5NP",
+    "spaces": 550
+  },
+  {
+    "id": "site-85",
+    "name": "MK1 Shopping & Leisure Park",
+    "address": "Stadium Way",
+    "city": "Milton Keynes",
+    "postcode": "MK1 1ST",
+    "spaces": 1006
+  },
+  {
+    "id": "site-86",
+    "name": "Fosse Park Shopping Park",
+    "address": "Fosse Park, Fosse Park Avenue",
+    "city": "Leicester",
+    "postcode": "LE19 1HY",
+    "spaces": 3355
+  },
+  {
+    "id": "site-87",
+    "name": "Coliseum Shopping Park",
+    "address": "30 Coliseum Way",
+    "city": "Ellesmere  Port",
+    "postcode": "CH65 9HD",
+    "spaces": 1016
+  },
+  {
+    "id": "site-88",
+    "name": "Aintree Shopping Park",
+    "address": "Ormskirk Rd",
+    "city": "Liverpool",
+    "postcode": "L9 5AN",
+    "spaces": 1053
+  }
+]
