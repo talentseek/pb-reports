@@ -116,17 +116,33 @@ function deg2rad(deg: number) {
  * Validates a UK postcode format roughly.
  */
 function isValidPostcode(p: string) {
-    return /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i.test(p)
+    // Relaxed check to ensure we catch most candidates
+    return /[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}/i.test(p)
 }
 
 export async function getLockerData(): Promise<LockerSite[]> {
     const filePath = path.join(process.cwd(), 'public', 'lockers.xlsx')
+    console.log('[LockerLogic] Reading:', filePath)
+
+    // Check if file exists to prevent hard crash if missing
+    try {
+        const fs = await import('fs')
+        if (!fs.existsSync(filePath)) {
+            console.error('[LockerLogic] File not found at:', filePath)
+            return []
+        }
+    } catch (e) {
+        console.warn('[LockerLogic] FS check failed, trying direct read')
+    }
+
     const workbook = xlsx.readFile(filePath)
     const sheetName = workbook.SheetNames[0]
+    console.log('[LockerLogic] Sheet:', sheetName)
     const sheet = workbook.Sheets[sheetName]
 
     // Header at row 5 (0-indexed)
     const rawData = xlsx.utils.sheet_to_json<any>(sheet, { range: 5 })
+    console.log('[LockerLogic] Raw Rows:', rawData.length)
 
     const sites: LockerSite[] = []
 
@@ -139,6 +155,8 @@ export async function getLockerData(): Promise<LockerSite[]> {
             postcodesToLookup.add(postcode)
         }
     })
+
+    console.log(`[LockerLogic] Found ${postcodesToLookup.size} unique postcodes to lookup`)
 
     const postcodeMap = await bulkGeocodePostcodes(Array.from(postcodesToLookup))
 
@@ -201,6 +219,8 @@ export async function getLockerData(): Promise<LockerSite[]> {
         })
     }
 
+    console.log(`[LockerLogic] Returned ${sites.length} sites`)
+
     return sites
 }
 
@@ -219,14 +239,17 @@ async function bulkGeocodePostcodes(postcodes: string[]) {
             })
             const data = await res.json()
             if (data.status === 200 && data.result) {
-                data.result.forEach((item: any) => {
-                    if (item.result) {
-                        results[item.query] = {
-                            lat: item.result.latitude,
-                            lng: item.result.longitude
+                // Check if result is array or what
+                if (Array.isArray(data.result)) {
+                    data.result.forEach((item: any) => {
+                        if (item.result) { // item.result contains lat/long
+                            results[item.query] = {
+                                lat: item.result.latitude,
+                                lng: item.result.longitude
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
         } catch (e) {
             console.error('Postcode lookup failed for chunk', chunk[0])
