@@ -55,7 +55,7 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
                             priority
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-8 text-white">
-                            <h2 className="text-xl font-bold mb-1">Sustainable Logistics</h2>
+                            <h2 className="text-xl font-bold mb-1">Last Mile Logistics Lockers</h2>
                             <p className="text-sm opacity-90">Secure, solar-powered delivery hubs.</p>
                         </div>
                     </div>
