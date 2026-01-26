@@ -54,7 +54,7 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
                                 className="object-contain"
                             />
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-800">Nexus Proposal Access</h1>
+                        <h1 className="text-2xl font-bold text-slate-800">Group Nexus</h1>
                         <p className="text-slate-500 text-sm mt-2">Please enter the access code to view the portfolio proposal.</p>
                     </div>
                     <form onSubmit={handleLogin} className="space-y-4">
@@ -92,8 +92,8 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
                         <Image src="/logo.png" alt="ParkBunny" fill className="object-contain" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-slate-900 leading-tight">Nexus Portfolio</h1>
-                        <p className="text-xs text-slate-500 font-medium tracking-wide">LAST MILE LOGISTIC LOCKERS PROPOSAL</p>
+                        <h1 className="text-xl font-bold text-slate-900 leading-tight">Last Mile Logistics Lockers</h1>
+                        <p className="text-xs text-slate-500 font-medium tracking-wide">ANNUAL REVENUE FORECAST</p>
                     </div>
                 </div>
                 <div className="flex gap-4 text-xs font-semibold text-slate-600 hidden md:flex">
