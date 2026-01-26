@@ -1,5 +1,6 @@
 import path from 'path'
 import * as xlsx from 'xlsx'
+import fs from 'fs'
 
 export type LockerSite = {
     id: string
@@ -116,23 +117,41 @@ function deg2rad(deg: number) {
  * Validates a UK postcode format roughly.
  */
 function isValidPostcode(p: string) {
-    // Relaxed check to ensure we catch most candidates
     return /[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}/i.test(p)
 }
 
 export async function getLockerData(): Promise<LockerSite[]> {
-    const filePath = path.join(process.cwd(), 'public', 'lockers.xlsx')
-    console.log('[LockerLogic] Reading:', filePath)
+    console.log('[LockerLogic] Starting data load')
 
-    // Check if file exists to prevent hard crash if missing
-    try {
-        const fs = await import('fs')
-        if (!fs.existsSync(filePath)) {
-            console.error('[LockerLogic] File not found at:', filePath)
-            return []
+    // Attempt multiple paths
+    const candidates = [
+        path.join(process.cwd(), 'public', 'lockers.xlsx'),
+        path.join(process.cwd(), '..', 'public', 'lockers.xlsx'),
+        path.resolve('./public/lockers.xlsx')
+    ]
+
+    let filePath = ''
+    let fileFound = false
+
+    for (const p of candidates) {
+        console.log('[LockerLogic] Checking path:', p)
+        if (fs.existsSync(p)) {
+            filePath = p
+            fileFound = true
+            console.log('[LockerLogic] Found file at:', p)
+            break
         }
-    } catch (e) {
-        console.warn('[LockerLogic] FS check failed, trying direct read')
+    }
+
+    if (!fileFound) {
+        console.error('[LockerLogic] File NOT found in any candidate path.')
+        // List cwd to help debug
+        try {
+            console.log('[LockerLogic] CWD Listing:', fs.readdirSync(process.cwd()))
+            console.log('[LockerLogic] CWD/public Listing:', fs.existsSync(path.join(process.cwd(), 'public')) ? fs.readdirSync(path.join(process.cwd(), 'public')) : 'public folder missing')
+        } catch (e) { console.error('Error listing dirs', e) }
+
+        throw new Error(`File lockers.xlsx not found. CWD: ${process.cwd()}`)
     }
 
     const workbook = xlsx.readFile(filePath)
