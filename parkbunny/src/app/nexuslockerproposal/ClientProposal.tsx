@@ -43,41 +43,59 @@ export default function ClientProposal({ initialData }: { initialData: LockerSit
 
     if (!isAuthenticated) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-slate-900">
-                <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-                    <div className="text-center mb-6">
-                        <div className="relative w-32 h-32 mx-auto mb-4">
-                            <Image
-                                src="/logo.png"
-                                alt="ParkBunny"
-                                fill
-                                className="object-contain"
-                            />
+            <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row h-[600px] md:h-[500px]">
+                    {/* Image Side */}
+                    <div className="w-full md:w-1/2 relative bg-slate-100">
+                        <Image
+                            src="/lockerphoto.webp"
+                            alt="Nexus Lockers"
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-8 text-white">
+                            <h2 className="text-xl font-bold mb-1">Sustainable Logistics</h2>
+                            <p className="text-sm opacity-90">Secure, solar-powered delivery hubs.</p>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-800">Group Nexus</h1>
-                        <p className="text-slate-500 text-sm mt-2">Please enter the access code to view the portfolio proposal.</p>
                     </div>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-                                <input
-                                    type="password"
-                                    value={passwordInput}
-                                    onChange={(e) => setPasswordInput(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all font-mono"
-                                    placeholder="Access Code"
+
+                    {/* Form Side */}
+                    <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                        <div className="text-center mb-8">
+                            <div className="relative w-32 h-32 mx-auto mb-4">
+                                <Image
+                                    src="/logo.png"
+                                    alt="ParkBunny"
+                                    fill
+                                    className="object-contain"
                                 />
                             </div>
-                            {error && <p className="text-red-500 text-sm mt-2 ml-1">{error}</p>}
+                            <h1 className="text-2xl font-bold text-slate-800">Group Nexus</h1>
+                            <p className="text-slate-500 text-sm mt-2">Enter access code to view proposal.</p>
                         </div>
-                        <button
-                            type="submit"
-                            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-violet-200"
-                        >
-                            View Proposal
-                        </button>
-                    </form>
+                        <form onSubmit={handleLogin} className="space-y-4 max-w-sm mx-auto w-full">
+                            <div>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+                                    <input
+                                        type="password"
+                                        value={passwordInput}
+                                        onChange={(e) => setPasswordInput(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all font-mono"
+                                        placeholder="Access Code"
+                                    />
+                                </div>
+                                {error && <p className="text-red-500 text-sm mt-2 ml-1">{error}</p>}
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-violet-200"
+                            >
+                                View Proposal
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         )
