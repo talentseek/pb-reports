@@ -5,7 +5,8 @@
         "postcode": "IG6 2EF",
         "region": "London",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -14,7 +15,8 @@
         "postcode": "S71 1AY",
         "region": "Yorkshire",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -33,7 +35,8 @@
         "postcode": "BB1 6AF",
         "region": "North West",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -43,6 +46,7 @@
         "region": "South East",
         "streams": [
             "locker",
+            "carwash",
             "ev"
         ]
     },
@@ -63,7 +67,8 @@
         "postcode": "BB11 2EJ",
         "region": "North West",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -72,7 +77,8 @@
         "postcode": "CO15 1NJ",
         "region": "South East",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -81,7 +87,8 @@
         "postcode": "ML5 3SQ",
         "region": "Scotland",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -100,7 +107,8 @@
         "postcode": "CV2 2QQ",
         "region": "Midlands",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -110,6 +118,7 @@
         "region": "Midlands",
         "streams": [
             "locker",
+            "carwash",
             "ev"
         ]
     },
@@ -119,7 +128,8 @@
         "postcode": "FK1 1RJ",
         "region": "Scotland",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -138,7 +148,8 @@
         "postcode": "B24 9QB",
         "region": "Midlands",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -157,7 +168,8 @@
         "postcode": "TS3 6HB",
         "region": "North East",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -166,7 +178,8 @@
         "postcode": "LA4 5HY",
         "region": "North West",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -176,6 +189,7 @@
         "region": "Midlands",
         "streams": [
             "locker",
+            "carwash",
             "ev"
         ]
     },
@@ -195,7 +209,8 @@
         "postcode": "DN15 6TZ",
         "region": "Midlands",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -204,7 +219,8 @@
         "postcode": "NE33 2LR",
         "region": "North East",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     },
     {
@@ -213,7 +229,8 @@
         "postcode": "WN1 1YP",
         "region": "North West",
         "streams": [
-            "locker"
+            "locker",
+            "carwash"
         ]
     }
 ]

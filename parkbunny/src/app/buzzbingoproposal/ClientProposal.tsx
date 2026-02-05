@@ -3,9 +3,11 @@
 import React, { useState } from 'react'
 import type { BuzzBingoSite } from '@/lib/buzzbingo-logic'
 import { calculatePortfolioSummary, groupByRegion, formatCurrency, REVENUE_RATES } from '@/lib/buzzbingo-logic'
+import type { PostcodePlaces } from '@/lib/buzzbingo-places'
+import { calculatePortfolioDemandSummary } from '@/lib/buzzbingo-places'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { Lock, MapPin, Package, Car, Zap, ShoppingBag, Monitor, CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { Lock, MapPin, Package, Car, Zap, ShoppingBag, Monitor, CheckCircle, Clock, AlertCircle, TrendingUp, Building2, Utensils, Dumbbell } from 'lucide-react'
 
 const BuzzBingoMap = dynamic(() => import('./BuzzBingoMap'), {
     loading: () => <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">Loading Map...</div>,
@@ -16,9 +18,10 @@ const PASSWORD = 'nexusbuzz2026'
 
 interface Props {
     data: BuzzBingoSite[]
+    placesData: PostcodePlaces[]
 }
 
-export default function ClientProposal({ data }: Props) {
+export default function ClientProposal({ data, placesData }: Props) {
     const [authed, setAuthed] = useState(false)
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -38,7 +41,7 @@ export default function ClientProposal({ data }: Props) {
         return <LoginScreen password={password} setPassword={setPassword} error={error} onSubmit={handleLogin} />
     }
 
-    return <ProposalReport data={data} selectedSiteId={selectedSiteId} setSelectedSiteId={setSelectedSiteId} />
+    return <ProposalReport data={data} placesData={placesData} selectedSiteId={selectedSiteId} setSelectedSiteId={setSelectedSiteId} />
 }
 
 // ============ LOGIN SCREEN ============
@@ -103,11 +106,13 @@ function LoginScreen({ password, setPassword, error, onSubmit }: {
 }
 
 // ============ PROPOSAL REPORT ============
-function ProposalReport({ data, selectedSiteId, setSelectedSiteId }: {
+function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }: {
     data: BuzzBingoSite[]
+    placesData: PostcodePlaces[]
     selectedSiteId: string | null
     setSelectedSiteId: (id: string | null) => void
 }) {
+    const demandSummary = calculatePortfolioDemandSummary(placesData)
     const summary = calculatePortfolioSummary(data)
     const regionGroups = groupByRegion(data)
     const regionOrder = ['London', 'South East', 'South West', 'South Coast', 'East of England', 'Midlands', 'North West', 'Yorkshire', 'North East', 'Scotland']
@@ -117,12 +122,12 @@ function ProposalReport({ data, selectedSiteId, setSelectedSiteId }: {
             {/* Header */}
             <header className="bg-white border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Image src="/logo.png" alt="ParkBunny" width={120} height={40} className="h-8 w-auto" />
+                    <div className="flex items-center gap-4">
+                        <Image src="/logo.png" alt="ParkBunny" width={100} height={32} className="h-7 w-auto" />
                         <span className="text-gray-300">|</span>
                         <Image src="/groupnexus.jpeg" alt="Group Nexus" width={60} height={24} className="h-6 w-auto rounded" />
                         <span className="text-gray-300">|</span>
-                        <Image src="/buzzbingo.png" alt="Buzz Bingo" width={32} height={32} className="h-8 w-auto" />
+                        <Image src="/buzzbingo.png" alt="Buzz Bingo" width={56} height={56} className="h-12 w-auto" />
                     </div>
                     <div className="text-right text-sm text-gray-600">
                         <p className="font-medium">Revenue Uplift Proposal</p>
@@ -178,11 +183,63 @@ function ProposalReport({ data, selectedSiteId, setSelectedSiteId }: {
                     </div>
                 </section>
 
-                {/* ============ REVENUE STREAMS ============ */}
-                <section className="space-y-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Additional Revenue Streams</h2>
+                {/* ============ LOCAL DEMAND ANALYSIS ============ */}
+                <section className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div className="p-6 border-b bg-gradient-to-r from-slate-50 to-white">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 text-red-500" />
+                            Local Demand Analysis
+                        </h2>
+                        <p className="text-sm text-gray-600 mt-1">Google Places data showing nearby businesses and footfall drivers</p>
+                    </div>
+                    <div className="p-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div className="bg-slate-50 rounded-lg p-4 text-center">
+                                <p className="text-3xl font-bold text-slate-900">{demandSummary.totalBusinesses}</p>
+                                <p className="text-sm text-gray-600">Total Nearby Businesses</p>
+                            </div>
+                            <div className="bg-slate-50 rounded-lg p-4 text-center">
+                                <p className="text-3xl font-bold text-slate-900">{demandSummary.avgDemandScore}/10</p>
+                                <p className="text-sm text-gray-600">Avg. Demand Score</p>
+                            </div>
+                            {demandSummary.topCategories.slice(0, 2).map((cat) => (
+                                <div key={cat.group} className="bg-slate-50 rounded-lg p-4 text-center">
+                                    <p className="text-3xl font-bold text-slate-900">{cat.count}</p>
+                                    <p className="text-sm text-gray-600">{cat.group}</p>
+                                </div>
+                            ))}
+                        </div>
 
-                    {/* LOCKERS */}
+                        {/* Top Sites by Demand */}
+                        <h3 className="font-medium mb-3 flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-gray-500" />
+                            Sites by Demand Score
+                        </h3>
+                        <div className="grid md:grid-cols-3 gap-3">
+                            {placesData
+                                .sort((a, b) => b.demandScore - a.demandScore)
+                                .slice(0, 6)
+                                .map((site) => (
+                                    <div key={site.postcode} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <p className="font-medium text-sm">{site.siteName}</p>
+                                            <p className="text-xs text-gray-500">{site.postcode}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-lg font-bold ${site.demandScore >= 7 ? 'text-green-600' : site.demandScore >= 5 ? 'text-yellow-600' : 'text-gray-600'}`}>
+                                                {site.demandScore}/10
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-4">*Demand score based on nearby businesses within 1 mile radius via Google Places API</p>
+                    </div>
+                </section>
+
+                {/* ============ ADDITIONAL PORTFOLIO UPLIFT ============ */}
+                <section className="space-y-6">
+                    <h2 className="text-2xl font-bold text-gray-900">Additional Portfolio Uplift</h2>
                     <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                         <div className="md:grid md:grid-cols-2">
                             <div className="p-6">
@@ -215,39 +272,38 @@ function ProposalReport({ data, selectedSiteId, setSelectedSiteId }: {
                     </div>
 
                     {/* SELF-SERVICE CAR WASH */}
-                    <div className="bg-white rounded-xl shadow-sm border p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Car className="w-6 h-6 text-blue-600" />
-                            <h3 className="text-xl font-semibold">Self-Service Car Wash</h3>
-                            <span className="ml-auto bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">Subject to Survey</span>
-                        </div>
-                        <p className="text-gray-600 mb-4">Interest confirmed for 6 sites. All hardware supplied, maintained, and insured including liquids.</p>
+                    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                        <div className="md:grid md:grid-cols-2">
+                            <div className="p-6">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Car className="w-6 h-6 text-blue-600" />
+                                    <h3 className="text-xl font-semibold">Self-Service Car Wash</h3>
+                                    <span className="ml-auto bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Portfolio-Wide</span>
+                                </div>
+                                <p className="text-gray-600 mb-4">Available across all 23 Buzz Bingo locations. All hardware supplied, maintained, and insured including liquids.</p>
 
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
                                 <h4 className="font-medium mb-2">Key Benefits</h4>
-                                <ul className="space-y-2 text-sm text-gray-700">
+                                <ul className="space-y-2 text-sm text-gray-700 mb-4">
                                     <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> <strong>ZERO CAPEX</strong> for Buzz Bingo</li>
                                     <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> All hardware supplied & maintained</li>
                                     <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Fully insured including liquids</li>
                                     <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Revenue share basis</li>
                                 </ul>
-                            </div>
-                            <div className="bg-blue-50 rounded-lg p-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-gray-600">Approx. per site/year</span>
-                                    <span className="font-semibold text-blue-700">~{formatCurrency(REVENUE_RATES.carwash)}</span>
-                                </div>
-                                <div className="flex justify-between items-center mt-2 pt-2 border-t border-blue-200">
-                                    <span className="font-medium">Potential ({summary.carwash.count} sites)</span>
-                                    <span className="text-xl font-bold text-blue-700">{formatCurrency(summary.carwash.annual)}/yr</span>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-2">Final revenue dependent on space and survey results</p>
-                            </div>
-                        </div>
 
-                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                            <p className="text-sm text-gray-600"><strong>Target Sites:</strong> Birmingham Great Park, Bristol Fishponds, Coventry Savoy, Fenton, Lordshill, Peterborough</p>
+                                <div className="bg-blue-50 rounded-lg p-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm text-gray-600">Approx. per site/year</span>
+                                        <span className="font-semibold text-blue-700">~{formatCurrency(REVENUE_RATES.carwash)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-blue-200">
+                                        <span className="font-medium">Portfolio Total ({summary.carwash.count} sites)</span>
+                                        <span className="text-xl font-bold text-blue-700">{formatCurrency(summary.carwash.annual)}/yr</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="relative h-64 md:h-auto bg-gray-100">
+                                <Image src="/selfservicecarwash.webp" alt="Self-Service Car Wash" fill className="object-cover" />
+                            </div>
                         </div>
                     </div>
 
