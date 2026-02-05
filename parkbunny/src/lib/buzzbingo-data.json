@@ -1,0 +1,219 @@
+[
+    {
+        "id": "barkingside",
+        "name": "Barkingside",
+        "postcode": "IG6 2EF",
+        "region": "London",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "barnsley",
+        "name": "Barnsley",
+        "postcode": "S71 1AY",
+        "region": "Yorkshire",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "birmingham-great-park",
+        "name": "Birmingham Great Park",
+        "postcode": "B45 9WA",
+        "region": "Midlands",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "blackburn",
+        "name": "Blackburn",
+        "postcode": "BB1 6AF",
+        "region": "North West",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "brighton",
+        "name": "Brighton",
+        "postcode": "BN2 0LE",
+        "region": "South East",
+        "streams": [
+            "locker",
+            "ev"
+        ]
+    },
+    {
+        "id": "bristol-fishponds",
+        "name": "Bristol Fishponds",
+        "postcode": "BS16 3BQ",
+        "region": "South West",
+        "streams": [
+            "locker",
+            "carwash",
+            "ev"
+        ]
+    },
+    {
+        "id": "burnley",
+        "name": "Burnley",
+        "postcode": "BB11 2EJ",
+        "region": "North West",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "clacton",
+        "name": "Clacton",
+        "postcode": "CO15 1NJ",
+        "region": "South East",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "coatbridge",
+        "name": "Coatbridge",
+        "postcode": "ML5 3SQ",
+        "region": "Scotland",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "coventry-savoy",
+        "name": "Coventry Savoy",
+        "postcode": "CV6 3BU",
+        "region": "Midlands",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "coventry-walsgrave",
+        "name": "Coventry Walsgrave",
+        "postcode": "CV2 2QQ",
+        "region": "Midlands",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "derby-city",
+        "name": "Derby City",
+        "postcode": "DE1 2LD",
+        "region": "Midlands",
+        "streams": [
+            "locker",
+            "ev"
+        ]
+    },
+    {
+        "id": "falkirk",
+        "name": "Falkirk",
+        "postcode": "FK1 1RJ",
+        "region": "Scotland",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "fenton",
+        "name": "Fenton",
+        "postcode": "ST4 2HX",
+        "region": "Midlands",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "kingsbury-road",
+        "name": "Kingsbury Road",
+        "postcode": "B24 9QB",
+        "region": "Midlands",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "lordshill",
+        "name": "Lordshill",
+        "postcode": "SO16 8HY",
+        "region": "South Coast",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "middlesbrough",
+        "name": "Middlesbrough",
+        "postcode": "TS3 6HB",
+        "region": "North East",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "morecambe",
+        "name": "Morecambe",
+        "postcode": "LA4 5HY",
+        "region": "North West",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "nottingham-top-valley",
+        "name": "Nottingham Top Valley",
+        "postcode": "NG5 9RU",
+        "region": "Midlands",
+        "streams": [
+            "locker",
+            "ev"
+        ]
+    },
+    {
+        "id": "peterborough",
+        "name": "Peterborough",
+        "postcode": "PE3 9TA",
+        "region": "East of England",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "scunthorpe",
+        "name": "Scunthorpe",
+        "postcode": "DN15 6TZ",
+        "region": "Midlands",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "south-shields",
+        "name": "South Shields",
+        "postcode": "NE33 2LR",
+        "region": "North East",
+        "streams": [
+            "locker"
+        ]
+    },
+    {
+        "id": "wigan-town",
+        "name": "Wigan Town (Rear Carpark)",
+        "postcode": "WN1 1YP",
+        "region": "North West",
+        "streams": [
+            "locker"
+        ]
+    }
+]
