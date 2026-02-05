@@ -123,11 +123,11 @@ function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }:
             <header className="bg-white border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Image src="/logo.png" alt="ParkBunny" width={100} height={32} className="h-7 w-auto" />
+                        <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto" />
                         <span className="text-gray-300">|</span>
-                        <Image src="/groupnexus.jpeg" alt="Group Nexus" width={60} height={24} className="h-6 w-auto rounded" />
+                        <Image src="/groupnexus.jpeg" alt="Group Nexus" width={120} height={48} className="h-12 w-auto rounded" />
                         <span className="text-gray-300">|</span>
-                        <Image src="/buzzbingo.png" alt="Buzz Bingo" width={56} height={56} className="h-12 w-auto" />
+                        <Image src="/buzzbingo.png" alt="Buzz Bingo" width={100} height={100} className="h-20 w-auto" />
                     </div>
                     <div className="text-right text-sm text-gray-600">
                         <p className="font-medium">Revenue Uplift Proposal</p>
@@ -222,10 +222,9 @@ function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }:
                             <Building2 className="w-4 h-4 text-gray-500" />
                             Sites by Projected Uplift
                         </h3>
-                        <div className="grid md:grid-cols-3 gap-3">
+                        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[600px] overflow-y-auto">
                             {[...placesData]
                                 .sort((a, b) => b.localOffersUpliftValue - a.localOffersUpliftValue)
-                                .slice(0, 6)
                                 .map((site) => (
                                     <div key={site.postcode} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div>
