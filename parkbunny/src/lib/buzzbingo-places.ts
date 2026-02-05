@@ -13,14 +13,17 @@ const PLACES_FIELD_MASK = [
     'places.userRatingCount',
 ].join(',')
 
-// Simplified categories for portfolio overview
+// Simplified categories for portfolio overview with uplift rates
 const DEMAND_CATEGORIES = [
-    { group: 'Food & Drink', types: ['restaurant', 'cafe', 'bar', 'fast_food_restaurant'] },
-    { group: 'Shopping', types: ['store', 'shopping_mall', 'supermarket'] },
-    { group: 'Health & Fitness', types: ['gym', 'spa', 'doctor', 'pharmacy'] },
-    { group: 'Entertainment', types: ['movie_theater', 'bowling_alley', 'amusement_park'] },
-    { group: 'Services', types: ['bank', 'post_office', 'car_repair'] },
+    { group: 'Food & Drink', types: ['restaurant', 'cafe', 'bar', 'fast_food_restaurant'], signUp: 0.05, uplift: 0.08 },
+    { group: 'Shopping', types: ['store', 'shopping_mall', 'supermarket'], signUp: 0.05, uplift: 0.06 },
+    { group: 'Health & Fitness', types: ['gym', 'spa', 'doctor', 'pharmacy'], signUp: 0.05, uplift: 0.06 },
+    { group: 'Entertainment', types: ['movie_theater', 'bowling_alley', 'amusement_park'], signUp: 0.05, uplift: 0.07 },
+    { group: 'Services', types: ['bank', 'post_office', 'car_repair'], signUp: 0.05, uplift: 0.05 },
 ]
+
+// Baseline parking revenue per site
+const BASELINE_REVENUE_PER_SITE = 50_000
 
 export type PlaceSummary = {
     id: string
@@ -34,6 +37,9 @@ export type CategorySummary = {
     group: string
     count: number
     topPlaces: PlaceSummary[]
+    signUp: number
+    uplift: number
+    categoryUpliftValue: number // count × signUp × uplift × baseline
 }
 
 export type PostcodePlaces = {
@@ -42,6 +48,10 @@ export type PostcodePlaces = {
     categories: CategorySummary[]
     totalPlaces: number
     demandScore: number // 1-10 based on total nearby businesses
+    // Uplift calculations
+    baselineRevenue: number
+    localOffersUpliftValue: number // £ amount
+    localOffersUpliftPercent: number // % increase
 }
 
 async function geocodePostcode(postcode: string): Promise<{ lat: number; lng: number } | null> {
@@ -116,11 +126,15 @@ export async function fetchPlacesForPostcode(postcode: string, siteName: string)
             categories: [],
             totalPlaces: 0,
             demandScore: 1,
+            baselineRevenue: BASELINE_REVENUE_PER_SITE,
+            localOffersUpliftValue: 0,
+            localOffersUpliftPercent: 0,
         }
     }
 
     const categories: CategorySummary[] = []
     let totalPlaces = 0
+    let totalUpliftPercent = 0
 
     for (const cat of DEMAND_CATEGORIES) {
         const places = await fetchNearbyPlaces(geo.lat, geo.lng, cat.types, 10)
@@ -132,13 +146,25 @@ export async function fetchPlacesForPostcode(postcode: string, siteName: string)
             reviewCount: p.userRatingCount,
         }))
 
+        // Calculate uplift contribution for this category
+        // Formula: count × signUp% × uplift% × baseline
+        const categoryUpliftPercent = places.length * cat.signUp * cat.uplift
+        const categoryUpliftValue = Math.round(BASELINE_REVENUE_PER_SITE * categoryUpliftPercent)
+        totalUpliftPercent += categoryUpliftPercent
+
         categories.push({
             group: cat.group,
             count: places.length,
             topPlaces,
+            signUp: cat.signUp,
+            uplift: cat.uplift,
+            categoryUpliftValue,
         })
         totalPlaces += places.length
     }
+
+    const localOffersUpliftValue = Math.round(BASELINE_REVENUE_PER_SITE * totalUpliftPercent)
+    const localOffersUpliftPercent = Math.round(totalUpliftPercent * 1000) / 10 // e.g., 0.25 → 25.0%
 
     return {
         postcode,
@@ -146,6 +172,9 @@ export async function fetchPlacesForPostcode(postcode: string, siteName: string)
         categories,
         totalPlaces,
         demandScore: calculateDemandScore(totalPlaces),
+        baselineRevenue: BASELINE_REVENUE_PER_SITE,
+        localOffersUpliftValue,
+        localOffersUpliftPercent,
     }
 }
 
@@ -185,10 +214,22 @@ export function calculatePortfolioDemandSummary(placesData: PostcodePlaces[]) {
         .slice(0, 3)
         .map(([group, count]) => ({ group, count }))
 
+    // Portfolio-wide revenue calculations
+    const totalBaselineRevenue = placesData.reduce((sum, p) => sum + p.baselineRevenue, 0)
+    const totalLocalOffersUplift = placesData.reduce((sum, p) => sum + p.localOffersUpliftValue, 0)
+    const avgUpliftPercent = totalSites > 0
+        ? Math.round(placesData.reduce((sum, p) => sum + p.localOffersUpliftPercent, 0) / totalSites * 10) / 10
+        : 0
+
     return {
         totalSites,
         avgDemandScore,
         topCategories,
         totalBusinesses: Object.values(categoryTotals).reduce((a, b) => a + b, 0),
+        // Portfolio revenue totals
+        totalBaselineRevenue,
+        totalLocalOffersUplift,
+        avgUpliftPercent,
     }
 }
+
