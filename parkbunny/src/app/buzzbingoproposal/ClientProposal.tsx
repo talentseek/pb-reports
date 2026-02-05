@@ -183,57 +183,63 @@ function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }:
                     </div>
                 </section>
 
-                {/* ============ LOCAL DEMAND ANALYSIS ============ */}
+                {/* ============ LOCAL OFFERS UPLIFT ============ */}
                 <section className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                    <div className="p-6 border-b bg-gradient-to-r from-slate-50 to-white">
+                    <div className="p-6 border-b bg-gradient-to-r from-green-50 to-white">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-red-500" />
-                            Local Demand Analysis
+                            <TrendingUp className="w-5 h-5 text-green-600" />
+                            Local Offers Uplift
                         </h2>
-                        <p className="text-sm text-gray-600 mt-1">Google Places data showing nearby businesses and footfall drivers</p>
+                        <p className="text-sm text-gray-600 mt-1">Projected revenue increase from nearby business partnerships</p>
                     </div>
                     <div className="p-6">
+                        {/* Portfolio Summary Metrics */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             <div className="bg-slate-50 rounded-lg p-4 text-center">
-                                <p className="text-3xl font-bold text-slate-900">{demandSummary.totalBusinesses}</p>
-                                <p className="text-sm text-gray-600">Total Nearby Businesses</p>
+                                <p className="text-2xl font-bold text-slate-900">{formatCurrency(demandSummary.totalBaselineRevenue)}</p>
+                                <p className="text-sm text-gray-600">Portfolio Baseline</p>
+                                <p className="text-xs text-gray-400">Current parking revenue</p>
+                            </div>
+                            <div className="bg-green-50 rounded-lg p-4 text-center border border-green-200">
+                                <p className="text-2xl font-bold text-green-700">+{formatCurrency(demandSummary.totalLocalOffersUplift)}</p>
+                                <p className="text-sm text-gray-600">Projected Uplift</p>
+                                <p className="text-xs text-gray-400">From local offers</p>
                             </div>
                             <div className="bg-slate-50 rounded-lg p-4 text-center">
-                                <p className="text-3xl font-bold text-slate-900">{demandSummary.avgDemandScore}/10</p>
-                                <p className="text-sm text-gray-600">Avg. Demand Score</p>
+                                <p className="text-2xl font-bold text-slate-900">+{demandSummary.avgUpliftPercent}%</p>
+                                <p className="text-sm text-gray-600">Avg. Uplift</p>
+                                <p className="text-xs text-gray-400">Per site</p>
                             </div>
-                            {demandSummary.topCategories.slice(0, 2).map((cat) => (
-                                <div key={cat.group} className="bg-slate-50 rounded-lg p-4 text-center">
-                                    <p className="text-3xl font-bold text-slate-900">{cat.count}</p>
-                                    <p className="text-sm text-gray-600">{cat.group}</p>
-                                </div>
-                            ))}
+                            <div className="bg-slate-50 rounded-lg p-4 text-center">
+                                <p className="text-2xl font-bold text-slate-900">{demandSummary.totalBusinesses}</p>
+                                <p className="text-sm text-gray-600">Partner Businesses</p>
+                                <p className="text-xs text-gray-400">Identified nearby</p>
+                            </div>
                         </div>
 
-                        {/* Top Sites by Demand */}
+                        {/* Per-Site Uplift Breakdown */}
                         <h3 className="font-medium mb-3 flex items-center gap-2">
                             <Building2 className="w-4 h-4 text-gray-500" />
-                            Sites by Demand Score
+                            Sites by Projected Uplift
                         </h3>
                         <div className="grid md:grid-cols-3 gap-3">
-                            {placesData
-                                .sort((a, b) => b.demandScore - a.demandScore)
+                            {[...placesData]
+                                .sort((a, b) => b.localOffersUpliftValue - a.localOffersUpliftValue)
                                 .slice(0, 6)
                                 .map((site) => (
                                     <div key={site.postcode} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div>
                                             <p className="font-medium text-sm">{site.siteName}</p>
-                                            <p className="text-xs text-gray-500">{site.postcode}</p>
+                                            <p className="text-xs text-gray-500">{site.totalPlaces} businesses nearby</p>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-lg font-bold ${site.demandScore >= 7 ? 'text-green-600' : site.demandScore >= 5 ? 'text-yellow-600' : 'text-gray-600'}`}>
-                                                {site.demandScore}/10
-                                            </span>
+                                        <div className="text-right">
+                                            <p className="font-bold text-green-600">+{formatCurrency(site.localOffersUpliftValue)}</p>
+                                            <p className="text-xs text-gray-500">+{site.localOffersUpliftPercent}%</p>
                                         </div>
                                     </div>
                                 ))}
                         </div>
-                        <p className="text-xs text-gray-500 mt-4">*Demand score based on nearby businesses within 1 mile radius via Google Places API</p>
+                        <p className="text-xs text-gray-500 mt-4">*Uplift calculated using industry-standard formula: business count × sign-up rate × uplift rate × baseline revenue</p>
                     </div>
                 </section>
 
@@ -420,17 +426,32 @@ function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }:
                                 </tr>
                             </thead>
                             <tbody className="text-white/90">
+                                {/* BASELINE */}
+                                <tr className="border-b border-white/10 bg-white/5">
+                                    <td className="py-3 pr-4 flex items-center gap-2"><Monitor className="w-4 h-4 text-slate-400" /> Portfolio Baseline</td>
+                                    <td className="py-3 px-4 text-center">{demandSummary.totalSites}</td>
+                                    <td className="py-3 px-4 text-right font-semibold">{formatCurrency(demandSummary.totalBaselineRevenue)}</td>
+                                    <td className="py-3 pl-4 text-right"><span className="bg-slate-500/20 text-slate-300 text-xs px-2 py-1 rounded">Current</span></td>
+                                </tr>
+                                {/* LOCAL OFFERS UPLIFT */}
+                                <tr className="border-b border-white/10 bg-green-900/20">
+                                    <td className="py-3 pr-4 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-green-400" /> Local Offers Uplift</td>
+                                    <td className="py-3 px-4 text-center">{demandSummary.totalSites}</td>
+                                    <td className="py-3 px-4 text-right font-semibold text-green-400">+{formatCurrency(demandSummary.totalLocalOffersUplift)}</td>
+                                    <td className="py-3 pl-4 text-right"><span className="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded">+{demandSummary.avgUpliftPercent}%</span></td>
+                                </tr>
+                                {/* ANCILLARY STREAMS */}
                                 <tr className="border-b border-white/10">
                                     <td className="py-3 pr-4 flex items-center gap-2"><Package className="w-4 h-4 text-indigo-400" /> Smart Lockers</td>
                                     <td className="py-3 px-4 text-center">{summary.locker.count}</td>
-                                    <td className="py-3 px-4 text-right font-semibold">{formatCurrency(summary.locker.annual)}</td>
+                                    <td className="py-3 px-4 text-right font-semibold">+{formatCurrency(summary.locker.annual)}</td>
                                     <td className="py-3 pl-4 text-right"><span className="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded">Confirmed</span></td>
                                 </tr>
                                 <tr className="border-b border-white/10">
                                     <td className="py-3 pr-4 flex items-center gap-2"><Car className="w-4 h-4 text-blue-400" /> Self-Service Car Wash</td>
                                     <td className="py-3 px-4 text-center">{summary.carwash.count}</td>
-                                    <td className="py-3 px-4 text-right font-semibold">{formatCurrency(summary.carwash.annual)}</td>
-                                    <td className="py-3 pl-4 text-right"><span className="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded">Survey</span></td>
+                                    <td className="py-3 px-4 text-right font-semibold">+{formatCurrency(summary.carwash.annual)}</td>
+                                    <td className="py-3 pl-4 text-right"><span className="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded">Portfolio-Wide</span></td>
                                 </tr>
                                 <tr className="border-b border-white/10">
                                     <td className="py-3 pr-4 flex items-center gap-2"><Zap className="w-4 h-4 text-emerald-400" /> EV Charging (RevShare)</td>
@@ -447,15 +468,15 @@ function ProposalReport({ data, placesData, selectedSiteId, setSelectedSiteId }:
                             </tbody>
                             <tfoot>
                                 <tr className="border-t-2 border-white/30">
-                                    <td className="py-4 pr-4 font-bold text-lg">Confirmed Annual Uplift</td>
-                                    <td className="py-4 px-4 text-center font-bold">{summary.locker.count}</td>
-                                    <td className="py-4 px-4 text-right font-bold text-2xl text-green-400">{formatCurrency(summary.locker.annual)}</td>
+                                    <td className="py-4 pr-4 font-bold text-lg">Total Revenue Opportunity</td>
+                                    <td className="py-4 px-4 text-center font-bold">{demandSummary.totalSites}</td>
+                                    <td className="py-4 px-4 text-right font-bold text-2xl text-green-400">{formatCurrency(demandSummary.totalBaselineRevenue + demandSummary.totalLocalOffersUplift + summary.locker.annual + summary.carwash.annual)}</td>
                                     <td className="py-4 pl-4"></td>
                                 </tr>
                                 <tr>
-                                    <td className="py-2 pr-4 text-white/70">Potential (with surveys)</td>
-                                    <td className="py-2 px-4 text-center text-white/70">{summary.locker.count + summary.carwash.count}+</td>
-                                    <td className="py-2 px-4 text-right font-semibold text-white/70">{formatCurrency(summary.locker.annual + summary.carwash.annual)}+</td>
+                                    <td className="py-2 pr-4 text-white/70">Uplift from baseline</td>
+                                    <td className="py-2 px-4 text-center text-white/70"></td>
+                                    <td className="py-2 px-4 text-right font-semibold text-white/70">+{formatCurrency(demandSummary.totalLocalOffersUplift + summary.locker.annual + summary.carwash.annual)}</td>
                                     <td className="py-2 pl-4"></td>
                                 </tr>
                             </tfoot>
