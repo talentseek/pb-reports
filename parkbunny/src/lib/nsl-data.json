@@ -1,0 +1,122 @@
+[
+    {
+        "id": "blenheim-centre",
+        "name": "Blenheim Centre, 632 Prince Regent Rd",
+        "postcode": "TW3 1NN",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "bell-road",
+        "name": "Bell Road",
+        "postcode": "TW3 3NX",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "bethany-waye",
+        "name": "Bethany Waye",
+        "postcode": "TW14 8BN",
+        "region": "Feltham",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "bridge-house",
+        "name": "Bridge House, Crendon Ct",
+        "postcode": "TW13 5DT",
+        "region": "Feltham",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "chiswick-common",
+        "name": "Chiswick Common Road",
+        "postcode": "W4 1SA",
+        "region": "Chiswick",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "inwood-road",
+        "name": "Inwood Road",
+        "postcode": "TW3 1XA",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "montague-rd-east",
+        "name": "11 Montague Rd East",
+        "postcode": "TW3 1JY",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "montague-rd-west",
+        "name": "26 Montague Rd West",
+        "postcode": "TW3 1LD",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "prince-regent-rd",
+        "name": "15 Prince Regent Rd",
+        "postcode": "TW3 1NU",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "redlees",
+        "name": "Redlees",
+        "postcode": "TW7 6EE",
+        "region": "Hounslow",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "wisdom-court",
+        "name": "Wisdom Court, 65 South St",
+        "postcode": "TW7 7AA",
+        "region": "Isleworth",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "chiswick-house",
+        "name": "Chiswick House, A4",
+        "postcode": "W4 2AQ",
+        "region": "Chiswick",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    }
+]
