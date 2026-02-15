@@ -58,7 +58,7 @@ function LoginScreen({ password, setPassword, error, onSubmit }: {
                         <div className="flex items-center justify-center gap-4 mt-4 text-xs text-slate-400">
                             <span className="flex items-center gap-1"><Image src="/logo.png" alt="ParkBunny" width={16} height={16} className="rounded" /> ParkBunny</span>
                             <span className="text-slate-300">|</span>
-                            <span>Agena Group</span>
+                            <span className="flex items-center gap-1"><Image src="/agena-group.png" alt="Agena Group" width={64} height={20} className="h-4 w-auto opacity-60" /></span>
                         </div>
                     </div>
                     <form onSubmit={onSubmit} className="space-y-4">
@@ -109,7 +109,7 @@ function MarinaDashboard() {
                     <div className="flex items-center gap-4 text-xs text-slate-400">
                         <span className="flex items-center gap-1.5"><Image src="/logo.png" alt="ParkBunny" width={20} height={20} className="rounded" /> <span className="hidden sm:inline">ParkBunny</span></span>
                         <span className="text-slate-200">|</span>
-                        <span className="font-medium text-slate-500">Agena Group</span>
+                        <span className="flex items-center gap-1.5"><Image src="/agena-group.png" alt="Agena Group" width={80} height={24} className="h-5 w-auto opacity-60" /></span>
                     </div>
                 </div>
                 {/* Tab Navigation */}
@@ -118,8 +118,8 @@ function MarinaDashboard() {
                         {TABS.map(tab => (
                             <button key={tab.id} onClick={() => switchTab(tab.id)}
                                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-t-xl transition-all cursor-pointer ${activeTab === tab.id
-                                        ? 'bg-gradient-to-b from-sky-50 to-white text-sky-600 border border-sky-200 border-b-white -mb-px shadow-sm'
-                                        : 'text-slate-500 hover:text-sky-500 hover:bg-sky-50/50'
+                                    ? 'bg-gradient-to-b from-sky-50 to-white text-sky-600 border border-sky-200 border-b-white -mb-px shadow-sm'
+                                    : 'text-slate-500 hover:text-sky-500 hover:bg-sky-50/50'
                                     }`} style={{ fontFamily: 'Fredoka, sans-serif' }}>
                                 {tabIcons[tab.id]}
                                 <span className="hidden sm:inline">{tab.label}</span>
