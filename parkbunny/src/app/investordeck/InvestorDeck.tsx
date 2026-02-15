@@ -9,16 +9,16 @@ import {
     MapPin, Zap, Package, Monitor, Car,
     ShoppingBag, Globe, Mail, Rocket,
     Target, BarChart3, Handshake,
-    Sparkles, Shield, Bot, Clapperboard
+    Sparkles, Shield, Bot, Clapperboard, ImageIcon
 } from 'lucide-react'
 import {
     DECK_PASSWORD, HERO, TRACTION, PROBLEM_DRIVERS, PROBLEM_OPERATORS,
     SOLUTION_DRIVERS, SOLUTION_OPERATORS, HOW_IT_WORKS, REVENUE_SIMPLIFIED,
     ADDITIONAL_STREAMS, PARTNERS, TEAM, INVESTMENT, BUSINESS_ACTIVATION,
-    AI_OPERATIONS, INTERNATIONAL
+    AI_OPERATIONS, INTERNATIONAL, COMMISSION_NOTE, TRACK_RECORD
 } from '@/lib/investor-data'
 
-const TOTAL_SLIDES = 14
+const TOTAL_SLIDES = 15
 
 export default function InvestorDeck() {
     const [authed, setAuthed] = useState(false)
@@ -188,6 +188,12 @@ function DeckPresentation() {
                 <div className="flex flex-col items-center justify-center text-center relative">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px]" />
                     <div className="relative z-10">
+                        <FadeIn>
+                            {/* Bunny mascot — replace /bunny-mascot.png with actual asset */}
+                            <div className="w-28 h-28 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-2 border-amber-500/30 flex items-center justify-center overflow-hidden">
+                                <Image src="/bunny-mascot.png" alt="ParkBunny Mascot" width={112} height={112} className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<span class="text-5xl">🐰</span>' }} />
+                            </div>
+                        </FadeIn>
                         <FadeIn>
                             <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto mx-auto mb-6 rounded-lg" />
                         </FadeIn>
@@ -429,6 +435,12 @@ function DeckPresentation() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Track Record — JustPark proof point */}
+                            <div className="bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-2xl p-5 mt-4">
+                                <p className="text-emerald-400 font-semibold text-sm mb-1">{TRACK_RECORD.headline}</p>
+                                <p className="text-gray-300 text-sm">{TRACK_RECORD.detail}</p>
+                            </div>
                         </div>
                     </FadeIn>
 
@@ -466,33 +478,36 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 8: ADDITIONAL REVENUE STREAMS ═══ */}
+            {/* ═══ SLIDE 8: WE ADD VALUE FOR YOUR CLIENTS ═══ */}
             <Slide ref={setSlideRef(7)}>
-                <SlideHeader number="07" title="Additional Revenue Streams for Car Park Owners" subtitle="Revenue generators for underutilised areas — it's so much more than parking" />
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                <SlideHeader number="07" title="We Add Value & Revenue for Our Clients" subtitle="Unlocking revenue from underutilised car park spaces" />
+                <div className="grid grid-cols-2 gap-6 mt-8">
                     {ADDITIONAL_STREAMS.map((stream, i) => {
                         const icons = [
                             <Package key="pkg" className="w-6 h-6" />,
                             <Monitor key="mon" className="w-6 h-6" />,
                             <Car key="car" className="w-6 h-6" />,
-                            <Clapperboard key="clap" className="w-6 h-6" />,
-                            <ShoppingBag key="shop" className="w-6 h-6" />,
                             <Zap key="zap" className="w-6 h-6" />,
                         ]
                         return (
                             <FadeIn key={i} delay={i * 100}>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-amber-500/20 transition-colors">
+                                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-amber-500/20 transition-colors">
                                     <div className="w-10 h-10 mb-3 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400">
                                         {icons[i]}
                                     </div>
-                                    <p className="text-white font-semibold text-sm">{stream.name}</p>
-                                    <p className="text-amber-400 font-bold text-lg mt-1">{stream.annual}</p>
-                                    <p className="text-gray-500 text-xs mt-1">{stream.detail}</p>
+                                    <p className="text-white font-semibold">{stream.name}</p>
+                                    <p className="text-amber-400 font-bold text-2xl mt-2">{stream.annual}</p>
+                                    <p className="text-gray-500 text-sm mt-2">{stream.detail}</p>
                                 </div>
                             </FadeIn>
                         )
                     })}
                 </div>
+                <FadeIn delay={500}>
+                    <div className="mt-8 bg-gradient-to-r from-amber-500/10 to-amber-600/5 border border-amber-500/30 rounded-2xl p-6 text-center">
+                        <p className="text-amber-400 font-semibold text-lg">{COMMISSION_NOTE}</p>
+                    </div>
+                </FadeIn>
             </Slide>
 
             {/* ═══ SLIDE 9: AI & TECHNOLOGY ═══ */}
@@ -666,9 +681,46 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 13: THE ASK ═══ */}
+            {/* ═══ SLIDE 13: GALLERY — Branding & Marketing ═══ */}
             <Slide ref={setSlideRef(12)}>
-                <SlideHeader number="12" title="The Investment Ask" subtitle={`We're looking for ${INVESTMENT.amount} at a ${INVESTMENT.valuation}`} />
+                <SlideHeader number="13" title="ParkBunny in Action" subtitle="Branding, marketing, and product in the wild" />
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                    {[
+                        { label: 'App Screenshot', src: '/gallery/app-screenshot.png' },
+                        { label: 'Bunny Cartoon', src: '/gallery/bunny-cartoon.png' },
+                        { label: 'Marketing Post', src: '/gallery/marketing-post.png' },
+                        { label: 'Social Campaign', src: '/gallery/social-campaign.png' },
+                        { label: 'Brand Assets', src: '/gallery/brand-assets.png' },
+                        { label: 'Product Demo', src: '/gallery/product-demo.png' },
+                    ].map((item, i) => (
+                        <FadeIn key={i} delay={i * 100}>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors group">
+                                <div className="aspect-[4/3] bg-gradient-to-br from-amber-500/5 to-blue-500/5 flex items-center justify-center relative">
+                                    <Image
+                                        src={item.src}
+                                        alt={item.label}
+                                        fill
+                                        className="object-cover opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                                    />
+                                    <div className="flex flex-col items-center gap-2 text-gray-500">
+                                        <ImageIcon className="w-8 h-8" />
+                                        <span className="text-xs">{item.label}</span>
+                                    </div>
+                                </div>
+                                <div className="p-3">
+                                    <p className="text-white text-sm font-medium">{item.label}</p>
+                                </div>
+                            </div>
+                        </FadeIn>
+                    ))}
+                </div>
+                <p className="text-gray-500 text-xs text-center mt-6">Images to be replaced with actual ParkBunny assets</p>
+            </Slide>
+
+            {/* ═══ SLIDE 14: INVESTMENT ASK ═══ */}
+            <Slide ref={setSlideRef(13)}>
+                <SlideHeader number="14" title="The Investment Ask" subtitle={`We're looking for ${INVESTMENT.amount} at a ${INVESTMENT.valuation}`} />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
                         <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-2xl p-8 flex flex-col justify-center">
@@ -714,8 +766,8 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 14: CONTACT ═══ */}
-            <Slide ref={setSlideRef(13)}>
+            {/* ═══ SLIDE 15: CONTACT ═══ */}
+            <Slide ref={setSlideRef(14)}>
                 <div className="flex flex-col items-center justify-center text-center h-full">
                     <FadeIn>
                         <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto mx-auto mb-6 rounded-lg" />
