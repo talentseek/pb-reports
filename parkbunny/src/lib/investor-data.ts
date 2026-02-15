@@ -1,10 +1,11 @@
 // ParkBunny Investor Deck — Static Data
-// All figures sourced from ParkBunny-Investor-Deck-V6-JANUARY26.pdf
+// Updated Feb 2026 with CEO feedback
 
 export interface TeamMember {
     name: string
     role: string
     initials: string
+    photo: string
     credentials: string[]
 }
 
@@ -12,6 +13,7 @@ export interface Partner {
     name: string
     description: string
     sites?: string
+    logo?: string
 }
 
 export interface RevenueStream {
@@ -26,13 +28,12 @@ export const HERO = {
     headline: 'Parking that rewards drivers.',
     subheadline: 'Technology that drives revenue.',
     tagline: 'A platform built for the future of real-estate activation.',
-    raiseAmount: '£1M',
-    equity: '20%',
-    valuation: '£5M pre-money',
+    raiseAmount: '£400k',
+    valuation: '£4M pre-money',
 }
 
 export const TRACTION = {
-    liveSites: '40+',
+    liveSites: '50+',
     pipeline: '150+',
     councilCoverage: '80%',
     shoppingCentres: '60',
@@ -58,7 +59,7 @@ export const PROBLEM_OPERATORS = [
 
 export const SOLUTION_DRIVERS = [
     'Fast, simple payments through an intuitive app',
-    'Unlock Instant Local Deals every time they park',
+    'Hyperlocal discounts from nearby businesses — food, retail, beauty & fitness',
     'Parking becomes rewarding, not just a cost',
 ]
 
@@ -67,7 +68,7 @@ export const SOLUTION_OPERATORS = [
     'Real-time control of tariffs & occupancy',
     'Transparent 1.5% fee + 20p convenience',
     'Comprehensive dashboard: usage, dwell time, repeat visits',
-    'Local Business Activation to fill underutilised spaces',
+    'AI-driven hyperlocal outreach to hotels, gyms & offices — offering discounted tariffs in return for promoting the car park to their guests, members and staff',
 ]
 
 export const HOW_IT_WORKS = [
@@ -76,45 +77,49 @@ export const HOW_IT_WORKS = [
     { step: 3, title: 'Earn', description: 'Drivers get rewards. Businesses get footfall. Operators get revenue.' },
 ]
 
-export const REVENUE_MODEL = {
-    perSession: '1.5% + 20p',
-    rewardsSubscription: '£10/month per retailer',
-    shoppingCentreAnnual: '£20,500',
-    payAndDisplayAnnual: '£7,167',
-    projectedNetRevenue: '£1M+',
-    currentMonthlyRev: '£1,949',
-    breakeven: 'April 2026',
-    overheadMonthly: '£14,500',
+export const BUSINESS_ACTIVATION = {
+    headline: 'Supporting Independent Retailers',
+    subtitle: 'Hyperlocal discounts that turn a new customer into a regular customer',
+    description: 'Drivers receive instant deals from local businesses the moment they park. Food, retail, beauty and fitness rewards — giving independent retailers the chance to turn a new customer into a regular customer.',
+    aiOutreach: 'AI-driven hyperlocal outreach to Hotels, Gyms, Offices and more — offering discounted tariffs in return for promoting the car park to their guests, members and staff.',
 }
 
-export const PATH_TO_1M = {
-    target: '£995,244',
-    mix: [
-        { type: '15 Shopping Centres', revenue: '£307,500' },
-        { type: '20 × 200-space P&D', revenue: '£286,560' },
-        { type: '20 × 100-space P&D', revenue: '£143,280' },
-        { type: '12 × 300-space P&D', revenue: '£257,904' },
-    ],
-    breakevenPipeline: [
-        { name: 'Midsummer Place (Savills)', revenue: '£1,708', type: 'Shopping Centre' },
-        { name: 'The Bridges Sunderland (LCP)', revenue: '£1,708', type: 'Shopping Centre' },
-        { name: 'The Rock (Euro)', revenue: '£1,708', type: 'Shopping Centre' },
-        { name: 'Bradford (Agena) 300 space', revenue: '£1,795', type: 'Pay & Display' },
-        { name: 'Wimbledon (Euro) 300 space', revenue: '£1,795', type: 'Pay & Display' },
-        { name: 'Shrewsbury (Intelli) 300 space', revenue: '£1,795', type: 'Pay & Display' },
-        { name: 'Portsmouth (Newpark) 300 space', revenue: '£1,795', type: 'Pay & Display' },
-        { name: 'Pitsea (Agena) 100 space', revenue: '£597', type: 'Pay & Display' },
-    ],
+export const REVENUE_SIMPLIFIED = {
+    breakeven: 'April 2026',
+    runRate: '£18.5k',
+    perSite150: '£7k',
+    perSiteLabel: '150-space car park',
+    targetRevenue: '£1M',
+    targetSites: '142',
+    partnerSites: '10,000+',
+    portfolioPercent: '1.42%',
+    shoppingCentreMultiple: '4–6×',
+    shoppingCentreNote: 'a 150-space car park in revenue',
+    perSession: '1.5% + 20p',
+    rewardsSubscription: '£10/month per retailer',
 }
 
 export const ADDITIONAL_STREAMS: RevenueStream[] = [
-    { name: 'Last Mile Logistics Lockers', annual: '£10,800', detail: 'Parcel & click-and-collect lockers. Passive income from rental fees.' },
-    { name: 'Digital Signage', annual: '£13,400', detail: '15 deals network. In-app and physical signage revenue.' },
-    { name: 'Waterless Car Wash', annual: '£6,200', detail: '8 sites. Self-service, zero maintenance.' },
-    { name: 'Film Production', annual: 'Variable', detail: 'Partnerships with Netflix, Marvel & more. Car parks as filming locations.' },
+    { name: 'Last Mile Logistics Lockers', annual: '£10,800', detail: 'Parcel & click-and-collect lockers. Passive income from rental fees for underutilised areas.' },
+    { name: 'Digital Signage', annual: '£13,400', detail: '15 deals network. In-app and physical signage revenue from car park assets.' },
+    { name: 'Waterless Car Wash', annual: '£6,200', detail: 'Self-service, zero maintenance. Revenue from underutilised car park areas.' },
+    { name: 'Unit Basing', annual: 'Variable', detail: 'Secure parking locations for film companies\' vehicles and equipment.' },
     { name: 'Pop-Up Retail & Events', annual: 'Variable', detail: 'Brand activations, farmers markets, event parking.' },
     { name: 'EV Charging', annual: '£24,528/site', detail: 'Phased rollout with Emerge Renewable Solutions.' },
 ]
+
+export const AI_OPERATIONS = {
+    headline: 'AI-First Operations',
+    subtitle: 'Why we\'re not hiring big teams',
+    points: [
+        'AI-powered support lines handle customer queries 24/7',
+        'Automated SDR functions for retailer acquisition at scale',
+        'AI-driven outreach via b2bee.ai — our proprietary platform',
+        'Lean team of 5 delivers what traditionally requires 15–20 people',
+        'Keeps burn rate low and capital efficiency high',
+        'More runway per £ invested',
+    ],
+}
 
 export const PARTNERS: Partner[] = [
     { name: 'Savills', description: 'Leading commercial property agent', sites: '80+ shopping centres' },
@@ -122,10 +127,13 @@ export const PARTNERS: Partner[] = [
     { name: 'LCP', description: 'Property management', sites: 'Shopping centres' },
     { name: 'Agena Group', description: 'Parking management', sites: 'Multiple P&D sites' },
     { name: 'IntelliPark', description: 'Smart parking solutions', sites: '2,000+ sites' },
-    { name: 'YourParkingSpace', description: 'Parking marketplace', sites: '100+ locations' },
-    { name: 'Smart Parking', description: 'Parking technology', sites: '80+ sites' },
-    { name: 'NSL', description: 'Parking enforcement', sites: '80% UK councils' },
+    { name: 'NSL', description: 'Parking enforcement', sites: '80% UK councils', logo: '/nsl-logo.svg' },
     { name: 'Newpark', description: 'Car park operator', sites: 'Multiple sites' },
+    { name: 'Anchor Group', description: 'Parking operator', sites: 'National network' },
+    { name: 'ParkBee', description: 'Smart parking marketplace', sites: 'Premium locations', logo: '/parkbee-logo.png' },
+    { name: 'Group Nexus', description: 'Parking management group', sites: 'Multi-brand operator', logo: '/groupnexus.jpeg' },
+    { name: 'Wise Parking', description: 'Parking management', sites: 'Regional network' },
+    { name: 'Britannia Parking', description: 'National parking operator', sites: 'Nationwide coverage' },
 ]
 
 export const TEAM: TeamMember[] = [
@@ -133,9 +141,10 @@ export const TEAM: TeamMember[] = [
         name: 'Jon Sprank',
         role: 'Co-Founder & CEO',
         initials: 'JS',
+        photo: '/team/jon-sprank.png',
         credentials: [
             'Ex Head of Sales at JustPark — onboarded 100,000+ spaces in under 2 years',
-            'Ex European Sales Director at iZettle (2-time unicorn)',
+            'Ex European Sales Director at iZettle (acquired by PayPal for $2.2B)',
             'Royal Navy Veteran',
         ],
     },
@@ -143,6 +152,7 @@ export const TEAM: TeamMember[] = [
         name: 'Chris Smith',
         role: 'Co-Founder & CTO',
         initials: 'CS',
+        photo: '/team/chris-smith.png',
         credentials: [
             'Veteran technology executive and product strategist',
             'Former CTO/Technical Director across multiple ventures',
@@ -153,6 +163,7 @@ export const TEAM: TeamMember[] = [
         name: 'Russell Grigg',
         role: 'Co-Founder & COO',
         initials: 'RG',
+        photo: '/team/russell-grigg.png',
         credentials: [
             'Ex Lead Vision Systems Engineer at Sony',
             '20+ years delivering tech-driven solutions in parking',
@@ -163,6 +174,7 @@ export const TEAM: TeamMember[] = [
         name: 'Mark Cushing',
         role: 'Co-Founder & VP Sales',
         initials: 'MC',
+        photo: '/team/mark-cushing.png',
         credentials: [
             'Account Management & Direct Sales specialist',
             'Electronic Security (ANPR, CCTV, Access Control)',
@@ -173,6 +185,7 @@ export const TEAM: TeamMember[] = [
         name: 'Ana Elena González',
         role: 'CMO',
         initials: 'AG',
+        photo: '/team/ana-gonzalez.png',
         credentials: [
             'MSc in Strategic Marketing',
             'Expert in digital campaigns, brand growth & SEO',
@@ -182,10 +195,8 @@ export const TEAM: TeamMember[] = [
 ]
 
 export const INVESTMENT = {
-    amount: '£1M',
-    equity: '20%',
-    valuation: '£5M pre-money',
-    alternative: '£500K for 10%',
+    amount: '£400k',
+    valuation: '£4M pre-money',
     useOfFunds: [
         { label: 'Core team — product, ops, commercial hires', percent: 35 },
         { label: 'Scale from 50+ to 150+ live car parks', percent: 25 },
