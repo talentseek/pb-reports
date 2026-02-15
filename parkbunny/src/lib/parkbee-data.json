@@ -1,0 +1,22 @@
+[
+    {
+        "id": "liverpool",
+        "name": "Liverpool",
+        "postcode": "L1 4AT",
+        "region": "Liverpool",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    },
+    {
+        "id": "lanark-road",
+        "name": "Lanark Road",
+        "postcode": "W9 1UB",
+        "region": "London",
+        "streams": [
+            "locker",
+            "carwash"
+        ]
+    }
+]
