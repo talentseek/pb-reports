@@ -3,22 +3,22 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import {
-    Lock, Download, ChevronDown, ChevronUp,
+    Lock, Download, ChevronDown,
     AlertTriangle, CheckCircle, ArrowRight,
     TrendingUp, DollarSign, Users, Building2,
     MapPin, Zap, Package, Monitor, Car,
     ShoppingBag, Globe, Mail, Rocket,
-    Target, BarChart3, Handshake, Film,
-    Sparkles, Shield
+    Target, BarChart3, Handshake,
+    Sparkles, Shield, Bot, Clapperboard
 } from 'lucide-react'
 import {
     DECK_PASSWORD, HERO, TRACTION, PROBLEM_DRIVERS, PROBLEM_OPERATORS,
-    SOLUTION_DRIVERS, SOLUTION_OPERATORS, HOW_IT_WORKS, REVENUE_MODEL,
-    PATH_TO_1M, ADDITIONAL_STREAMS, PARTNERS, TEAM, INVESTMENT,
-    INTERNATIONAL
+    SOLUTION_DRIVERS, SOLUTION_OPERATORS, HOW_IT_WORKS, REVENUE_SIMPLIFIED,
+    ADDITIONAL_STREAMS, PARTNERS, TEAM, INVESTMENT, BUSINESS_ACTIVATION,
+    AI_OPERATIONS, INTERNATIONAL
 } from '@/lib/investor-data'
 
-const TOTAL_SLIDES = 15
+const TOTAL_SLIDES = 14
 
 export default function InvestorDeck() {
     const [authed, setAuthed] = useState(false)
@@ -320,19 +320,18 @@ function DeckPresentation() {
 
             {/* ═══ SLIDE 5: BUSINESS ACTIVATION ═══ */}
             <Slide ref={setSlideRef(4)}>
-                <SlideHeader number="04" title="Nearby Business Activation" subtitle="A win-win ecosystem: more customers, more footfall, more revenue" />
+                <SlideHeader number="04" title={BUSINESS_ACTIVATION.headline} subtitle={BUSINESS_ACTIVATION.subtitle} />
                 <div className="mt-8">
                     <FadeIn>
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                            {/* Hub and spoke layout */}
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                                 {[
-                                    { icon: <ShoppingBag className="w-6 h-6" />, label: 'Retail Discounts', desc: '20% off at local shops' },
-                                    { icon: <Building2 className="w-6 h-6" />, label: 'Hotels & B&Bs', desc: '25% off parking for guests' },
-                                    { icon: <Users className="w-6 h-6" />, label: 'Gym Members', desc: 'Discounted sessions' },
-                                    { icon: <Package className="w-6 h-6" />, label: 'B2B Lockers', desc: '£8,400/yr revenue' },
-                                    { icon: <Car className="w-6 h-6" />, label: 'Car Wash', desc: '£12,000/yr revenue' },
-                                    { icon: <Monitor className="w-6 h-6" />, label: 'Co-Working', desc: 'Member parking deals' },
+                                    { icon: <ShoppingBag className="w-6 h-6" />, label: 'Retail Discounts', desc: 'Independent local shops' },
+                                    { icon: <Building2 className="w-6 h-6" />, label: 'Hotels & B&Bs', desc: 'Discounted parking for guests' },
+                                    { icon: <Users className="w-6 h-6" />, label: 'Gyms & Fitness', desc: 'Member parking rewards' },
+                                    { icon: <Package className="w-6 h-6" />, label: 'Offices', desc: 'Staff parking incentives' },
+                                    { icon: <Car className="w-6 h-6" />, label: 'Beauty & Wellness', desc: 'Client parking deals' },
+                                    { icon: <Monitor className="w-6 h-6" />, label: 'Food & Hospitality', desc: 'Restaurant & café offers' },
                                 ].map((item, i) => (
                                     <FadeIn key={i} delay={i * 100}>
                                         <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:border-amber-500/30 transition-colors">
@@ -345,10 +344,18 @@ function DeckPresentation() {
                                     </FadeIn>
                                 ))}
                             </div>
-                            <div className="bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-xl p-4">
-                                <p className="text-amber-400 font-medium text-sm">
-                                    Drivers receive instant deals the moment they park. Local retailers gain new customers daily. Operators fill empty spaces through targeted B2B partnerships.
-                                </p>
+                            <div className="space-y-3">
+                                <div className="bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-xl p-4">
+                                    <p className="text-amber-400 font-medium text-sm">
+                                        {BUSINESS_ACTIVATION.description}
+                                    </p>
+                                </div>
+                                <div className="bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
+                                    <p className="text-blue-400 font-medium text-sm flex items-center gap-2">
+                                        <Bot className="w-4 h-4 shrink-0" />
+                                        {BUSINESS_ACTIVATION.aiOutreach}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </FadeIn>
@@ -381,9 +388,9 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 7: REVENUE MODEL ═══ */}
+            {/* ═══ SLIDE 7: REVENUE MODEL (SIMPLIFIED — MERGED) ═══ */}
             <Slide ref={setSlideRef(6)}>
-                <SlideHeader number="06" title="Revenue Model" subtitle="Multiple revenue streams from every parking session" />
+                <SlideHeader number="06" title="Revenue Model & Path to £1M" subtitle="Simple model. Clear path. Massive addressable market." />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
                         <div className="space-y-4">
@@ -395,12 +402,12 @@ function DeckPresentation() {
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-400">Transaction fee</span>
-                                        <span className="text-white font-bold text-lg">{REVENUE_MODEL.perSession}</span>
+                                        <span className="text-white font-bold text-lg">{REVENUE_SIMPLIFIED.perSession}</span>
                                     </div>
                                     <div className="border-t border-white/5" />
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-400">Retailer subscription</span>
-                                        <span className="text-white font-bold">{REVENUE_MODEL.rewardsSubscription}</span>
+                                        <span className="text-white font-bold">{REVENUE_SIMPLIFIED.rewardsSubscription}</span>
                                     </div>
                                 </div>
                             </div>
@@ -408,17 +415,17 @@ function DeckPresentation() {
                             <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                                     <BarChart3 className="w-5 h-5 text-blue-400" />
-                                    Revenue per Site Type
+                                    How We Scale
                                 </h3>
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-400">Shopping Centre</span>
-                                        <span className="text-emerald-400 font-bold text-lg">{REVENUE_MODEL.shoppingCentreAnnual}/yr</span>
+                                        <span className="text-gray-400">{REVENUE_SIMPLIFIED.perSiteLabel}</span>
+                                        <span className="text-emerald-400 font-bold text-lg">{REVENUE_SIMPLIFIED.perSite150} net revenue</span>
                                     </div>
                                     <div className="border-t border-white/5" />
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-400">Pay & Display (per 100 spaces)</span>
-                                        <span className="text-emerald-400 font-bold">{REVENUE_MODEL.payAndDisplayAnnual}/yr</span>
+                                        <span className="text-gray-400">Shopping centre</span>
+                                        <span className="text-emerald-400 font-bold">{REVENUE_SIMPLIFIED.shoppingCentreMultiple} {REVENUE_SIMPLIFIED.shoppingCentreNote}</span>
                                     </div>
                                 </div>
                             </div>
@@ -427,21 +434,31 @@ function DeckPresentation() {
 
                     <FadeIn delay={200}>
                         <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-2xl p-6 h-full flex flex-col justify-center">
-                            <p className="text-amber-400 text-sm font-medium mb-2">Projected Annual Net Revenue</p>
-                            <p className="text-5xl font-bold text-white mb-4">{REVENUE_MODEL.projectedNetRevenue}</p>
-                            <p className="text-gray-400 text-sm mb-6">From current pipeline of 150+ sites</p>
-                            <div className="space-y-2">
+                            <p className="text-amber-400 text-sm font-medium mb-2">Target Annual Net Revenue</p>
+                            <p className="text-5xl font-bold text-white mb-6">{REVENUE_SIMPLIFIED.targetRevenue}</p>
+                            <div className="space-y-3">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-400">Current Monthly Rev</span>
-                                    <span className="text-white font-medium">{REVENUE_MODEL.currentMonthlyRev}</span>
+                                    <span className="text-gray-400">Sites needed</span>
+                                    <span className="text-white font-medium">{REVENUE_SIMPLIFIED.targetSites} car parks</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-400">Monthly Overhead</span>
-                                    <span className="text-white font-medium">{REVENUE_MODEL.overheadMonthly}</span>
+                                    <span className="text-gray-400">Partner network</span>
+                                    <span className="text-white font-medium">{REVENUE_SIMPLIFIED.partnerSites} sites of this size</span>
                                 </div>
-                                <div className="flex justify-between text-sm border-t border-amber-500/20 pt-2">
-                                    <span className="text-amber-400 font-medium">Breakeven Target</span>
-                                    <span className="text-amber-400 font-bold">{REVENUE_MODEL.breakeven}</span>
+                                <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                                    <p className="text-emerald-400 text-sm font-medium text-center">
+                                        Only <span className="text-lg font-bold">{REVENUE_SIMPLIFIED.portfolioPercent}</span> of partner portfolios needed
+                                    </p>
+                                </div>
+                                <div className="border-t border-amber-500/20 pt-3 space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-400">Monthly run rate</span>
+                                        <span className="text-white font-medium">{REVENUE_SIMPLIFIED.runRate}/mo</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-amber-400 font-medium">Breakeven target</span>
+                                        <span className="text-amber-400 font-bold">{REVENUE_SIMPLIFIED.breakeven}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -449,65 +466,16 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 8: PATH TO £1M ═══ */}
+            {/* ═══ SLIDE 8: ADDITIONAL REVENUE STREAMS ═══ */}
             <Slide ref={setSlideRef(7)}>
-                <SlideHeader number="07" title="Path to £1M" subtitle="Scalable, realistic mix of high-value assets" />
-                <div className="grid md:grid-cols-2 gap-6 mt-8">
-                    <FadeIn>
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <h3 className="text-white font-semibold mb-4">Revenue Mix Target</h3>
-                            <div className="space-y-4">
-                                {PATH_TO_1M.mix.map((item, i) => (
-                                    <div key={i}>
-                                        <div className="flex justify-between text-sm mb-1">
-                                            <span className="text-gray-400">{item.type}</span>
-                                            <span className="text-white font-medium">{item.revenue}</span>
-                                        </div>
-                                        <div className="w-full bg-white/5 rounded-full h-2">
-                                            <div
-                                                className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
-                                                style={{ width: `${(parseInt(item.revenue.replace(/[£,]/g, '')) / 307500) * 100}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                                <div className="border-t border-white/10 pt-3 flex justify-between">
-                                    <span className="text-amber-400 font-semibold">Total</span>
-                                    <span className="text-amber-400 font-bold text-xl">{PATH_TO_1M.target}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </FadeIn>
-
-                    <FadeIn delay={200}>
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <h3 className="text-white font-semibold mb-4">Breakeven Pipeline Snapshot</h3>
-                            <div className="space-y-2">
-                                {PATH_TO_1M.breakevenPipeline.map((site, i) => (
-                                    <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                                        <div>
-                                            <p className="text-gray-300 text-sm">{site.name}</p>
-                                            <p className="text-gray-500 text-xs">{site.type}</p>
-                                        </div>
-                                        <span className="text-emerald-400 font-medium text-sm">{site.revenue}/mo</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </FadeIn>
-                </div>
-            </Slide>
-
-            {/* ═══ SLIDE 9: ADDITIONAL REVENUE ═══ */}
-            <Slide ref={setSlideRef(8)}>
-                <SlideHeader number="08" title="Additional Revenue Streams" subtitle="It's so much more than parking — multiple passive income opportunities" />
+                <SlideHeader number="07" title="Additional Revenue Streams for Car Park Owners" subtitle="Revenue generators for underutilised areas — it's so much more than parking" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                     {ADDITIONAL_STREAMS.map((stream, i) => {
                         const icons = [
                             <Package key="pkg" className="w-6 h-6" />,
                             <Monitor key="mon" className="w-6 h-6" />,
                             <Car key="car" className="w-6 h-6" />,
-                            <Film key="film" className="w-6 h-6" />,
+                            <Clapperboard key="clap" className="w-6 h-6" />,
                             <ShoppingBag key="shop" className="w-6 h-6" />,
                             <Zap key="zap" className="w-6 h-6" />,
                         ]
@@ -527,9 +495,9 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 10: AI & TECHNOLOGY ═══ */}
-            <Slide ref={setSlideRef(9)}>
-                <SlideHeader number="09" title="AI & Technology" subtitle="AI-Powered Revenue Optimisation" />
+            {/* ═══ SLIDE 9: AI & TECHNOLOGY ═══ */}
+            <Slide ref={setSlideRef(8)}>
+                <SlideHeader number="08" title="AI & Technology" subtitle="AI-Powered Revenue Optimisation & Lean Operations" />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -569,36 +537,41 @@ function DeckPresentation() {
                                 </div>
                             </div>
 
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                                <h3 className="text-white font-semibold mb-3">The Flywheel</h3>
-                                <div className="flex items-center justify-between">
-                                    {['Empty Spaces\nMonetised', 'Local Businesses\nGain Customers', 'Drivers Get\nRewarded'].map((text, i) => (
-                                        <React.Fragment key={i}>
-                                            <div className="text-center">
-                                                <div className="w-16 h-16 mx-auto mb-2 bg-amber-500/10 rounded-full flex items-center justify-center">
-                                                    {[<MapPin key="mp" className="w-6 h-6 text-amber-400" />, <Handshake key="hs" className="w-6 h-6 text-emerald-400" />, <Users key="us" className="w-6 h-6 text-blue-400" />][i]}
-                                                </div>
-                                                <p className="text-gray-300 text-xs whitespace-pre-line">{text}</p>
-                                            </div>
-                                            {i < 2 && <ArrowRight className="w-4 h-4 text-gray-600 shrink-0" />}
-                                        </React.Fragment>
+                            {/* AI-First Operations - NEW SECTION */}
+                            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 rounded-2xl p-6">
+                                <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                                    <Bot className="w-5 h-5 text-emerald-400" />
+                                    {AI_OPERATIONS.headline}
+                                </h3>
+                                <p className="text-gray-500 text-xs mb-3">{AI_OPERATIONS.subtitle}</p>
+                                <ul className="space-y-2">
+                                    {AI_OPERATIONS.points.map((point, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-gray-300 text-xs">
+                                            <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
+                                            {point}
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
                             </div>
                         </div>
                     </FadeIn>
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 11: STRATEGIC PARTNERS ═══ */}
-            <Slide ref={setSlideRef(10)}>
-                <SlideHeader number="10" title="Strategic Partners" subtitle="It's all about relationships — national operators already in the pipeline" />
+            {/* ═══ SLIDE 10: STRATEGIC PARTNERS ═══ */}
+            <Slide ref={setSlideRef(9)}>
+                <SlideHeader number="09" title="Strategic Partners" subtitle="It's all about relationships — national operators already in the pipeline" />
                 <div className="mt-8">
                     <FadeIn>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {PARTNERS.map((partner, i) => (
                                 <FadeIn key={i} delay={i * 80}>
                                     <div className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-amber-500/20 transition-colors">
+                                        {partner.logo ? (
+                                            <div className="h-8 mb-3">
+                                                <Image src={partner.logo} alt={partner.name} width={80} height={32} className="h-8 w-auto object-contain rounded" />
+                                            </div>
+                                        ) : null}
                                         <p className="text-white font-semibold">{partner.name}</p>
                                         <p className="text-gray-500 text-xs mt-1">{partner.description}</p>
                                         {partner.sites && (
@@ -620,9 +593,9 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 12: MARKET OPPORTUNITY ═══ */}
-            <Slide ref={setSlideRef(11)}>
-                <SlideHeader number="11" title="Market Opportunity" subtitle="A massive, untapped market with zero loyalty competitors" />
+            {/* ═══ SLIDE 11: MARKET OPPORTUNITY ═══ */}
+            <Slide ref={setSlideRef(10)}>
+                <SlideHeader number="10" title="Market Opportunity" subtitle="A massive, untapped market with zero loyalty competitors" />
                 <div className="mt-8 text-center">
                     <FadeIn>
                         <div className="mb-8">
@@ -640,7 +613,7 @@ function DeckPresentation() {
                         <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
                             <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                                 <p className="text-emerald-400 font-bold text-lg">Proven</p>
-                                <p className="text-gray-500 text-xs">at 40+ sites, ready to scale</p>
+                                <p className="text-gray-500 text-xs">at {TRACTION.liveSites} sites, ready to scale</p>
                             </div>
                             <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                                 <p className="text-amber-400 font-bold text-lg">1% capture</p>
@@ -655,9 +628,9 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 13: THE TEAM ═══ */}
-            <Slide ref={setSlideRef(12)}>
-                <SlideHeader number="12" title="The Team" subtitle="Experienced founders who've already done this at scale" />
+            {/* ═══ SLIDE 12: THE TEAM ═══ */}
+            <Slide ref={setSlideRef(11)}>
+                <SlideHeader number="11" title="The Team" subtitle="Experienced founders who've already done this at scale" />
                 <FadeIn>
                     <div className="bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-xl p-4 mt-4 mb-6">
                         <p className="text-amber-400 text-sm font-medium">
@@ -670,8 +643,12 @@ function DeckPresentation() {
                     {TEAM.map((member, i) => (
                         <FadeIn key={i} delay={i * 100}>
                             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center hover:border-amber-500/20 transition-colors">
-                                <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center text-black font-bold text-xl">
-                                    {member.initials}
+                                <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                                    {member.photo ? (
+                                        <Image src={member.photo} alt={member.name} width={80} height={80} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-black font-bold text-xl">{member.initials}</span>
+                                    )}
                                 </div>
                                 <p className="text-white font-semibold text-sm">{member.name}</p>
                                 <p className="text-amber-400 text-xs font-medium mt-0.5">{member.role}</p>
@@ -689,20 +666,21 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 14: THE ASK ═══ */}
-            <Slide ref={setSlideRef(13)}>
-                <SlideHeader number="13" title="The Investment Ask" subtitle="We're raising £1M to accelerate growth" />
+            {/* ═══ SLIDE 13: THE ASK ═══ */}
+            <Slide ref={setSlideRef(12)}>
+                <SlideHeader number="12" title="The Investment Ask" subtitle={`We're looking for ${INVESTMENT.amount} at a ${INVESTMENT.valuation}`} />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
                         <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-2xl p-8 flex flex-col justify-center">
                             <p className="text-sm text-amber-400 font-medium mb-2">Seeking</p>
                             <p className="text-6xl font-bold text-white mb-2">{INVESTMENT.amount}</p>
                             <p className="text-gray-400 mb-6">
-                                for {INVESTMENT.equity} equity at {INVESTMENT.valuation}
+                                at a {INVESTMENT.valuation}
                             </p>
                             <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                                <p className="text-gray-400 text-sm">Also open to</p>
-                                <p className="text-white font-semibold">{INVESTMENT.alternative}</p>
+                                <p className="text-emerald-400 text-sm font-medium">
+                                    Revenue-generating, lean, and ready to scale.
+                                </p>
                             </div>
                         </div>
                     </FadeIn>
@@ -736,8 +714,8 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 15: CONTACT ═══ */}
-            <Slide ref={setSlideRef(14)}>
+            {/* ═══ SLIDE 14: CONTACT ═══ */}
+            <Slide ref={setSlideRef(13)}>
                 <div className="flex flex-col items-center justify-center text-center h-full">
                     <FadeIn>
                         <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto mx-auto mb-6 rounded-lg" />
