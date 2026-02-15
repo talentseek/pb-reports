@@ -100,13 +100,18 @@ export const REVENUE_SIMPLIFIED = {
 }
 
 export const ADDITIONAL_STREAMS: RevenueStream[] = [
-    { name: 'Last Mile Logistics Lockers', annual: '£10,800', detail: 'Parcel & click-and-collect lockers. Passive income from rental fees for underutilised areas.' },
-    { name: 'Digital Signage', annual: '£13,400', detail: '15 deals network. In-app and physical signage revenue from car park assets.' },
-    { name: 'Waterless Car Wash', annual: '£6,200', detail: 'Self-service, zero maintenance. Revenue from underutilised car park areas.' },
-    { name: 'Unit Basing', annual: 'Variable', detail: 'Secure parking locations for film companies\' vehicles and equipment.' },
-    { name: 'Pop-Up Retail & Events', annual: 'Variable', detail: 'Brand activations, farmers markets, event parking.' },
-    { name: 'EV Charging', annual: '£24,528/site', detail: 'Phased rollout with Emerge Renewable Solutions.' },
+    { name: 'Lockers', annual: '£1k – £500k', detail: 'Depending on size of portfolio. Parcel & click-and-collect lockers for underutilised areas.' },
+    { name: 'Digital Signage', annual: '£10k – £40k', detail: 'In-app and physical signage revenue from car park assets.' },
+    { name: 'Waterless Car Wash', annual: '£10k – £30k', detail: 'Self-service, zero maintenance. Revenue from underutilised car park areas.' },
+    { name: 'EV Charging', annual: 'Variable', detail: 'Phased rollout. Revenue share or CAPEX options.' },
 ]
+
+export const COMMISSION_NOTE = 'ParkBunny earns a minimum of 10% of this revenue for the duration of these contracts.'
+
+export const TRACK_RECORD = {
+    headline: 'We\'ve done this before',
+    detail: 'Our CEO added 100,000 spaces to the JustPark platform in under two years — the equivalent of 600+ car parks.',
+}
 
 export const AI_OPERATIONS = {
     headline: 'AI-First Operations',
