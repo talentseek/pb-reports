@@ -130,7 +130,7 @@ export const PARTNERS: Partner[] = [
     { name: 'Savills', description: 'Leading commercial property agent', sites: '80+ shopping centres' },
     { name: 'Euro Car Parks', description: 'Major UK parking operator', sites: '800+ sites' },
     { name: 'LCP', description: 'Property management', sites: 'Shopping centres' },
-    { name: 'Agena Group', description: 'Parking management', sites: 'Multiple P&D sites' },
+    { name: 'Agena Group', description: 'Parking management', sites: 'Multiple P&D sites', logo: '/agena-group.png' },
     { name: 'IntelliPark', description: 'Smart parking solutions', sites: '2,000+ sites' },
     { name: 'NSL', description: 'Parking enforcement', sites: '80% UK councils', logo: '/nsl-logo.svg' },
     { name: 'Newpark', description: 'Car park operator', sites: 'Multiple sites' },
