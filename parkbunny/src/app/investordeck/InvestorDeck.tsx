@@ -746,64 +746,18 @@ function DeckPresentation() {
 
             {/* ═══ SLIDE 15: INTERNATIONAL EXPANSION ═══ */}
             <Slide ref={setSlideRef(14)}>
-                <SlideHeader number="15" title="International Expansion" subtitle="Taking ParkBunny global — key target markets" />
-                <div className="mt-8 flex justify-center">
-                    <FadeIn>
-                        <div className="relative w-full max-w-4xl">
-                            {/* Pink-themed SVG World Map */}
-                            <svg viewBox="0 0 1000 500" className="w-full" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="mapGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fce7f3" /><stop offset="100%" stopColor="#fbcfe8" /></linearGradient>
-                                    <filter id="mapGlow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-                                </defs>
-                                {/* Europe */}
-                                <path d="M460,100 L480,80 L520,75 L550,85 L560,100 L555,130 L540,145 L520,150 L500,155 L480,150 L465,140 L455,125 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
-                                {/* UK */}
-                                <path d="M445,90 L450,75 L460,70 L465,80 L462,100 L455,105 L448,98 Z" fill="#f472b6" stroke="#ec4899" strokeWidth="1.5" opacity="0.9" />
-                                {/* North America */}
-                                <path d="M100,80 L150,60 L230,55 L280,70 L300,100 L290,150 L260,180 L220,200 L180,210 L130,190 L100,160 L80,130 L85,100 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
-                                {/* South America */}
-                                <path d="M220,240 L260,230 L280,260 L290,310 L280,370 L260,400 L240,410 L220,390 L210,350 L205,300 L210,260 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1" opacity="0.4" />
-                                {/* Africa */}
-                                <path d="M460,170 L500,160 L530,180 L540,220 L535,280 L520,330 L500,350 L480,340 L465,310 L455,270 L450,220 L452,190 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1" opacity="0.4" />
-                                {/* Middle East */}
-                                <path d="M560,140 L600,130 L630,145 L640,170 L620,190 L590,195 L570,180 L555,160 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
-                                {/* Asia */}
-                                <path d="M620,60 L700,50 L780,60 L830,80 L850,120 L840,170 L800,200 L740,210 L680,200 L640,180 L620,150 L610,110 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
-                                {/* Australia */}
-                                <path d="M780,310 L830,290 L880,300 L900,330 L890,370 L860,390 L820,395 L790,380 L775,350 L770,330 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
-                                {/* Hotspot markers */}
-                                {[
-                                    { x: 455, y: 88, label: 'UK', primary: true },
-                                    { x: 500, y: 110, label: 'Europe', primary: true },
-                                    { x: 200, y: 120, label: 'North America', primary: true },
-                                    { x: 750, y: 100, label: 'Asia', primary: false },
-                                    { x: 840, y: 340, label: 'Australia', primary: false },
-                                    { x: 600, y: 160, label: 'Middle East', primary: false },
-                                ].map((marker, i) => (
-                                    <g key={i}>
-                                        <circle cx={marker.x} cy={marker.y} r={marker.primary ? 8 : 5} fill={marker.primary ? '#ec4899' : '#f9a8d4'} filter="url(#mapGlow)" className="animate-pulse" style={{ animationDelay: `${i * 300}ms` }} />
-                                        <circle cx={marker.x} cy={marker.y} r={marker.primary ? 3 : 2} fill="white" />
-                                        <text x={marker.x} y={marker.y - (marker.primary ? 14 : 10)} textAnchor="middle" fill="#ec4899" fontSize={marker.primary ? 11 : 9} fontWeight={marker.primary ? 700 : 500} fontFamily="sans-serif">{marker.label}</text>
-                                    </g>
-                                ))}
-                            </svg>
+                <SlideHeader number="15" title="International Expansion" subtitle="A scalable model with global potential" />
+                <FadeIn>
+                    <div className="mt-6 flex justify-center">
+                        <div className="relative w-full max-w-5xl rounded-2xl overflow-hidden">
+                            <Image src="/pink-world-map.png" alt="Global expansion map" width={1200} height={600} className="w-full h-auto rounded-2xl" />
                         </div>
-                    </FadeIn>
-                </div>
-                <FadeIn delay={400}>
-                    <div className="grid grid-cols-3 gap-4 mt-6 max-w-3xl mx-auto">
-                        {[
-                            { region: 'UK & Europe', status: 'Active', color: 'text-emerald-400' },
-                            { region: 'North America', status: 'Phase 2', color: 'text-amber-400' },
-                            { region: 'Asia Pacific & Middle East', status: 'Phase 3', color: 'text-pink-400' },
-                        ].map((item, i) => (
-                            <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
-                                <p className="text-white font-semibold text-sm">{item.region}</p>
-                                <p className={`${item.color} text-xs font-medium mt-1`}>{item.status}</p>
-                            </div>
-                        ))}
                     </div>
+                </FadeIn>
+                <FadeIn delay={300}>
+                    <p className="text-center text-gray-400 text-sm mt-6 max-w-xl mx-auto">
+                        ParkBunny&apos;s asset-light platform adapts to any parking infrastructure worldwide — from marinas and airports to retail and mixed-use developments.
+                    </p>
                 </FadeIn>
             </Slide>
 
