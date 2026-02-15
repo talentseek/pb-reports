@@ -18,7 +18,7 @@ import {
     AI_OPERATIONS, INTERNATIONAL, COMMISSION_NOTE, TRACK_RECORD
 } from '@/lib/investor-data'
 
-const TOTAL_SLIDES = 15
+const TOTAL_SLIDES = 16
 
 export default function InvestorDeck() {
     const [authed, setAuthed] = useState(false)
@@ -189,9 +189,8 @@ function DeckPresentation() {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px]" />
                     <div className="relative z-10">
                         <FadeIn>
-                            {/* Bunny mascot — replace /bunny-mascot.png with actual asset */}
-                            <div className="w-28 h-28 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-2 border-amber-500/30 flex items-center justify-center overflow-hidden">
-                                <Image src="/bunny-mascot.png" alt="ParkBunny Mascot" width={112} height={112} className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<span class="text-5xl">🐰</span>' }} />
+                            <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-2 border-amber-500/30 flex items-center justify-center overflow-hidden">
+                                <Image src="/bunnyhero.jpeg" alt="ParkBunny Mascot" width={128} height={128} className="w-full h-full object-cover" />
                             </div>
                         </FadeIn>
                         <FadeIn>
@@ -685,37 +684,16 @@ function DeckPresentation() {
             <Slide ref={setSlideRef(12)}>
                 <SlideHeader number="13" title="ParkBunny in Action" subtitle="Branding, marketing, and product in the wild" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                    {[
-                        { label: 'App Screenshot', src: '/gallery/app-screenshot.png' },
-                        { label: 'Bunny Cartoon', src: '/gallery/bunny-cartoon.png' },
-                        { label: 'Marketing Post', src: '/gallery/marketing-post.png' },
-                        { label: 'Social Campaign', src: '/gallery/social-campaign.png' },
-                        { label: 'Brand Assets', src: '/gallery/brand-assets.png' },
-                        { label: 'Product Demo', src: '/gallery/product-demo.png' },
-                    ].map((item, i) => (
+                    {[1, 2, 3, 4, 5, 6].map((n, i) => (
                         <FadeIn key={i} delay={i * 100}>
-                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors group">
-                                <div className="aspect-[4/3] bg-gradient-to-br from-amber-500/5 to-blue-500/5 flex items-center justify-center relative">
-                                    <Image
-                                        src={item.src}
-                                        alt={item.label}
-                                        fill
-                                        className="object-cover opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                                    />
-                                    <div className="flex flex-col items-center gap-2 text-gray-500">
-                                        <ImageIcon className="w-8 h-8" />
-                                        <span className="text-xs">{item.label}</span>
-                                    </div>
-                                </div>
-                                <div className="p-3">
-                                    <p className="text-white text-sm font-medium">{item.label}</p>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
+                                <div className="aspect-[4/3] relative">
+                                    <Image src={`/gallery/gallery-${n}.jpeg`} alt={`ParkBunny marketing ${n}`} fill className="object-cover" />
                                 </div>
                             </div>
                         </FadeIn>
                     ))}
                 </div>
-                <p className="text-gray-500 text-xs text-center mt-6">Images to be replaced with actual ParkBunny assets</p>
             </Slide>
 
             {/* ═══ SLIDE 14: INVESTMENT ASK ═══ */}
@@ -766,8 +744,71 @@ function DeckPresentation() {
                 </div>
             </Slide>
 
-            {/* ═══ SLIDE 15: CONTACT ═══ */}
+            {/* ═══ SLIDE 15: INTERNATIONAL EXPANSION ═══ */}
             <Slide ref={setSlideRef(14)}>
+                <SlideHeader number="15" title="International Expansion" subtitle="Taking ParkBunny global — key target markets" />
+                <div className="mt-8 flex justify-center">
+                    <FadeIn>
+                        <div className="relative w-full max-w-4xl">
+                            {/* Pink-themed SVG World Map */}
+                            <svg viewBox="0 0 1000 500" className="w-full" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="mapGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fce7f3" /><stop offset="100%" stopColor="#fbcfe8" /></linearGradient>
+                                    <filter id="mapGlow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+                                </defs>
+                                {/* Europe */}
+                                <path d="M460,100 L480,80 L520,75 L550,85 L560,100 L555,130 L540,145 L520,150 L500,155 L480,150 L465,140 L455,125 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
+                                {/* UK */}
+                                <path d="M445,90 L450,75 L460,70 L465,80 L462,100 L455,105 L448,98 Z" fill="#f472b6" stroke="#ec4899" strokeWidth="1.5" opacity="0.9" />
+                                {/* North America */}
+                                <path d="M100,80 L150,60 L230,55 L280,70 L300,100 L290,150 L260,180 L220,200 L180,210 L130,190 L100,160 L80,130 L85,100 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
+                                {/* South America */}
+                                <path d="M220,240 L260,230 L280,260 L290,310 L280,370 L260,400 L240,410 L220,390 L210,350 L205,300 L210,260 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1" opacity="0.4" />
+                                {/* Africa */}
+                                <path d="M460,170 L500,160 L530,180 L540,220 L535,280 L520,330 L500,350 L480,340 L465,310 L455,270 L450,220 L452,190 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1" opacity="0.4" />
+                                {/* Middle East */}
+                                <path d="M560,140 L600,130 L630,145 L640,170 L620,190 L590,195 L570,180 L555,160 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
+                                {/* Asia */}
+                                <path d="M620,60 L700,50 L780,60 L830,80 L850,120 L840,170 L800,200 L740,210 L680,200 L640,180 L620,150 L610,110 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
+                                {/* Australia */}
+                                <path d="M780,310 L830,290 L880,300 L900,330 L890,370 L860,390 L820,395 L790,380 L775,350 L770,330 Z" fill="url(#mapGrad)" stroke="#ec4899" strokeWidth="1.5" opacity="0.7" />
+                                {/* Hotspot markers */}
+                                {[
+                                    { x: 455, y: 88, label: 'UK', primary: true },
+                                    { x: 500, y: 110, label: 'Europe', primary: true },
+                                    { x: 200, y: 120, label: 'North America', primary: true },
+                                    { x: 750, y: 100, label: 'Asia', primary: false },
+                                    { x: 840, y: 340, label: 'Australia', primary: false },
+                                    { x: 600, y: 160, label: 'Middle East', primary: false },
+                                ].map((marker, i) => (
+                                    <g key={i}>
+                                        <circle cx={marker.x} cy={marker.y} r={marker.primary ? 8 : 5} fill={marker.primary ? '#ec4899' : '#f9a8d4'} filter="url(#mapGlow)" className="animate-pulse" style={{ animationDelay: `${i * 300}ms` }} />
+                                        <circle cx={marker.x} cy={marker.y} r={marker.primary ? 3 : 2} fill="white" />
+                                        <text x={marker.x} y={marker.y - (marker.primary ? 14 : 10)} textAnchor="middle" fill="#ec4899" fontSize={marker.primary ? 11 : 9} fontWeight={marker.primary ? 700 : 500} fontFamily="sans-serif">{marker.label}</text>
+                                    </g>
+                                ))}
+                            </svg>
+                        </div>
+                    </FadeIn>
+                </div>
+                <FadeIn delay={400}>
+                    <div className="grid grid-cols-3 gap-4 mt-6 max-w-3xl mx-auto">
+                        {[
+                            { region: 'UK & Europe', status: 'Active', color: 'text-emerald-400' },
+                            { region: 'North America', status: 'Phase 2', color: 'text-amber-400' },
+                            { region: 'Asia Pacific & Middle East', status: 'Phase 3', color: 'text-pink-400' },
+                        ].map((item, i) => (
+                            <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                                <p className="text-white font-semibold text-sm">{item.region}</p>
+                                <p className={`${item.color} text-xs font-medium mt-1`}>{item.status}</p>
+                            </div>
+                        ))}
+                    </div>
+                </FadeIn>
+            </Slide>
+
+            {/* ═══ SLIDE 16: CONTACT ═══ */}
+            <Slide ref={setSlideRef(15)}>
                 <div className="flex flex-col items-center justify-center text-center h-full">
                     <FadeIn>
                         <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto mx-auto mb-6 rounded-lg" />
