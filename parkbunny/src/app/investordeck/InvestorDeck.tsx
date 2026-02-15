@@ -546,10 +546,7 @@ function DeckPresentation() {
                                 </h3>
                                 <p className="text-gray-400 text-sm mb-3">ParkBunny owns a share in an AI Agency</p>
                                 <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <p className="text-blue-400 font-bold text-lg">b2bee.ai</p>
-                                        <Image src="/agena-group.png" alt="Agena Group" width={80} height={24} className="h-6 w-auto opacity-70" />
-                                    </div>
+                                    <p className="text-blue-400 font-bold text-lg">b2bee.ai</p>
                                     <p className="text-gray-400 text-sm">Provides proprietary outreach tools that automate retailer acquisition at scale</p>
                                 </div>
                             </div>
