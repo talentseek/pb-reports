@@ -127,18 +127,18 @@ export const AI_OPERATIONS = {
 }
 
 export const PARTNERS: Partner[] = [
-    { name: 'Savills', description: 'Leading commercial property agent', sites: '80+ shopping centres' },
-    { name: 'Euro Car Parks', description: 'Major UK parking operator', sites: '800+ sites' },
-    { name: 'LCP', description: 'Property management', sites: 'Shopping centres' },
+    { name: 'Savills', description: 'Leading commercial property agent', sites: '80+ shopping centres', logo: '/savills-logo.png' },
+    { name: 'Euro Car Parks', description: 'Major UK parking operator', sites: '800+ sites', logo: '/euro-car-parks.png' },
+    { name: 'M Core', description: 'Property management', sites: 'Shopping centres', logo: '/m-core-property.png' },
     { name: 'Agena Group', description: 'Parking management', sites: 'Multiple P&D sites', logo: '/agena-group.png' },
-    { name: 'IntelliPark', description: 'Smart parking solutions', sites: '2,000+ sites' },
+    { name: 'IntelliPark', description: 'Smart parking solutions', sites: '2,000+ sites', logo: '/intelli.png' },
     { name: 'NSL', description: 'Parking enforcement', sites: '80% UK councils', logo: '/nsl-logo.svg' },
-    { name: 'Newpark', description: 'Car park operator', sites: 'Multiple sites' },
-    { name: 'Anchor Group', description: 'Parking operator', sites: 'National network' },
+    { name: 'Newpark', description: 'Car park operator', sites: 'Multiple sites', logo: '/newpark-solutions.png' },
+    { name: 'Anchor Group', description: 'Parking operator', sites: 'National network', logo: '/anchor-group-services.png' },
     { name: 'ParkBee', description: 'Smart parking marketplace', sites: 'Premium locations', logo: '/parkbee-logo.png' },
     { name: 'Group Nexus', description: 'Parking management group', sites: 'Multi-brand operator', logo: '/groupnexus.jpeg' },
-    { name: 'Wise Parking', description: 'Parking management', sites: 'Regional network' },
-    { name: 'Britannia Parking', description: 'National parking operator', sites: 'Nationwide coverage' },
+    { name: 'Wise Parking', description: 'Parking management', sites: 'Regional network', logo: '/wise-parking.png' },
+    { name: 'Britannia Parking', description: 'National parking operator', sites: 'Nationwide coverage', logo: '/britannia-parking.png' },
 ]
 
 export const TEAM: TeamMember[] = [
