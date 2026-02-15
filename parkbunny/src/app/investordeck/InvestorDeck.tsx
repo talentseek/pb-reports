@@ -787,14 +787,7 @@ function DeckPresentation() {
                         </a>
                         <p className="text-gray-500 text-sm mt-3">jon@parkbunny.app</p>
                     </FadeIn>
-                    <FadeIn delay={800}>
-                        <div className="mt-12 flex items-center gap-6 text-gray-500">
-                            <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4" />
-                                <span className="text-sm">International expansion: LA & Europe — 2026</span>
-                            </div>
-                        </div>
-                    </FadeIn>
+
                     <div className="absolute bottom-8 text-center">
                         <p className="text-gray-600 text-xs">
                             Strictly Private and Confidential. © {new Date().getFullYear()} ParkBunny Ltd. All Rights Reserved.
