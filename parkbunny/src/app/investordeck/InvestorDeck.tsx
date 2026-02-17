@@ -687,7 +687,7 @@ function DeckPresentation() {
                             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center hover:border-amber-500/20 transition-colors h-full">
                                 <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                                     {member.photo ? (
-                                        <Image src={member.photo} alt={member.name} width={80} height={80} className="w-full h-full object-cover" />
+                                        <Image src={member.photo} alt={member.name} width={80} height={80} className="w-full h-full object-cover object-top" />
                                     ) : (
                                         <span className="text-black font-bold text-xl">{member.initials}</span>
                                     )}
