@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import {
-    Lock, Download, ChevronDown,
+    Lock, ChevronDown,
     AlertTriangle, CheckCircle, ArrowRight,
     TrendingUp, DollarSign, Users, Building2,
     MapPin, Zap, Package, Monitor, Car,
@@ -173,15 +173,7 @@ function DeckPresentation() {
                 {String(currentSlide + 1).padStart(2, '0')} / {TOTAL_SLIDES}
             </div>
 
-            {/* Download PDF button */}
-            <a
-                href="/ParkBunny-Investor-Deck-V6-JANUARY26.pdf"
-                download
-                className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-medium text-sm rounded-full transition-colors shadow-lg shadow-amber-500/20 cursor-pointer"
-            >
-                <Download className="w-4 h-4" />
-                Download PDF
-            </a>
+
 
             {/* ═══ SLIDE 1: COVER ═══ */}
             <Slide ref={setSlideRef(0)}>
