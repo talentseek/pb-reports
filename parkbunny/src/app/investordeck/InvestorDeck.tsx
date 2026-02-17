@@ -18,7 +18,7 @@ import {
     AI_OPERATIONS, INTERNATIONAL, COMMISSION_NOTE, TRACK_RECORD
 } from '@/lib/investor-data'
 
-const TOTAL_SLIDES = 16
+const TOTAL_SLIDES = 17
 
 export default function InvestorDeck() {
     const [authed, setAuthed] = useState(false)
@@ -475,11 +475,41 @@ function DeckPresentation() {
                         </div>
                     </FadeIn>
                 </div>
+                <FadeIn delay={400}>
+                    <div className="mt-6 bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-2xl p-5">
+                        <p className="text-white font-semibold text-sm mb-2">ParkBunny turns every parking session into a revenue opportunity</p>
+                        <p className="text-gray-400 text-sm">Not just a payment — like Ringo, PayByPhone & JustPark. We activate live retailer networks around each site from day one. Our model aligns drivers, retailers and operators in a single value loop. We&apos;re building the loyalty and yield layer for parking — not another parking app.</p>
+                    </div>
+                </FadeIn>
             </Slide>
 
-            {/* ═══ SLIDE 8: WE ADD VALUE FOR YOUR CLIENTS ═══ */}
+            {/* ═══ SLIDE 8: WHY WE WIN ═══ */}
             <Slide ref={setSlideRef(7)}>
-                <SlideHeader number="07" title="We Add Value & Revenue for Our Clients" subtitle="Unlocking revenue from underutilised car park spaces" />
+                <SlideHeader number="07" title="Why We Win" subtitle="A compounding advantage that grows with every site" />
+                <div className="mt-8 max-w-3xl mx-auto">
+                    <div className="space-y-4">
+                        {[
+                            { text: 'We already have direct access to operators across the UK.', icon: '🤝' },
+                            { text: 'Every new site activates an existing retailer network from day one.', icon: '🚀' },
+                            { text: 'We generate incremental revenue — not just process payments.', icon: '💷' },
+                            { text: 'Drivers earn rewards, creating repeat behaviour and habit.', icon: '🔁' },
+                            { text: 'Retailers gain measurable, attributable footfall.', icon: '📊' },
+                            { text: 'More sites create better data, stronger performance, and compounding value.', icon: '📈' },
+                        ].map((item, i) => (
+                            <FadeIn key={i} delay={i * 100}>
+                                <div className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-5 hover:border-amber-500/20 transition-colors">
+                                    <span className="text-2xl shrink-0">{item.icon}</span>
+                                    <p className="text-gray-300 text-sm leading-relaxed">{item.text}</p>
+                                </div>
+                            </FadeIn>
+                        ))}
+                    </div>
+                </div>
+            </Slide>
+
+            {/* ═══ SLIDE 9: WE ADD VALUE FOR YOUR CLIENTS ═══ */}
+            <Slide ref={setSlideRef(8)}>
+                <SlideHeader number="08" title="We Add Value & Revenue for Our Clients" subtitle="Unlocking revenue from underutilised car park spaces" />
                 <div className="grid grid-cols-2 gap-6 mt-8">
                     {ADDITIONAL_STREAMS.map((stream, i) => {
                         const icons = [
@@ -510,8 +540,8 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 9: AI & TECHNOLOGY ═══ */}
-            <Slide ref={setSlideRef(8)}>
-                <SlideHeader number="08" title="AI & Technology" subtitle="AI-Powered Revenue Optimisation & Lean Operations" />
+            <Slide ref={setSlideRef(9)}>
+                <SlideHeader number="09" title="AI & Technology" subtitle="AI-Powered Revenue Optimisation & Lean Operations" />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -573,8 +603,8 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 10: STRATEGIC PARTNERS ═══ */}
-            <Slide ref={setSlideRef(9)}>
-                <SlideHeader number="09" title="Strategic Partners" subtitle="It's all about relationships — national operators already in the pipeline" />
+            <Slide ref={setSlideRef(10)}>
+                <SlideHeader number="10" title="Strategic Partners" subtitle="It's all about relationships — national operators already in the pipeline" />
                 <div className="mt-8">
                     <FadeIn>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -608,8 +638,8 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 11: MARKET OPPORTUNITY ═══ */}
-            <Slide ref={setSlideRef(10)}>
-                <SlideHeader number="10" title="Market Opportunity" subtitle="A massive, untapped market with zero loyalty competitors" />
+            <Slide ref={setSlideRef(11)}>
+                <SlideHeader number="11" title="Market Opportunity" subtitle="A massive, untapped market with zero loyalty competitors" />
                 <div className="mt-8 text-center">
                     <FadeIn>
                         <div className="mb-8">
@@ -643,8 +673,8 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 12: THE TEAM ═══ */}
-            <Slide ref={setSlideRef(11)}>
-                <SlideHeader number="11" title="The Team" subtitle="Experienced founders who've already done this at scale" />
+            <Slide ref={setSlideRef(12)}>
+                <SlideHeader number="12" title="The Team" subtitle="Experienced founders who've already done this at scale" />
                 <FadeIn>
                     <div className="bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-xl p-4 mt-4 mb-6">
                         <p className="text-amber-400 text-sm font-medium">
@@ -681,7 +711,7 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 13: GALLERY — Branding & Marketing ═══ */}
-            <Slide ref={setSlideRef(12)}>
+            <Slide ref={setSlideRef(13)}>
                 <SlideHeader number="13" title="ParkBunny in Action" subtitle="Branding, marketing, and product in the wild" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                     {[1, 2, 3, 4, 5, 6].map((n, i) => (
@@ -697,7 +727,7 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 14: INVESTMENT ASK ═══ */}
-            <Slide ref={setSlideRef(13)}>
+            <Slide ref={setSlideRef(14)}>
                 <SlideHeader number="14" title="The Investment Ask" subtitle={`We're looking for ${INVESTMENT.amount} at a ${INVESTMENT.valuation}`} />
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <FadeIn>
@@ -745,7 +775,7 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 15: INTERNATIONAL EXPANSION ═══ */}
-            <Slide ref={setSlideRef(14)}>
+            <Slide ref={setSlideRef(15)}>
                 <SlideHeader number="15" title="International Expansion" subtitle="A scalable model with global potential" />
                 <FadeIn>
                     <div className="mt-6 flex justify-center">
@@ -762,7 +792,7 @@ function DeckPresentation() {
             </Slide>
 
             {/* ═══ SLIDE 16: CONTACT ═══ */}
-            <Slide ref={setSlideRef(15)}>
+            <Slide ref={setSlideRef(16)}>
                 <div className="flex flex-col items-center justify-center text-center h-full">
                     <FadeIn>
                         <Image src="/logo.png" alt="ParkBunny" width={200} height={64} className="h-14 w-auto mx-auto mb-6 rounded-lg" />
