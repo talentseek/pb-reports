@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import {
-    Lock, ChevronDown,
+    Lock, ChevronDown, Download, Loader2,
     AlertTriangle, CheckCircle, ArrowRight,
     TrendingUp, DollarSign, Users, Building2,
     MapPin, Zap, Package, Monitor, Car,
@@ -109,8 +109,50 @@ function LoginScreen({ password, setPassword, error, onSubmit }: {
    ═══════════════════════════════════════════ */
 function DeckPresentation() {
     const [currentSlide, setCurrentSlide] = useState(0)
+    const [pdfProgress, setPdfProgress] = useState<string | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const slideRefs = useRef<(HTMLElement | null)[]>([])
+
+    const handleDownloadPDF = useCallback(async () => {
+        if (pdfProgress) return
+        setPdfProgress('Preparing...')
+        try {
+            const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+                import('html2canvas-pro'),
+                import('jspdf'),
+            ])
+
+            const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1920, 1080] })
+            const slides = slideRefs.current.filter(Boolean) as HTMLElement[]
+
+            for (let i = 0; i < slides.length; i++) {
+                setPdfProgress(`Capturing slide ${i + 1} of ${slides.length}...`)
+                const slide = slides[i]
+                slide.scrollIntoView({ behavior: 'instant' as ScrollBehavior })
+                await new Promise(r => setTimeout(r, 400))
+
+                const canvas = await html2canvas(slide, {
+                    backgroundColor: '#0B1120',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: 1920,
+                    windowHeight: 1080,
+                })
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.92)
+                if (i > 0) pdf.addPage()
+                pdf.addImage(imgData, 'JPEG', 0, 0, 1920, 1080)
+            }
+
+            setPdfProgress('Saving...')
+            pdf.save('ParkBunny-Investor-Deck.pdf')
+        } catch (err) {
+            console.error('PDF generation failed:', err)
+        } finally {
+            setPdfProgress(null)
+        }
+    }, [pdfProgress])
 
     const scrollToSlide = useCallback((index: number) => {
         slideRefs.current[index]?.scrollIntoView({ behavior: 'smooth' })
@@ -172,6 +214,19 @@ function DeckPresentation() {
             <div className="fixed bottom-4 left-4 z-50 text-gray-500 text-sm font-mono">
                 {String(currentSlide + 1).padStart(2, '0')} / {TOTAL_SLIDES}
             </div>
+
+            {/* Download PDF button */}
+            <button
+                onClick={handleDownloadPDF}
+                disabled={!!pdfProgress}
+                className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/60 text-black font-medium text-sm rounded-full transition-colors shadow-lg shadow-amber-500/20 cursor-pointer disabled:cursor-wait"
+            >
+                {pdfProgress ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> {pdfProgress}</>
+                ) : (
+                    <><Download className="w-4 h-4" /> Download PDF</>
+                )}
+            </button>
 
 
 
