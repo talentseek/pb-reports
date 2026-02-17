@@ -146,7 +146,7 @@ export const TEAM: TeamMember[] = [
         name: 'Jon Sprank',
         role: 'Co-Founder & CEO',
         initials: 'JS',
-        photo: '/team/jon-sprank.png',
+        photo: '/team/jon-headshot.jpg',
         credentials: [
             'Ex Head of Sales at JustPark — onboarded 100,000+ spaces in under 2 years',
             'Ex European Sales Director at iZettle (acquired by PayPal for $2.2B)',

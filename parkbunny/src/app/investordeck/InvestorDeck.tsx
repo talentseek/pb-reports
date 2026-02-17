@@ -391,6 +391,12 @@ function DeckPresentation() {
                         </FadeIn>
                     ))}
                 </div>
+                <FadeIn delay={600}>
+                    <div className="mt-6 bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-2xl p-5 text-center">
+                        <p className="text-emerald-400 font-bold text-3xl md:text-4xl">23.4%</p>
+                        <p className="text-gray-300 text-sm mt-1">Average growth over the past 6 months</p>
+                    </div>
+                </FadeIn>
             </Slide>
 
             {/* ═══ SLIDE 7: REVENUE MODEL (SIMPLIFIED — MERGED) ═══ */}
@@ -713,16 +719,30 @@ function DeckPresentation() {
             {/* ═══ SLIDE 13: GALLERY — Branding & Marketing ═══ */}
             <Slide ref={setSlideRef(13)}>
                 <SlideHeader number="13" title="ParkBunny in Action" subtitle="Branding, marketing, and product in the wild" />
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                    {[1, 2, 3, 4, 5, 6].map((n, i) => (
-                        <FadeIn key={i} delay={i * 100}>
+                <div className="mt-8 space-y-4">
+                    <FadeIn>
+                        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
+                            <div className="aspect-[16/8] relative">
+                                <Image src="/gallery/marketing-collateral.jpg" alt="ParkBunny marketing materials" fill className="object-cover" />
+                            </div>
+                        </div>
+                    </FadeIn>
+                    <div className="grid grid-cols-2 gap-4">
+                        <FadeIn delay={100}>
                             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
-                                <div className="aspect-[4/3] relative">
-                                    <Image src={`/gallery/gallery-${n}.jpeg`} alt={`ParkBunny marketing ${n}`} fill className="object-cover" />
+                                <div className="aspect-square relative">
+                                    <Image src="/gallery/app-screenshots.jpg" alt="ParkBunny app screenshots" fill className="object-cover" />
                                 </div>
                             </div>
                         </FadeIn>
-                    ))}
+                        <FadeIn delay={200}>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
+                                <div className="aspect-square relative">
+                                    <Image src="/gallery/social-post.jpg" alt="ParkBunny social media" fill className="object-cover" />
+                                </div>
+                            </div>
+                        </FadeIn>
+                    </div>
                 </div>
             </Slide>
 
