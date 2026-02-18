@@ -8,6 +8,8 @@ import PublicRevenueTabs from "@/components/report/public/PublicRevenueTabs"
 import { ExecutiveAreaSummary, AppShowcase, WhatMakesDifferent, ActivationPlan, MeasurementReporting, ComplianceGoodPractice } from "@/components/report/public/PublicSections"
 import { AncillaryServices, CommercialOffer, CommercialTerms } from "@/components/report/public/PublicCommercial"
 import { SingleMap, MultiLocationSection } from "@/components/report/public/PublicLocations"
+import PublicRevenueSummary from "@/components/report/public/PublicRevenueSummary"
+import { getStreamsForReport, calculateStreamRevenue } from "@/lib/revenue-streams"
 
 function getCategoryBreakdown(businesses: any[]) {
   const counts: Record<string, number> = {}
@@ -129,6 +131,11 @@ export default async function PublicReportView({ report }: { report: any }) {
     .sort((a, b) => b.included - a.included)
     .slice(0, 3)
 
+  // ── Revenue Streams ──────────────────────────────────────────────
+  const dbStreams = await getStreamsForReport(report.id)
+  const streamSummaries = dbStreams.map((s) => calculateStreamRevenue(s, locationCount))
+  const hasStreams = streamSummaries.length > 0
+
   return (
     <div className="space-y-12">
       <PublicHeader
@@ -189,8 +196,8 @@ export default async function PublicReportView({ report }: { report: any }) {
                       <TableCell>{typeof l.longitude === 'number' ? l.longitude.toFixed(5) : '—'}</TableCell>
                       <TableCell>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${l.status === 'LIVE'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
                           }`}>
                           {l.status}
                         </span>
@@ -400,7 +407,18 @@ export default async function PublicReportView({ report }: { report: any }) {
 
 
 
-      <AncillaryServices />
+      <AncillaryServices streams={streamSummaries} formatCurrency={formatCurrency} />
+
+      {hasStreams && (
+        <PublicRevenueSummary
+          locationCount={locationCount}
+          totalCurrentRevenue={totalCurrentRevenue}
+          upliftValue={upliftValue}
+          growthPercent={computedGrowthPercent}
+          streams={streamSummaries}
+          formatCurrency={formatCurrency}
+        />
+      )}
 
       <CommercialOffer />
 

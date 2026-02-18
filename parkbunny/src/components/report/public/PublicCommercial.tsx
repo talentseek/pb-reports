@@ -1,43 +1,114 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import type { StreamRevenueSummary } from "@/lib/revenue-streams"
+import { STREAM_DEFAULTS } from "@/lib/revenue-streams"
+import type { StreamType } from "@prisma/client"
 
-export function AncillaryServices() {
+type AncillaryProps = {
+  streams: StreamRevenueSummary[]
+  formatCurrency: (n: number) => string
+}
+
+export function AncillaryServices({ streams, formatCurrency }: AncillaryProps) {
+  if (streams.length === 0) return null
+
   return (
-    <section className="space-y-4">
+    <section className="space-y-6">
       <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
         <CardHeader>
-          <CardTitle className="text-primary">Ancillary Services Revenue Potential</CardTitle>
+          <CardTitle className="text-primary">Additional Portfolio Uplift</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-700 mb-3">Subject to site surveys — projected upside from additional services</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[
-              ['Smart Lockers','£1k–£36k','Per year recurring revenue','/lockers.png'],
-              ['Digital Signage','£4k–£40k','Per year depending on location','/signage.jpg'],
-              ['WeBuyAnyCar.com','£15k–£20k','Per year per site','/wbac.webp'],
-              ['Tesla Test Drive Centre','£50k','Per year per site','/tesla.jpg'],
-              ['Waterless Car Wash','£12k–£45k/year','Eco-friendly; minimal water usage','/carwash.webp'],
-              ['Last Mile Logistics','Up to £30k/year','Delivery partnerships','/courier.png'],
-              ['Markets & Events','Flexible activation','Pop-up markets and community events','/market.webp'],
-            ].map(([title,amount,desc,src]) => (
-              <div key={String(title)} className="rounded border p-4 space-y-2">
-                <div className="w-full h-24 lg:h-28 flex items-center justify-center">
-                  {src ? (
-                    <img src={String(src)} alt={String(title)} className="h-full w-auto object-contain rounded-md" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Image coming soon</div>
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium">{title}</p>
-                  <p className="text-sm">{amount}</p>
-                  <p className="text-xs text-gray-600">{desc}</p>
+        <CardContent className="space-y-6">
+          <p className="text-sm text-gray-700">Subject to site surveys — projected upside from additional services deployed across the portfolio.</p>
+
+          {streams.map((stream) => {
+            const meta = STREAM_DEFAULTS[stream.streamType]
+            return (
+              <div key={stream.streamType} className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                <div className="md:grid md:grid-cols-2">
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-2xl">{getStreamEmoji(stream.streamType)}</span>
+                      <h3 className="text-xl font-semibold">{meta.label}</h3>
+                      <span className={`ml-auto text-xs px-2 py-1 rounded-full ${stream.statusLabel === 'Confirmed'
+                          ? 'bg-green-100 text-green-700'
+                          : stream.statusLabel === 'Portfolio-Wide'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}>
+                        {stream.statusLabel}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 mb-4">{meta.description}</p>
+                    <ul className="text-sm text-gray-700 space-y-1 mb-4">
+                      {meta.bullets.map((b, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-green-500 mt-0.5">✓</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Pricing box */}
+                    {stream.isTextOnly ? (
+                      <div className="bg-amber-50 rounded-lg p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Estimated per event</span>
+                          <span className="font-semibold text-amber-700">{stream.textDisplay}</span>
+                        </div>
+                        <p className="text-sm font-bold text-gray-800 mt-3 bg-amber-100 rounded px-3 py-2">
+                          ⚠️ Subject to site feasibility assessment
+                        </p>
+                      </div>
+                    ) : stream.isRange ? (
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Estimated per site/year</span>
+                          <span className="font-semibold text-blue-700">
+                            {formatCurrency(stream.annualMin! / Math.max(1, stream.siteCount))} – {formatCurrency(stream.annualMax! / Math.max(1, stream.siteCount))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-blue-200">
+                          <span className="font-medium">Portfolio Total ({stream.siteCount} sites)</span>
+                          <span className="text-xl font-bold text-blue-700">
+                            {formatCurrency(stream.annualMin ?? 0)} – {formatCurrency(stream.annualMax ?? 0)}/yr
+                          </span>
+                        </div>
+                        <p className="text-sm font-bold text-gray-800 mt-3 bg-amber-100 rounded px-3 py-2">
+                          ⚠️ Subject to survey
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="bg-indigo-50 rounded-lg p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Per site/year</span>
+                          <span className="font-semibold text-indigo-700">
+                            {formatCurrency(stream.annualRevenue! / Math.max(1, stream.siteCount))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-indigo-200">
+                          <span className="font-medium">Portfolio Total ({stream.siteCount} sites)</span>
+                          <span className="text-xl font-bold text-indigo-700">
+                            {formatCurrency(stream.annualRevenue ?? 0)}/yr
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative h-64 md:h-auto bg-gray-100">
+                    <img
+                      src={meta.image}
+                      alt={meta.label}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="rounded border p-4 text-xs text-gray-600 mt-4">
+            )
+          })}
+
+          <div className="rounded border p-4 text-xs text-gray-600">
             <p className="font-medium">Implementation Notes</p>
             <p>All opportunities subject to site survey and feasibility assessment. Partnership negotiations and planning permissions may apply.</p>
           </div>
@@ -45,6 +116,16 @@ export function AncillaryServices() {
       </Card>
     </section>
   )
+}
+
+function getStreamEmoji(streamType: StreamType): string {
+  switch (streamType) {
+    case 'LOCKER': return '📦'
+    case 'CAR_WASH': return '🚗'
+    case 'EV_CHARGING': return '⚡'
+    case 'FARMERS_MARKET': return '🛒'
+    default: return '📊'
+  }
 }
 
 export function CommercialOffer() {
@@ -82,13 +163,13 @@ export function CommercialOffer() {
   )
 }
 
-export function CommercialTerms({ 
-  transactionFeePercent = 1.5, 
-  convenienceFeePence = 25, 
-  useCustomCommercialTerms = false, 
-  customCommercialTermsText = '' 
-}: { 
-  transactionFeePercent?: number; 
+export function CommercialTerms({
+  transactionFeePercent = 1.5,
+  convenienceFeePence = 25,
+  useCustomCommercialTerms = false,
+  customCommercialTermsText = ''
+}: {
+  transactionFeePercent?: number;
   convenienceFeePence?: number;
   useCustomCommercialTerms?: boolean;
   customCommercialTermsText?: string;

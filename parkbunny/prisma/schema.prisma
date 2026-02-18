@@ -32,6 +32,7 @@ model Report {
   businesses        Business[]
   user              User?            @relation(fields: [userId], references: [id])
   locations         ReportLocation[]
+  revenueStreams    RevenueStream[]
 }
 
 model Business {
@@ -58,6 +59,7 @@ model ReportLocation {
   status        LocationStatus        @default(PENDING)
   report        Report                @relation(fields: [reportId], references: [id])
   places        ReportLocationPlace[]
+  streamExclusions RevenueStreamExclusion[]
 
   @@unique([reportId, postcode], name: "reportId_postcode")
 }
@@ -171,4 +173,41 @@ enum CampaignStatus {
   ENRICHED
   READY_TO_LAUNCH
   LAUNCHED
+}
+
+enum StreamType {
+  LOCKER
+  CAR_WASH
+  EV_CHARGING
+  FARMERS_MARKET
+}
+
+model RevenueStream {
+  id          String      @id @default(cuid())
+  reportId    String
+  streamType  StreamType
+  enabled     Boolean     @default(true)
+  ratePerSite Int?
+  rateMin     Int?
+  rateMax     Int?
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  report              Report                   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  excludedLocations   RevenueStreamExclusion[]
+
+  @@unique([reportId, streamType])
+}
+
+model RevenueStreamExclusion {
+  id              String         @id @default(cuid())
+  revenueStreamId String
+  locationId      String
+  createdAt       DateTime       @default(now())
+
+  revenueStream   RevenueStream  @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+  location        ReportLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([revenueStreamId, locationId])
 }
