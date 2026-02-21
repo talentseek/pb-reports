@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { locationId, category, postcode, businessIds } = await request.json();
+    const { locationId, category, postcode, businessIds, carparkName } = await request.json();
 
     if (!locationId || !category || !postcode || !businessIds || !Array.isArray(businessIds)) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
         name: campaignName,
         businessType: category,
         postcode: postcode,
+        locationId: locationId,
+        carparkName: carparkName || 'the car park',
         businesses: {
           create: businessIds.map((businessId: string) => ({
             reportLocationPlaceId: businessId
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       campaignId: campaign.id,
       campaign: campaign
     });
