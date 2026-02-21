@@ -5,81 +5,128 @@ import prisma from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-
-// Mock data generator for demo purposes
-function getMockProgress(locationId: string, totalBusinesses: number) {
-  // Use locationId to generate consistent "random" values
-  const seed = locationId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const enrichmentProgress = Math.min(100, (seed % 40) + 60); // 60-100%
-  const contacted = Math.floor(totalBusinesses * (0.5 + (seed % 50) / 100)); // 50-100%
-
-  const statuses = ['Not Started', 'In Progress', 'Complete'];
-  const status = totalBusinesses > 0 ? statuses[seed % 3] : 'Not Started';
-
-  return { enrichmentProgress, contacted, status };
-}
+import { getLocationStats, type LocationStats } from "@/lib/voice-queue";
 
 export default async function OutreachPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  // Fetch all live locations across all reports
+  // Only fetch LIVE locations
   const liveLocations = await prisma.reportLocation.findMany({
-    where: {
-      status: 'LIVE'
-    },
+    where: { status: "LIVE" },
     include: {
-      report: {
-        select: {
-          name: true
-        }
-      },
+      report: { select: { name: true } },
       places: {
-        include: {
-          place: true
-        }
-      }
+        where: { included: true },
+        include: { place: { select: { phone: true } } },
+      },
     },
-    orderBy: {
-      createdAt: 'desc'
-    }
+    orderBy: { createdAt: "desc" },
   });
+
+  // Check voice config status
+  const voiceConfig = await prisma.voiceConfig.findFirst({
+    select: { callingEnabled: true },
+  });
+
+  // Get stats for each location
+  const locationStatsMap: Record<string, LocationStats> = {};
+  for (const loc of liveLocations) {
+    locationStatsMap[loc.id] = await getLocationStats(loc.id);
+  }
+
+  // Global aggregates
+  const globalCallable = Object.values(locationStatsMap).reduce((s, l) => s + l.withPhone, 0);
+  const globalLeads = Object.values(locationStatsMap).reduce(
+    (s, l) => s + (l.callStats?.leadsCaptured ?? 0),
+    0,
+  );
+  const globalCallbacks = Object.values(locationStatsMap).reduce(
+    (s, l) => s + (l.callStats?.callbacksBooked ?? 0),
+    0,
+  );
+  const globalPending = Object.values(locationStatsMap).reduce(
+    (s, l) => s + (l.callStats?.pending ?? 0),
+    0,
+  );
 
   return (
     <main className="mx-auto max-w-7xl p-6 space-y-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">AI-Powered Outreach</h1>
-          <p className="text-muted-foreground mt-2">
-            Automated business discovery, enrichment, and personalized outreach
+          <h1 className="text-3xl font-bold">🎯 Voice Outreach</h1>
+          <p className="text-muted-foreground mt-1">
+            AI-powered calling across LIVE locations
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link
-            href="/outreach/inbox"
-            className="inline-flex items-center justify-center rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90"
-          >
-            📬 Inbox
-          </Link>
-          <Link
-            href="/outreach/campaigns"
-            className="inline-flex items-center justify-center rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
-          >
-            View Campaigns
-          </Link>
-        </div>
+        <Link
+          href="/outreach/voice-config"
+          className="inline-flex items-center gap-2 rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
+        >
+          ⚙️ Voice Settings
+        </Link>
       </header>
 
+      {/* Global Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-4 pb-4 text-center">
+            <p className="text-3xl font-bold">{globalCallable.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">📞 Callable</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-4 text-center">
+            <p className="text-3xl font-bold text-green-600">{globalLeads}</p>
+            <p className="text-sm text-muted-foreground">✅ Leads</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-4 text-center">
+            <p className="text-3xl font-bold text-blue-600">{globalCallbacks}</p>
+            <p className="text-sm text-muted-foreground">📅 Callbacks</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-4 text-center">
+            <p className="text-3xl font-bold text-amber-600">{globalPending}</p>
+            <p className="text-sm text-muted-foreground">⏳ Pending</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Voice Config Banner */}
+      {!voiceConfig && (
+        <Card className="border-amber-300 bg-amber-50">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="font-medium">Voice outreach not configured</p>
+                <p className="text-sm text-muted-foreground">
+                  Set up Twilio and Vapi credentials in{" "}
+                  <Link href="/outreach/voice-config" className="underline text-blue-600">
+                    Voice Settings
+                  </Link>{" "}
+                  to start calling.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Per-Location Cards */}
       {liveLocations.length === 0 ? (
         <Card>
           <CardContent className="pt-6">
             <div className="text-center py-8">
               <p className="text-muted-foreground mb-4">
-                No live locations found. Update location status to &quot;LIVE&quot; in your reports to start outreach campaigns.
+                No LIVE locations found. Set location status to &quot;LIVE&quot; in your reports to start outreach.
               </p>
               <Link
                 href="/reports"
-                className="inline-flex items-center justify-center rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90"
+                className="inline-flex items-center rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90"
               >
                 View Reports
               </Link>
@@ -87,67 +134,130 @@ export default async function OutreachPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {liveLocations.map((location) => {
-            const totalBusinesses = location.places.length;
-            const includedBusinesses = location.places.filter(p => p.included).length;
-            const mockData = getMockProgress(location.id, includedBusinesses);
+            const stats = locationStatsMap[location.id];
+            const totalBiz = stats?.totalBusinesses ?? 0;
+            const withPhone = stats?.withPhone ?? 0;
+            const callStats = stats?.callStats;
+            const called =
+              (callStats?.leadsCaptured ?? 0) +
+              (callStats?.callbacksBooked ?? 0) +
+              (callStats?.notInterested ?? 0) +
+              (callStats?.voicemail ?? 0) +
+              (callStats?.gatekeeperBlocked ?? 0) +
+              (callStats?.noAnswer ?? 0);
+            const progressPct = withPhone > 0 ? Math.round((called / withPhone) * 100) : 0;
+
+            const statusLabel = stats?.campaignStatus ?? "Not Started";
+            const statusVariant =
+              statusLabel === "COMPLETED"
+                ? "default"
+                : statusLabel === "CALLING"
+                  ? "secondary"
+                  : statusLabel === "PAUSED"
+                    ? "outline"
+                    : "outline";
 
             return (
-              <Link key={location.id} href={`/outreach/${location.id}`}>
-                <Card className="hover:shadow-lg transition-all cursor-pointer border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{location.postcode}</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          {location.report.name}
-                        </p>
-                      </div>
-                      <Badge
-                        variant={mockData.status === 'Complete' ? 'default' : mockData.status === 'In Progress' ? 'secondary' : 'outline'}
-                        className="text-xs"
-                      >
-                        {mockData.status}
-                      </Badge>
+              <Card key={location.id} className="hover:shadow-lg transition-all">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{location.postcode}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{location.report.name}</p>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* Businesses Found */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">🔍 Businesses Found</span>
-                        <Badge variant="secondary">
-                          {includedBusinesses}
+                    <Badge variant={statusVariant} className="text-xs capitalize">
+                      {statusLabel.toLowerCase().replace("_", " ")}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Progress */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>Contacted {called} / {withPhone} callable</span>
+                      <span className="text-muted-foreground">{progressPct}%</span>
+                    </div>
+                    <Progress value={progressPct} className="h-2" />
+                  </div>
+
+                  {/* Funnel */}
+                  <div className="text-sm text-muted-foreground">
+                    📊 {totalBiz} businesses → {withPhone} callable
+                    {(callStats?.ctpsBlocked ?? 0) > 0 && (
+                      <span className="text-red-500 ml-2">
+                        · {callStats?.ctpsBlocked} CTPS blocked
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Outcome badges */}
+                  {callStats && called > 0 && (
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      {callStats.leadsCaptured > 0 && (
+                        <Badge variant="default" className="bg-green-600">
+                          ✅ {callStats.leadsCaptured} leads
                         </Badge>
-                      </div>
-
-                      {/* Enrichment Progress */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">🤖 AI Enrichment</span>
-                          <span className="text-muted-foreground">{mockData.enrichmentProgress}%</span>
-                        </div>
-                        <Progress value={mockData.enrichmentProgress} className="h-2" />
-                      </div>
-
-                      {/* Outreach Progress */}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">📧 Contacted</span>
-                        <span className="text-muted-foreground">{mockData.contacted} / {includedBusinesses}</span>
-                      </div>
-
-                      <div className="text-xs text-muted-foreground pt-2 border-t">
-                        Live since {new Date(location.createdAt).toLocaleDateString()}
-                      </div>
+                      )}
+                      {callStats.callbacksBooked > 0 && (
+                        <Badge variant="secondary">📅 {callStats.callbacksBooked} callbacks</Badge>
+                      )}
+                      {callStats.notInterested > 0 && (
+                        <Badge variant="outline">❌ {callStats.notInterested}</Badge>
+                      )}
+                      {callStats.voicemail > 0 && (
+                        <Badge variant="outline">📞 {callStats.voicemail} VM</Badge>
+                      )}
+                      {(callStats.pending ?? 0) > 0 && (
+                        <Badge variant="outline">⏳ {callStats.pending}</Badge>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+                  )}
+
+                  {/* Recent activity */}
+                  {stats?.lastActivity && (
+                    <p className="text-xs text-muted-foreground border-t pt-2">
+                      Last: {stats.lastActivity.businessName} —{" "}
+                      {stats.lastActivity.status.toLowerCase().replace("_", " ")}{" "}
+                      {formatTimeAgo(stats.lastActivity.at)}
+                    </p>
+                  )}
+
+                  {/* Action button */}
+                  <div className="pt-2">
+                    {stats?.campaignId ? (
+                      <Link
+                        href={`/outreach/campaigns/${stats.campaignId}`}
+                        className="inline-flex items-center rounded bg-primary text-primary-foreground px-4 py-2 text-sm hover:opacity-90 w-full justify-center"
+                      >
+                        View Campaign →
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/outreach/${location.id}`}
+                        className="inline-flex items-center rounded bg-primary text-primary-foreground px-4 py-2 text-sm hover:opacity-90 w-full justify-center"
+                      >
+                        Start Outreach →
+                      </Link>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
       )}
     </main>
   );
+}
+
+function formatTimeAgo(date: Date): string {
+  const diff = Date.now() - date.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }

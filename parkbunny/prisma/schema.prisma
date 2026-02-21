@@ -60,6 +60,7 @@ model ReportLocation {
   report        Report                @relation(fields: [reportId], references: [id])
   places        ReportLocationPlace[]
   streamExclusions RevenueStreamExclusion[]
+  campaigns     Campaign[]
 
   @@unique([reportId, postcode], name: "reportId_postcode")
 }
@@ -112,14 +113,17 @@ model ReportLocationPlace {
 }
 
 model Campaign {
-  id          String            @id @default(cuid())
-  name        String
+  id           String            @id @default(cuid())
+  name         String
   businessType String
-  postcode    String
-  status      CampaignStatus    @default(CREATED)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  businesses  CampaignBusiness[]
+  postcode     String
+  locationId   String?
+  carparkName  String            @default("the car park")
+  status       CampaignStatus    @default(CREATED)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  businesses   CampaignBusiness[]
+  location     ReportLocation?   @relation(fields: [locationId], references: [id])
 }
 
 model CampaignBusiness {
@@ -127,6 +131,25 @@ model CampaignBusiness {
   campaignId            String
   reportLocationPlaceId String
   createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  // Voice call tracking
+  vapiCallId            String?              @unique
+  callStatus            CallStatus           @default(PENDING)
+  callAttempts          Int                  @default(0)
+  lastCallAt            DateTime?
+  nextCallAt            DateTime?
+  callDuration          Int?
+  callSummary           String?
+  transcript            String?              @db.Text
+  recordingUrl          String?
+
+  // Extracted data from call
+  extractedName         String?
+  extractedEmail        String?
+  extractedPhone        String?
+  callbackTime          String?
+
   campaign              Campaign             @relation(fields: [campaignId], references: [id])
   reportLocationPlace   ReportLocationPlace  @relation(fields: [reportLocationPlaceId], references: [id])
 
@@ -173,6 +196,39 @@ enum CampaignStatus {
   ENRICHED
   READY_TO_LAUNCH
   LAUNCHED
+  CALLING
+  PAUSED
+  COMPLETED
+}
+
+enum CallStatus {
+  PENDING
+  QUEUED
+  IN_PROGRESS
+  LEAD_CAPTURED
+  CALLBACK_BOOKED
+  NOT_INTERESTED
+  VOICEMAIL
+  GATEKEEPER_BLOCKED
+  NO_ANSWER
+  INVALID_NUMBER
+  FAILED
+  CTPS_BLOCKED
+}
+
+model VoiceConfig {
+  id              String   @id @default(cuid())
+  twilioSid       String
+  twilioAuthToken String
+  vapiApiKey      String
+  vapiAssistantId String
+  vapiPhoneNumId  String
+  callingEnabled  Boolean  @default(false)
+  maxConcurrent   Int      @default(1)
+  maxAttempts     Int      @default(3)
+  webhookSecret   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 enum StreamType {
