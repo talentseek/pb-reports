@@ -729,7 +729,7 @@ function DeckPresentation() {
                             </div>
                         </div>
                     </FadeIn>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                         <FadeIn delay={100}>
                             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
                                 <div className="aspect-square relative">
@@ -741,6 +741,13 @@ function DeckPresentation() {
                             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
                                 <div className="aspect-square relative">
                                     <Image src="/gallery/social-post.jpg" alt="ParkBunny social media" fill className="object-cover" />
+                                </div>
+                            </div>
+                        </FadeIn>
+                        <FadeIn delay={300}>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors">
+                                <div className="aspect-square relative">
+                                    <Image src="/gallery/carpark-billboard.jpg" alt="ParkBunny billboard in car park" fill className="object-cover" />
                                 </div>
                             </div>
                         </FadeIn>
