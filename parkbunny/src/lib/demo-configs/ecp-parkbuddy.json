@@ -1,0 +1,119 @@
+{
+    "slug": "ecp-parkbuddy",
+    "operator": {
+        "name": "ECP ParkBuddy",
+        "tagline": "Smarter parking that pays drivers back",
+        "logo": "/demo/ecp-parkbuddy/logo.png",
+        "logoAlt": "/demo/ecp-parkbuddy/logo-corp.png",
+        "colors": {
+            "primary": "#36C5FD",
+            "secondary": "#003399",
+            "accent": "#FFCC00",
+            "background": "#f8fafc",
+            "text": "#0f172a",
+            "cardBg": "rgba(255,255,255,0.85)"
+        },
+        "font": "Arial, sans-serif"
+    },
+    "location": {
+        "name": "Mayfair",
+        "address": "Achilles Way, London",
+        "postcode": "W1K 1AB",
+        "phone": "0330 022 3866",
+        "locationCode": "684543",
+        "city": "London",
+        "totalSpaces": 304,
+        "hourlyRate": 4.50,
+        "lat": 51.5074,
+        "lng": -0.1478
+    },
+    "deals": [
+        {
+            "id": "costa-1",
+            "brand": "Costa Coffee",
+            "logo": "/demo/deals/costa.svg",
+            "offer": "Free hot drink with any £3+ food purchase",
+            "category": "food_and_drink",
+            "savingsValue": "£3.50",
+            "expiryMinutes": 120,
+            "placeQuery": "Costa Coffee",
+            "redeemInstructions": "Show QR code to barista before ordering. Valid on any hot drink up to grande size.",
+            "termsAndConditions": "One per transaction. Cannot be combined with other offers.",
+            "color": "#6F1E51"
+        },
+        {
+            "id": "vue-1",
+            "brand": "Vue Cinema",
+            "logo": "/demo/deals/vue.svg",
+            "offer": "2-for-1 tickets on any standard screening",
+            "category": "entertainment",
+            "savingsValue": "£11.99",
+            "expiryMinutes": 240,
+            "placeQuery": "Vue Cinema",
+            "redeemInstructions": "Present QR code at the box office or scan at self-service kiosks.",
+            "termsAndConditions": "Valid Mon-Thu only. Excludes IMAX and special screenings.",
+            "color": "#00284d"
+        },
+        {
+            "id": "tesco-1",
+            "brand": "Tesco",
+            "logo": "/demo/deals/tesco.svg",
+            "offer": "£5 off when you spend £40 or more",
+            "category": "shopping",
+            "savingsValue": "£5.00",
+            "expiryMinutes": 180,
+            "placeQuery": "Tesco",
+            "redeemInstructions": "Scan QR code at self-checkout or show to cashier before payment.",
+            "termsAndConditions": "Minimum spend £40. Excludes alcohol and tobacco.",
+            "color": "#00539F"
+        },
+        {
+            "id": "pret-1",
+            "brand": "Pret A Manger",
+            "logo": "/demo/deals/pret.svg",
+            "offer": "Free pastry with any coffee purchase",
+            "category": "food_and_drink",
+            "savingsValue": "£2.80",
+            "expiryMinutes": 90,
+            "placeQuery": "Pret A Manger",
+            "redeemInstructions": "Show QR code at the till. Choose any pastry from the bakery selection.",
+            "termsAndConditions": "One per customer per day. While stocks last.",
+            "color": "#6B2737"
+        },
+        {
+            "id": "nandos-1",
+            "brand": "Nando's",
+            "logo": "/demo/deals/nandos.svg",
+            "offer": "20% off your total bill",
+            "category": "food_and_drink",
+            "savingsValue": "~£4.00",
+            "expiryMinutes": 180,
+            "placeQuery": "Nando's",
+            "redeemInstructions": "Show QR code to your server before ordering. Discount applied to final bill.",
+            "termsAndConditions": "Dine-in only. Max party size 6. Cannot combine with other offers.",
+            "color": "#CE1126"
+        },
+        {
+            "id": "greggs-1",
+            "brand": "Greggs",
+            "logo": "/demo/deals/greggs.svg",
+            "offer": "Free regular hot drink — any variety",
+            "category": "food_and_drink",
+            "savingsValue": "£2.20",
+            "expiryMinutes": 60,
+            "placeQuery": "Greggs",
+            "redeemInstructions": "Scan QR code at the counter. Valid on any regular hot drink.",
+            "termsAndConditions": "One per visit. Subject to availability.",
+            "color": "#FF6600"
+        }
+    ],
+    "partnerView": {
+        "baselineRevenue": 498000,
+        "projectedUplift": 34,
+        "avgDwellIncrease": 42,
+        "partnerEngagement": 67,
+        "driverRetention": 78,
+        "dealsRedeemed": 1247,
+        "footfallConversion": 23
+    }
+}
