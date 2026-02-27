@@ -103,8 +103,8 @@ export default function RedemptionScreen({ config, deal, onRedeem, onBack }: Pro
                 {!redeemed ? (
                     <button
                         onClick={handleRedeem}
-                        className="w-full py-4 rounded-2xl font-bold text-lg text-white transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg flex items-center justify-center gap-2"
-                        style={{ background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` }}
+                        className="w-full py-4 rounded-2xl font-bold text-lg transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg flex items-center justify-center gap-2"
+                        style={{ background: colors.cta, color: '#1a1a2e' }}
                     >
                         <Wallet className="w-5 h-5" />
                         Save to Wallet

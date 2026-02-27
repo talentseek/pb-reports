@@ -10,6 +10,7 @@ import DealsScreen from './components/DealsScreen'
 import RedemptionScreen from './components/RedemptionScreen'
 import PartnerScreen from './components/PartnerScreen'
 import DemoNav from './components/DemoNav'
+import PhoneFrame from './components/PhoneFrame'
 
 type Props = {
     config: DemoConfig
@@ -72,85 +73,88 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
     } as React.CSSProperties
 
     return (
-        <div
-            className="relative min-h-screen overflow-hidden"
-            style={{
-                ...cssVars,
-                fontFamily: font,
-                backgroundColor: colors.background,
-                color: colors.text,
-            }}
-        >
-            {/* Partner view overlay */}
-            {showPartnerView && (
-                <div className="fixed inset-0 z-50">
-                    <PartnerScreen
-                        config={config}
-                        onClose={() => setShowPartnerView(false)}
-                    />
-                </div>
-            )}
-
-            {/* Main content with transition */}
-            <div className="relative z-10">
-                <div
-                    className="transition-all duration-500 ease-in-out"
-                    key={currentStep}
-                    style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
-                >
-                    {currentStep === 1 && (
-                        <LandingScreen config={config} onNext={nextStep} />
-                    )}
-                    {currentStep === 2 && (
-                        <CarParkScreen config={config} onNext={nextStep} />
-                    )}
-                    {currentStep === 3 && (
-                        <PaymentScreen config={config} onPaymentComplete={handlePaymentComplete} />
-                    )}
-                    {currentStep === 4 && (
-                        <SuccessScreen
-                            config={config}
-                            paymentData={paymentData}
-                            onNext={nextStep}
-                        />
-                    )}
-                    {currentStep === 5 && (
-                        <DealsScreen
-                            config={config}
-                            deals={enrichedDeals}
-                            savedAmount={savedAmount}
-                            onSelectDeal={handleDealSelect}
-                        />
-                    )}
-                    {currentStep === 6 && selectedDeal && (
-                        <RedemptionScreen
-                            config={config}
-                            deal={selectedDeal}
-                            onRedeem={handleDealRedeem}
-                            onBack={() => goToStep(5)}
-                        />
-                    )}
-                    {currentStep === 7 && (
+        <PhoneFrame config={config}>
+            <div
+                className="relative overflow-hidden"
+                style={{
+                    ...cssVars,
+                    fontFamily: font,
+                    minHeight: '100%',
+                    backgroundColor: colors.background,
+                    color: colors.text,
+                }}
+            >
+                {/* Partner view overlay */}
+                {showPartnerView && (
+                    <div className="fixed inset-0 z-50">
                         <PartnerScreen
                             config={config}
-                            onClose={() => journeyComplete ? goToStep(5) : undefined}
+                            onClose={() => setShowPartnerView(false)}
                         />
-                    )}
+                    </div>
+                )}
+
+                {/* Main content with transition */}
+                <div className="relative z-10">
+                    <div
+                        className="transition-all duration-500 ease-in-out"
+                        key={currentStep}
+                        style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
+                    >
+                        {currentStep === 1 && (
+                            <LandingScreen config={config} onNext={nextStep} />
+                        )}
+                        {currentStep === 2 && (
+                            <CarParkScreen config={config} onNext={nextStep} />
+                        )}
+                        {currentStep === 3 && (
+                            <PaymentScreen config={config} onPaymentComplete={handlePaymentComplete} />
+                        )}
+                        {currentStep === 4 && (
+                            <SuccessScreen
+                                config={config}
+                                paymentData={paymentData}
+                                onNext={nextStep}
+                            />
+                        )}
+                        {currentStep === 5 && (
+                            <DealsScreen
+                                config={config}
+                                deals={enrichedDeals}
+                                savedAmount={savedAmount}
+                                onSelectDeal={handleDealSelect}
+                            />
+                        )}
+                        {currentStep === 6 && selectedDeal && (
+                            <RedemptionScreen
+                                config={config}
+                                deal={selectedDeal}
+                                onRedeem={handleDealRedeem}
+                                onBack={() => goToStep(5)}
+                            />
+                        )}
+                        {currentStep === 7 && (
+                            <PartnerScreen
+                                config={config}
+                                onClose={() => journeyComplete ? goToStep(5) : undefined}
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            {/* Navigation */}
-            <DemoNav
-                currentStep={currentStep}
-                highestStep={highestStep}
-                journeyComplete={journeyComplete}
-                onStepChange={goToStep}
-                onTogglePartner={() => setShowPartnerView(prev => !prev)}
-                showPartnerView={showPartnerView}
-                primaryColor={colors.primary}
-            />
+                {/* Navigation */}
+                <DemoNav
+                    currentStep={currentStep}
+                    highestStep={highestStep}
+                    journeyComplete={journeyComplete}
+                    onStepChange={goToStep}
+                    onTogglePartner={() => setShowPartnerView(prev => !prev)}
+                    showPartnerView={showPartnerView}
+                    primaryColor={colors.primary}
+                    accentColor={colors.accent}
+                />
 
-            <style jsx global>{`
+                <style jsx global>{`
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
@@ -176,6 +180,7 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
       `}</style>
-        </div>
+            </div>
+        </PhoneFrame>
     )
 }

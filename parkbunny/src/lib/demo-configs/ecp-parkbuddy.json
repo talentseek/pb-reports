@@ -6,12 +6,13 @@
         "logo": "/demo/ecp-parkbuddy/logo.png",
         "logoAlt": "/demo/ecp-parkbuddy/logo-corp.png",
         "colors": {
-            "primary": "#36C5FD",
-            "secondary": "#003399",
+            "primary": "#003399",
+            "secondary": "#001a4d",
             "accent": "#FFCC00",
-            "background": "#f8fafc",
+            "background": "#f0f4ff",
             "text": "#0f172a",
-            "cardBg": "rgba(255,255,255,0.85)"
+            "cardBg": "rgba(255,255,255,0.92)",
+            "cta": "#FFCC00"
         },
         "font": "Arial, sans-serif"
     },

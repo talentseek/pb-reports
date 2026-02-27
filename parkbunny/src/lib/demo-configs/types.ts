@@ -12,6 +12,7 @@ export type DemoConfig = {
             background: string
             text: string
             cardBg: string
+            cta: string
         }
         font: string
     }
