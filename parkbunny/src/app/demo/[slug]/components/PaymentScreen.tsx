@@ -146,8 +146,8 @@ export default function PaymentScreen({ config, onPaymentComplete }: Props) {
                                 key={m.key}
                                 onClick={() => setPaymentMethod(m.key)}
                                 className={`p-3 rounded-xl border-2 text-center transition-all ${paymentMethod === m.key
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-200 bg-white hover:border-gray-300'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 bg-white hover:border-gray-300'
                                     }`}
                             >
                                 <div className="flex justify-center mb-1">{m.icon}</div>
@@ -160,11 +160,12 @@ export default function PaymentScreen({ config, onPaymentComplete }: Props) {
                 {/* Pay button */}
                 <button
                     onClick={handlePay}
-                    className="w-full py-4 rounded-2xl font-bold text-lg text-white transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg"
+                    className={`w-full py-4 rounded-2xl font-bold text-lg transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg ${paymentMethod === 'apple' ? 'text-white' : ''}`}
                     style={{
                         background: paymentMethod === 'apple'
                             ? 'linear-gradient(135deg, #1a1a2e, #16213e)'
-                            : `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+                            : colors.cta,
+                        color: paymentMethod === 'apple' ? undefined : '#1a1a2e',
                     }}
                 >
                     {paymentMethod === 'apple' ? '' : ''} Pay £{total.toFixed(2)}

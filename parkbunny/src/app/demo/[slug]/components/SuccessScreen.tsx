@@ -74,9 +74,10 @@ export default function SuccessScreen({ config, paymentData, onNext }: Props) {
 
                 <button
                     onClick={onNext}
-                    className="w-full max-w-sm py-4 rounded-2xl font-bold text-lg text-white transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg"
+                    className="w-full max-w-sm py-4 rounded-2xl font-bold text-lg transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg"
                     style={{
-                        background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+                        background: colors.cta,
+                        color: '#1a1a2e',
                         animation: 'pulse-soft 2s ease-in-out infinite',
                     }}
                 >

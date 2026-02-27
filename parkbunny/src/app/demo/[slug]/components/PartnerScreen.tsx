@@ -41,8 +41,8 @@ export default function PartnerScreen({ config, onClose }: Props) {
             {/* Header */}
             <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
                 <div className="flex items-center gap-3">
-                    <div className="px-3 py-1 rounded-full text-xs font-bold text-white"
-                        style={{ background: colors.secondary }}>
+                    <div className="px-3 py-1 rounded-full text-xs font-bold"
+                        style={{ background: colors.accent, color: '#1a1a2e' }}>
                         PARTNER VIEW
                     </div>
                     <span className="text-sm font-semibold text-gray-700">{operator.name} × ParkBunny</span>

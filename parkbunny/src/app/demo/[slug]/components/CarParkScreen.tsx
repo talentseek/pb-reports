@@ -20,14 +20,14 @@ export default function CarParkScreen({ config, onNext }: Props) {
             {/* Header */}
             <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div className="flex items-center gap-2">
-                    <Image src={operator.logo} alt={operator.name} width={120} height={32}
-                        className="h-7 w-auto object-contain" unoptimized
+                    <Image src={operator.logo} alt={operator.name} width={160} height={40}
+                        className="h-9 w-auto object-contain" unoptimized
                         style={{ filter: 'brightness(0)' }}
                     />
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
                     <span>powered by</span>
-                    <Image src="/logo.png" alt="ParkBunny" width={80} height={20} className="h-4 w-auto" />
+                    <Image src="/logo.png" alt="ParkBunny" width={60} height={16} className="h-3.5 w-auto" />
                 </div>
             </header>
 
@@ -100,7 +100,7 @@ export default function CarParkScreen({ config, onNext }: Props) {
                         <Sparkles className="w-6 h-6" style={{ color: colors.primary }} />
                     </div>
                     <div className="flex-1">
-                        <p className="font-semibold text-sm">ParkBunny Rewards Available ✨</p>
+                        <p className="font-semibold text-sm">ECP ParkBuddy Rewards Available ✨</p>
                         <p className="text-xs text-gray-500">Unlock exclusive local deals when you park here</p>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-300" />
@@ -109,9 +109,10 @@ export default function CarParkScreen({ config, onNext }: Props) {
                 {/* CTA */}
                 <button
                     onClick={onNext}
-                    className="w-full py-4 rounded-2xl font-bold text-lg text-white transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg"
+                    className="w-full py-4 rounded-2xl font-bold text-lg transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg"
                     style={{
-                        background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+                        background: colors.cta,
+                        color: '#1a1a2e',
                     }}
                 >
                     Start Parking

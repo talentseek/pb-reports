@@ -25,20 +25,21 @@ export default function LandingScreen({ config, onNext }: Props) {
                     <Image
                         src={operator.logo}
                         alt={operator.name}
-                        width={160}
-                        height={40}
-                        className="h-8 w-auto object-contain brightness-0 invert"
+                        width={200}
+                        height={50}
+                        className="h-10 w-auto object-contain"
                         unoptimized
+                        style={{ filter: 'brightness(0) invert(1)' }}
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-white/70">powered by</span>
+                    <span className="text-[10px] font-medium text-white/50">powered by</span>
                     <Image
                         src="/logo.png"
                         alt="ParkBunny"
-                        width={100}
-                        height={28}
-                        className="h-6 w-auto object-contain brightness-0 invert"
+                        width={80}
+                        height={20}
+                        className="h-4 w-auto object-contain brightness-0 invert opacity-60"
                     />
                 </div>
             </header>
@@ -62,19 +63,19 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div
                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
                     style={{
-                        background: `${colors.primary}20`,
-                        color: colors.primary,
-                        border: `1px solid ${colors.primary}40`,
+                        background: `${colors.accent}25`,
+                        color: colors.accent,
+                        border: `1px solid ${colors.accent}50`,
                     }}
                 >
                     <Sparkles className="w-4 h-4" />
-                    ParkBunny Rewards Available
+                    ECP ParkBuddy Rewards
                 </div>
 
                 {/* Main heading */}
                 <h1 className="text-4xl md:text-6xl font-bold text-white text-center mb-3 tracking-tight">
                     Park. Pay.<br />
-                    <span style={{ color: colors.primary }}>Get rewarded.</span>
+                    <span style={{ color: colors.accent }}>Get rewarded.</span>
                 </h1>
                 <p className="text-white/70 text-lg md:text-xl text-center max-w-md mb-10">
                     {operator.tagline}
@@ -91,8 +92,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                         </div>
                         <button
                             onClick={onNext}
-                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white text-base transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-                            style={{ background: colors.primary }}
+                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                            style={{ background: colors.cta, color: '#1a1a2e' }}
                         >
                             <Search className="w-4 h-4" />
                             Find Parking

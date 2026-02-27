@@ -11,6 +11,7 @@ type Props = {
     onTogglePartner: () => void
     showPartnerView: boolean
     primaryColor: string
+    accentColor: string
 }
 
 const STEPS = [
@@ -31,6 +32,7 @@ export default function DemoNav({
     onTogglePartner,
     showPartnerView,
     primaryColor,
+    accentColor,
 }: Props) {
     if (showPartnerView) return null
 
@@ -44,7 +46,7 @@ export default function DemoNav({
                             className="h-full transition-all duration-500 ease-out"
                             style={{
                                 width: `${(currentStep / 7) * 100}%`,
-                                background: primaryColor,
+                                background: accentColor,
                             }}
                         />
                     </div>
