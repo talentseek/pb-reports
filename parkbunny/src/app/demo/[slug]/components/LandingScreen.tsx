@@ -4,7 +4,7 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import type { DemoConfig } from '@/lib/demo-configs/types'
-import { MapPin, Search, ChevronRight, Sparkles } from 'lucide-react'
+import { MapPin, Search, Sparkles } from 'lucide-react'
 
 const DemoMap = dynamic(() => import('./DemoMap'), { ssr: false })
 
@@ -18,30 +18,18 @@ export default function LandingScreen({ config, onNext }: Props) {
     const { colors } = operator
 
     return (
-        <div className="relative min-h-screen flex flex-col">
-            {/* Header */}
-            <header className="relative z-20 flex items-center justify-between px-6 py-4">
-                <div className="flex items-center gap-3">
-                    <Image
-                        src={operator.logo}
-                        alt={operator.name}
-                        width={200}
-                        height={50}
-                        className="h-10 w-auto object-contain"
-                        unoptimized
-                        style={{ filter: 'brightness(0) invert(1)' }}
-                    />
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-medium text-white/50">powered by</span>
-                    <Image
-                        src="/logo.png"
-                        alt="ParkBunny"
-                        width={80}
-                        height={20}
-                        className="h-4 w-auto object-contain brightness-0 invert opacity-60"
-                    />
-                </div>
+        <div className="relative flex flex-col" style={{ minHeight: '100%' }}>
+            {/* Header — just ECP logo, centred */}
+            <header className="relative z-20 flex items-center justify-center px-4 pt-12 pb-2">
+                <Image
+                    src={operator.logo}
+                    alt={operator.name}
+                    width={180}
+                    height={45}
+                    className="h-9 w-auto object-contain"
+                    unoptimized
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                />
             </header>
 
             {/* Map background */}
@@ -58,41 +46,63 @@ export default function LandingScreen({ config, onNext }: Props) {
             </div>
 
             {/* Content */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 pb-32">
+            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-28">
                 {/* Hero badge */}
                 <div
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-5"
                     style={{
                         background: `${colors.accent}25`,
                         color: colors.accent,
                         border: `1px solid ${colors.accent}50`,
                     }}
                 >
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-3.5 h-3.5" />
                     ECP ParkBuddy Rewards
                 </div>
 
                 {/* Main heading */}
-                <h1 className="text-4xl md:text-6xl font-bold text-white text-center mb-3 tracking-tight">
+                <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
                     Park. Pay.<br />
                     <span style={{ color: colors.accent }}>Get rewarded.</span>
                 </h1>
-                <p className="text-white/70 text-lg md:text-xl text-center max-w-md mb-10">
+                <p className="text-white/60 text-sm text-center max-w-xs mb-6">
                     {operator.tagline}
                 </p>
 
-                {/* Search bar */}
-                <div className="w-full max-w-lg">
-                    <div className="glass rounded-2xl p-2 flex items-center gap-2 shadow-2xl">
-                        <div className="flex items-center gap-2 flex-1 px-4 py-3">
-                            <MapPin className="w-5 h-5 text-gray-400 shrink-0" />
-                            <span className="text-gray-500 text-base">
-                                {location.name}, {location.city} — {location.postcode}
+                {/* Co-branding */}
+                <div className="flex items-center gap-2 mb-8">
+                    <Image
+                        src={operator.logo}
+                        alt={operator.name}
+                        width={80}
+                        height={20}
+                        className="h-4 w-auto object-contain"
+                        unoptimized
+                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.5 }}
+                    />
+                    <span className="text-white/30 text-xs">×</span>
+                    <Image
+                        src="/logo.png"
+                        alt="ParkBunny"
+                        width={80}
+                        height={20}
+                        className="h-4 w-auto object-contain"
+                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.5 }}
+                    />
+                </div>
+
+                {/* Search bar — stacked layout */}
+                <div className="w-full max-w-xs">
+                    <div className="glass rounded-2xl p-3 shadow-2xl">
+                        <div className="flex items-center gap-2 px-2 py-2 mb-2">
+                            <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                            <span className="text-gray-600 text-sm font-medium">
+                                {location.name} · {location.postcode}
                             </span>
                         </div>
                         <button
                             onClick={onNext}
-                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
                             style={{ background: colors.cta, color: '#1a1a2e' }}
                         >
                             <Search className="w-4 h-4" />
@@ -100,17 +110,6 @@ export default function LandingScreen({ config, onNext }: Props) {
                         </button>
                     </div>
                 </div>
-            </div>
-
-            {/* Bottom CTA */}
-            <div className="relative z-20 pb-8 flex justify-center">
-                <button
-                    onClick={onNext}
-                    className="group flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
-                >
-                    Explore this location
-                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
             </div>
         </div>
     )

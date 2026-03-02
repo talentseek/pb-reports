@@ -67,7 +67,7 @@ export default function PaymentScreen({ config, onPaymentComplete }: Props) {
     return (
         <div className="min-h-screen flex flex-col" style={{ background: colors.background }}>
             {/* Header */}
-            <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <header className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
                 <h1 className="text-lg font-bold">Payment</h1>
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                     <Shield className="w-3.5 h-3.5" />
@@ -75,7 +75,7 @@ export default function PaymentScreen({ config, onPaymentComplete }: Props) {
                 </div>
             </header>
 
-            <div className="flex-1 px-6 py-6 space-y-6 max-w-lg mx-auto w-full">
+            <div className="flex-1 px-4 py-5 space-y-5 max-w-lg mx-auto w-full pb-20">
                 {/* Location summary */}
                 <div className="rounded-xl bg-white border border-gray-100 p-4 flex items-center gap-4 shadow-sm">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center"

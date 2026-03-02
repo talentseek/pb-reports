@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { MapPin, Car, CreditCard, Check, Gift, QrCode, BarChart3, Eye } from 'lucide-react'
+import { MapPin, Car, CreditCard, Gift, Eye } from 'lucide-react'
 
 type Props = {
     currentStep: number
@@ -14,20 +14,16 @@ type Props = {
     accentColor: string
 }
 
-const STEPS = [
+const TABS = [
     { step: 1, icon: MapPin, label: 'Find' },
     { step: 2, icon: Car, label: 'Park' },
     { step: 3, icon: CreditCard, label: 'Pay' },
-    { step: 4, icon: Check, label: 'Done' },
     { step: 5, icon: Gift, label: 'Deals' },
-    { step: 6, icon: QrCode, label: 'Redeem' },
-    { step: 7, icon: BarChart3, label: 'Insights' },
 ]
 
 export default function DemoNav({
     currentStep,
     highestStep,
-    journeyComplete,
     onStepChange,
     onTogglePartner,
     showPartnerView,
@@ -36,64 +32,105 @@ export default function DemoNav({
 }: Props) {
     if (showPartnerView) return null
 
+    // Map current step to closest tab for highlighting
+    const activeTab = currentStep <= 3 ? currentStep : currentStep >= 5 ? 5 : 3
+
     return (
         <>
-            {/* Step indicator (linear mode) */}
-            {!journeyComplete && (
-                <div className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
-                    <div className="h-1 bg-gray-200/50">
-                        <div
-                            className="h-full transition-all duration-500 ease-out"
-                            style={{
-                                width: `${(currentStep / 7) * 100}%`,
-                                background: accentColor,
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
+            {/* Always-visible bottom tab bar */}
+            <div className="demo-tab-bar">
+                <div className="flex items-center justify-around w-full max-w-xs mx-auto">
+                    {TABS.map(tab => {
+                        const isActive = activeTab === tab.step
+                        const isReachable = tab.step <= highestStep || (tab.step === 5 && highestStep >= 4)
+                        const isLocked = !isReachable
 
-            {/* Bottom tab bar (free mode) */}
-            {journeyComplete && (
-                <div className="fixed bottom-0 left-0 right-0 z-40 glass-dark safe-area-bottom">
-                    <div className="flex items-center justify-around px-2 py-2 max-w-lg mx-auto">
-                        {STEPS.filter(s => [1, 2, 5, 7].includes(s.step)).map(s => {
-                            const isActive = currentStep === s.step
-                            return (
-                                <button
-                                    key={s.step}
-                                    onClick={() => onStepChange(s.step)}
-                                    className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${isActive ? 'scale-105' : 'opacity-60 hover:opacity-80'
-                                        }`}
+                        return (
+                            <button
+                                key={tab.step}
+                                onClick={() => {
+                                    if (!isLocked) onStepChange(tab.step)
+                                }}
+                                className="flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-lg transition-all"
+                                style={{
+                                    opacity: isLocked ? 0.3 : isActive ? 1 : 0.6,
+                                    cursor: isLocked ? 'default' : 'pointer',
+                                }}
+                                disabled={isLocked}
+                            >
+                                <div className="relative">
+                                    <tab.icon
+                                        className="w-5 h-5"
+                                        style={{ color: isActive ? accentColor : '#94a3b8' }}
+                                    />
+                                    {isActive && (
+                                        <div
+                                            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                                            style={{ background: accentColor }}
+                                        />
+                                    )}
+                                </div>
+                                <span
+                                    className="text-[10px] font-medium"
+                                    style={{ color: isActive ? accentColor : '#94a3b8' }}
                                 >
-                                    <s.icon className="w-5 h-5" style={{ color: isActive ? primaryColor : '#94a3b8' }} />
-                                    <span className={`text-[10px] font-medium ${isActive ? 'text-white' : 'text-slate-400'}`}>
-                                        {s.label}
-                                    </span>
-                                </button>
-                            )
-                        })}
-                    </div>
+                                    {tab.label}
+                                </span>
+                            </button>
+                        )
+                    })}
                 </div>
-            )}
+            </div>
 
-            {/* Partner view floating button */}
+            {/* Partner view floating button — above tab bar */}
             <button
                 onClick={onTogglePartner}
-                className="fixed bottom-20 right-4 z-50 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+                className="demo-partner-btn"
                 style={{
                     background: `linear-gradient(135deg, ${primaryColor}, #003399)`,
                 }}
                 title="Toggle Partner View"
             >
-                <Eye className="w-5 h-5 text-white" />
+                <Eye className="w-4 h-4 text-white" />
             </button>
 
             <style jsx>{`
-        .safe-area-bottom {
-          padding-bottom: env(safe-area-inset-bottom, 8px);
-        }
-      `}</style>
+                .demo-tab-bar {
+                    position: sticky;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 40;
+                    background: rgba(255, 255, 255, 0.92);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border-top: 1px solid rgba(0, 0, 0, 0.06);
+                    padding: 6px 8px;
+                    padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+                }
+                .demo-partner-btn {
+                    position: fixed;
+                    bottom: 70px;
+                    right: 12px;
+                    z-index: 50;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s;
+                    border: none;
+                    cursor: pointer;
+                }
+                .demo-partner-btn:hover {
+                    transform: scale(1.1);
+                }
+                .demo-partner-btn:active {
+                    transform: scale(0.95);
+                }
+            `}</style>
         </>
     )
 }
