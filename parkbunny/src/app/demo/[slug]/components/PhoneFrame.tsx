@@ -5,71 +5,71 @@ import Image from 'next/image'
 import type { DemoConfig } from '@/lib/demo-configs/types'
 
 type Props = {
-    config: DemoConfig
-    children: React.ReactNode
+  config: DemoConfig
+  children: React.ReactNode
 }
 
 export default function PhoneFrame({ config, children }: Props) {
-    const { colors, name, logo } = config.operator
+  const { colors, name, logo } = config.operator
 
-    return (
-        <>
-            {/* Desktop: iPhone frame + branded background */}
-            <div className="phone-frame-desktop">
-                {/* Branded background */}
-                <div className="phone-bg">
-                    <div className="phone-bg-inner" />
-                    {/* Background branding */}
-                    <div className="phone-bg-brand">
-                        <Image
-                            src={logo}
-                            alt={name}
-                            width={200}
-                            height={60}
-                            className="phone-bg-logo"
-                            unoptimized
-                        />
-                        <p className="phone-bg-tagline">{config.operator.tagline}</p>
-                        <div className="phone-bg-powered">
-                            <span>powered by</span>
-                            <Image src="/logo.png" alt="ParkBunny" width={100} height={28} className="h-5 w-auto" />
-                        </div>
-                    </div>
-                </div>
-
-                {/* iPhone device */}
-                <div className="phone-device">
-                    {/* Notch / Dynamic Island */}
-                    <div className="phone-island" />
-                    {/* Status bar */}
-                    <div className="phone-statusbar">
-                        <span className="phone-time">17:30</span>
-                        <div className="phone-indicators">
-                            <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="4" width="3" height="8" rx="0.5" opacity="0.4" /><rect x="4.5" y="3" width="3" height="9" rx="0.5" opacity="0.6" /><rect x="9" y="1" width="3" height="11" rx="0.5" opacity="0.8" /><rect x="13.5" y="0" width="3" height="12" rx="0.5" /></svg>
-                            <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M8 3C10.7 3 13.1 4.1 14.8 5.9L16 4.7C14 2.6 11.2 1.3 8 1.3S2 2.6 0 4.7L1.2 5.9C2.9 4.1 5.3 3 8 3Z" opacity="0.4" /><path d="M8 6.5C9.8 6.5 11.4 7.3 12.5 8.4L13.7 7.2C12.3 5.8 10.3 4.9 8 4.9S3.7 5.8 2.3 7.2L3.5 8.4C4.6 7.3 6.2 6.5 8 6.5Z" opacity="0.7" /><path d="M8 10C8.8 10 9.5 10.3 10.1 10.9L8 13L5.9 10.9C6.5 10.3 7.2 10 8 10Z" /></svg>
-                            <div className="phone-battery">
-                                <div className="phone-battery-body">
-                                    <div className="phone-battery-fill" />
-                                </div>
-                                <div className="phone-battery-cap" />
-                            </div>
-                        </div>
-                    </div>
-                    {/* Screen content */}
-                    <div className="phone-screen">
-                        {children}
-                    </div>
-                    {/* Home indicator */}
-                    <div className="phone-home-indicator" />
-                </div>
+  return (
+    <>
+      {/* Desktop: iPhone frame + branded background */}
+      <div className="phone-frame-desktop">
+        {/* Branded background */}
+        <div className="phone-bg">
+          <div className="phone-bg-inner" />
+          {/* Background branding */}
+          <div className="phone-bg-brand">
+            <Image
+              src={logo}
+              alt={name}
+              width={200}
+              height={60}
+              className="phone-bg-logo"
+              unoptimized
+            />
+            <p className="phone-bg-tagline">{config.operator.tagline}</p>
+            <div className="phone-bg-powered">
+              <span>powered by</span>
+              <Image src="/logo.png" alt="ParkBunny" width={100} height={28} className="h-5 w-auto" />
             </div>
+          </div>
+        </div>
 
-            {/* Mobile: full-bleed passthrough */}
-            <div className="phone-frame-mobile">
-                {children}
+        {/* iPhone device */}
+        <div className="phone-device">
+          {/* Notch / Dynamic Island */}
+          <div className="phone-island" />
+          {/* Status bar */}
+          <div className="phone-statusbar">
+            <span className="phone-time">17:30</span>
+            <div className="phone-indicators">
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="4" width="3" height="8" rx="0.5" opacity="0.4" /><rect x="4.5" y="3" width="3" height="9" rx="0.5" opacity="0.6" /><rect x="9" y="1" width="3" height="11" rx="0.5" opacity="0.8" /><rect x="13.5" y="0" width="3" height="12" rx="0.5" /></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M8 3C10.7 3 13.1 4.1 14.8 5.9L16 4.7C14 2.6 11.2 1.3 8 1.3S2 2.6 0 4.7L1.2 5.9C2.9 4.1 5.3 3 8 3Z" opacity="0.4" /><path d="M8 6.5C9.8 6.5 11.4 7.3 12.5 8.4L13.7 7.2C12.3 5.8 10.3 4.9 8 4.9S3.7 5.8 2.3 7.2L3.5 8.4C4.6 7.3 6.2 6.5 8 6.5Z" opacity="0.7" /><path d="M8 10C8.8 10 9.5 10.3 10.1 10.9L8 13L5.9 10.9C6.5 10.3 7.2 10 8 10Z" /></svg>
+              <div className="phone-battery">
+                <div className="phone-battery-body">
+                  <div className="phone-battery-fill" />
+                </div>
+                <div className="phone-battery-cap" />
+              </div>
             </div>
+          </div>
+          {/* Screen content */}
+          <div className="phone-screen">
+            {children}
+          </div>
+          {/* Home indicator */}
+          <div className="phone-home-indicator" />
+        </div>
+      </div>
 
-            <style jsx global>{`
+      {/* Mobile: full-bleed passthrough */}
+      <div className="phone-frame-mobile">
+        {children}
+      </div>
+
+      <style jsx global>{`
         /* Desktop: show phone, hide mobile */
         .phone-frame-desktop {
           display: none;
@@ -227,6 +227,7 @@ export default function PhoneFrame({ config, children }: Props) {
 
           /* Screen */
           .phone-screen {
+            position: relative;
             width: 100%;
             height: 100%;
             border-radius: 40px;
@@ -253,6 +254,6 @@ export default function PhoneFrame({ config, children }: Props) {
           }
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }
