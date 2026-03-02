@@ -39,7 +39,7 @@ export default function PartnerScreen({ config, onClose }: Props) {
     return (
         <div className="min-h-screen flex flex-col" style={{ background: '#f8fafc' }}>
             {/* Header */}
-            <header className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+            <header className="flex items-center justify-between px-4 py-4 border-b border-gray-100 bg-white">
                 <div className="flex items-center gap-3">
                     <div className="px-3 py-1 rounded-full text-xs font-bold"
                         style={{ background: colors.accent, color: '#1a1a2e' }}>
@@ -55,7 +55,7 @@ export default function PartnerScreen({ config, onClose }: Props) {
                 )}
             </header>
 
-            <div className="flex-1 px-6 py-6 space-y-6 max-w-2xl mx-auto w-full pb-28">
+            <div className="flex-1 px-4 py-5 space-y-5 max-w-2xl mx-auto w-full pb-20">
                 {/* Dual branding */}
                 <div className="flex items-center justify-center gap-4 py-3">
                     <Image src={operator.logo} alt={operator.name} width={140} height={40}

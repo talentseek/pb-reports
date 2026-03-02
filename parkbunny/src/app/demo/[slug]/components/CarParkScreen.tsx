@@ -31,7 +31,7 @@ export default function CarParkScreen({ config, onNext }: Props) {
                 </div>
             </header>
 
-            <div className="flex-1 px-6 py-6 space-y-6 max-w-lg mx-auto w-full">
+            <div className="flex-1 px-4 py-5 space-y-5 max-w-lg mx-auto w-full pb-20">
                 {/* Location card */}
                 <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100">
                     {/* Mini map strip */}

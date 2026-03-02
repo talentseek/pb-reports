@@ -57,14 +57,14 @@ export default function RedemptionScreen({ config, deal, onRedeem, onBack }: Pro
     return (
         <div className="min-h-screen flex flex-col" style={{ background: colors.background }}>
             {/* Header */}
-            <header className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+            <header className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
                 <button onClick={onBack} className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
                     <ArrowLeft className="w-5 h-5" />
                 </button>
                 <h1 className="text-lg font-bold">Redeem Deal</h1>
             </header>
 
-            <div className="flex-1 px-6 py-6 space-y-6 max-w-lg mx-auto w-full">
+            <div className="flex-1 px-4 py-5 space-y-5 max-w-lg mx-auto w-full pb-20">
                 {/* Brand card */}
                 <div className="rounded-2xl overflow-hidden shadow-lg">
                     <div className="p-5 text-white" style={{ background: deal.color }}>

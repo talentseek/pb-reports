@@ -30,7 +30,7 @@ export default function DealsScreen({ config, deals, savedAmount, onSelectDeal }
     return (
         <div className="min-h-screen flex flex-col" style={{ background: colors.background }}>
             {/* Header */}
-            <header className="px-6 pt-5 pb-4 space-y-4">
+            <header className="px-4 pt-5 pb-4 space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold">Your Rewards</h1>
@@ -50,8 +50,8 @@ export default function DealsScreen({ config, deals, savedAmount, onSelectDeal }
                             key={cat.key}
                             onClick={() => setActiveCategory(cat.key)}
                             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeCategory === cat.key
-                                    ? 'text-white shadow-md'
-                                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+                                ? 'text-white shadow-md'
+                                : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
                                 }`}
                             style={activeCategory === cat.key ? { background: colors.primary } : undefined}
                         >
@@ -62,7 +62,7 @@ export default function DealsScreen({ config, deals, savedAmount, onSelectDeal }
             </header>
 
             {/* Deals grid */}
-            <div className="flex-1 px-6 pb-28 space-y-3">
+            <div className="flex-1 px-4 pb-20 space-y-3">
                 {filtered.map((deal, i) => (
                     <button
                         key={deal.id}

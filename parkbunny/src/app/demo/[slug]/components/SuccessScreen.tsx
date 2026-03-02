@@ -21,7 +21,7 @@ export default function SuccessScreen({ config, paymentData, onNext }: Props) {
     }, [])
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-6"
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 pb-20"
             style={{ background: `linear-gradient(180deg, ${colors.background}, white)` }}>
 
             {/* Success indicator */}
