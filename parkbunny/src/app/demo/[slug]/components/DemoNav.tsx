@@ -96,12 +96,12 @@ export default function DemoNav({
 
             <style jsx>{`
                 .demo-tab-bar {
-                    position: sticky;
+                    position: fixed;
                     bottom: 0;
                     left: 0;
                     right: 0;
                     z-index: 40;
-                    background: rgba(255, 255, 255, 0.92);
+                    background: rgba(255, 255, 255, 0.95);
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
                     border-top: 1px solid rgba(0, 0, 0, 0.06);

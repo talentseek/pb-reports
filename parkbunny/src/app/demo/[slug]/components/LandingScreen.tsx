@@ -18,7 +18,7 @@ export default function LandingScreen({ config, onNext }: Props) {
     const { colors } = operator
 
     return (
-        <div className="relative flex flex-col" style={{ minHeight: '100%' }}>
+        <div className="relative flex flex-col" style={{ height: '100%' }}>
             {/* Header — just ECP logo, centred */}
             <header className="relative z-20 flex items-center justify-center px-4 pt-12 pb-2">
                 <Image
