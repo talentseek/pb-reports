@@ -79,9 +79,10 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
                 style={{
                     ...cssVars,
                     fontFamily: font,
-                    minHeight: '100%',
+                    height: '100%',
                     backgroundColor: colors.background,
                     color: colors.text,
+                    position: 'relative',
                 }}
             >
                 {/* Partner view overlay */}
@@ -94,12 +95,12 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
                     </div>
                 )}
 
-                {/* Main content with transition */}
-                <div className="relative z-10">
+                {/* Main content — fills phone screen, scrollable */}
+                <div className="relative z-10" style={{ height: '100%', overflow: 'auto' }}>
                     <div
                         className="transition-all duration-500 ease-in-out"
                         key={currentStep}
-                        style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
+                        style={{ animation: 'fadeSlideIn 0.4s ease-out', height: '100%' }}
                     >
                         {currentStep === 1 && (
                             <LandingScreen config={config} onNext={nextStep} />
@@ -142,7 +143,7 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
                     </div>
                 </div>
 
-                {/* Navigation */}
+                {/* Navigation — absolutely positioned at bottom of phone screen */}
                 <DemoNav
                     currentStep={currentStep}
                     highestStep={highestStep}

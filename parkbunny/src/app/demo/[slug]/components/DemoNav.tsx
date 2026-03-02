@@ -96,7 +96,7 @@ export default function DemoNav({
 
             <style jsx>{`
                 .demo-tab-bar {
-                    position: fixed;
+                    position: absolute;
                     bottom: 0;
                     left: 0;
                     right: 0;
@@ -105,12 +105,11 @@ export default function DemoNav({
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
                     border-top: 1px solid rgba(0, 0, 0, 0.06);
-                    padding: 6px 8px;
-                    padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+                    padding: 6px 8px 10px;
                 }
                 .demo-partner-btn {
-                    position: fixed;
-                    bottom: 70px;
+                    position: absolute;
+                    bottom: 60px;
                     right: 12px;
                     z-index: 50;
                     width: 40px;
