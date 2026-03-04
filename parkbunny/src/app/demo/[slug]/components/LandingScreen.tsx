@@ -45,8 +45,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/90 z-10" />
             </div>
 
-            {/* Content — centred in screen */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-24">
+            {/* Content — centred in screen, pb-40 shifts centre above map pin */}
+            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-40">
                 {/* Main heading */}
                 <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
                     Park. Pay.<br />
