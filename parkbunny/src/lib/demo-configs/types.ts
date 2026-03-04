@@ -1,10 +1,16 @@
 export type DemoConfig = {
     slug: string
+    password?: string
     operator: {
         name: string
         tagline: string
         logo: string
         logoAlt?: string
+        brandStrip?: {
+            logo: string
+            alt: string
+            background: string
+        }
         colors: {
             primary: string
             secondary: string
