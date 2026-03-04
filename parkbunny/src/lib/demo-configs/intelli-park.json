@@ -1,9 +1,10 @@
 {
     "slug": "intelli-park",
+    "password": "intllipark2026",
     "operator": {
         "name": "Intelli-Park",
         "tagline": "Your Partner In Parking Solutions",
-        "logo": "/demo/intelli-park/logo.png",
+        "logo": "/demo/intelli-park/logo.svg",
         "colors": {
             "primary": "#93D500",
             "secondary": "#1a1a1a",

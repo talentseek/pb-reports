@@ -14,7 +14,7 @@ import PartnerScreen from './components/PartnerScreen'
 import DemoNav from './components/DemoNav'
 import PhoneFrame from './components/PhoneFrame'
 
-const PASSWORD = 'ecpparkbuddy2026'
+const DEFAULT_PASSWORD = 'demo2026'
 
 type Props = {
     config: DemoConfig
@@ -71,7 +71,7 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault()
-        if (password === PASSWORD) {
+        if (password === (config.password || DEFAULT_PASSWORD)) {
             setAuthed(true)
             setLoginError('')
         } else {
@@ -181,6 +181,7 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
                     showPartnerView={showPartnerView}
                     primaryColor={colors.primary}
                     accentColor={colors.accent}
+                    brandStrip={config.operator.brandStrip}
                 />
 
                 <style jsx global>{`

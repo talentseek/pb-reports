@@ -12,6 +12,11 @@ type Props = {
     showPartnerView: boolean
     primaryColor: string
     accentColor: string
+    brandStrip?: {
+        logo: string
+        alt: string
+        background: string
+    }
 }
 
 const TABS = [
@@ -28,6 +33,7 @@ export default function DemoNav({
     onStepChange,
     primaryColor,
     accentColor,
+    brandStrip,
 }: Props) {
     if (showPartnerView) return null
 
@@ -36,17 +42,19 @@ export default function DemoNav({
 
     return (
         <>
-            {/* Euro Car Parks branding strip */}
-            <div className="demo-brand-strip">
-                <Image
-                    src="/ecp-logo.gif"
-                    alt="Euro Car Parks"
-                    width={120}
-                    height={30}
-                    className="demo-brand-logo"
-                    unoptimized
-                />
-            </div>
+            {/* Operator branding strip (only if config provides one) */}
+            {brandStrip && (
+                <div className="demo-brand-strip" style={{ background: brandStrip.background }}>
+                    <Image
+                        src={brandStrip.logo}
+                        alt={brandStrip.alt}
+                        width={120}
+                        height={30}
+                        className="demo-brand-logo"
+                        unoptimized
+                    />
+                </div>
+            )}
 
             {/* Bottom tab bar */}
             <div className="demo-tab-bar">

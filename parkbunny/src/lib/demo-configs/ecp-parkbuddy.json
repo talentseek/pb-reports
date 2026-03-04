@@ -1,10 +1,16 @@
 {
     "slug": "ecp-parkbuddy",
+    "password": "ecpparkbuddy2026",
     "operator": {
         "name": "ECP ParkBuddy",
         "tagline": "Smarter parking that pays drivers back",
         "logo": "/demo/ecp-parkbuddy/logo.png",
         "logoAlt": "/demo/ecp-parkbuddy/logo-corp.png",
+        "brandStrip": {
+            "logo": "/ecp-logo.gif",
+            "alt": "Euro Car Parks",
+            "background": "#003399"
+        },
         "colors": {
             "primary": "#003399",
             "secondary": "#001a4d",
