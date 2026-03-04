@@ -239,6 +239,7 @@ function LoginScreen({ config, password, setPassword, error, onSubmit }: {
                             height={40}
                             className="h-10 w-auto"
                             unoptimized
+                            style={{ filter: 'brightness(0)' }}
                         />
                         <span className="text-gray-300 text-lg">×</span>
                         <Image
