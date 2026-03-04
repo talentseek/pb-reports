@@ -6,10 +6,10 @@ import PublicHeader from "@/components/report/public/PublicHeader"
 import { HeadlineMetrics, ContextMetrics } from "@/components/report/public/PublicMetrics"
 import PublicRevenueTabs from "@/components/report/public/PublicRevenueTabs"
 import { ExecutiveAreaSummary, AppShowcase, WhatMakesDifferent, ActivationPlan, MeasurementReporting, ComplianceGoodPractice } from "@/components/report/public/PublicSections"
-import { AncillaryServices, AlternativeRevenueStreams, CommercialOffer, CommercialTerms } from "@/components/report/public/PublicCommercial"
+import { CommercialOffer, CommercialTerms } from "@/components/report/public/PublicCommercial"
 import { SingleMap, MultiLocationSection } from "@/components/report/public/PublicLocations"
-import PublicRevenueSummary from "@/components/report/public/PublicRevenueSummary"
-import { getStreamsForReport, calculateStreamRevenue } from "@/lib/revenue-streams"
+import InteractiveStreamSection from "@/components/report/public/InteractiveStreamSection"
+import { getStreamsForReport, calculateStreamRevenue, STREAM_DEFAULTS } from "@/lib/revenue-streams"
 
 function getCategoryBreakdown(businesses: any[]) {
   const counts: Record<string, number> = {}
@@ -134,10 +134,14 @@ export default async function PublicReportView({ report }: { report: any }) {
   // ── Revenue Streams ──────────────────────────────────────────────
   const dbStreams = await getStreamsForReport(report.id)
   const streamSummaries = dbStreams.map((s) => calculateStreamRevenue(s, locationCount))
-  const coreStreams = streamSummaries.filter((s) => !s.isAlternative)
-  const altStreams = streamSummaries.filter((s) => s.isAlternative)
-  const hasStreams = coreStreams.length > 0
-  const hasAltStreams = altStreams.length > 0
+  const hasStreams = streamSummaries.length > 0
+
+  // Serialise stream metadata for the client component
+  const streamMeta: Record<string, { label: string; icon: string; image: string; description: string; bullets: string[]; statusLabel: string }> = {}
+  for (const s of streamSummaries) {
+    const d = STREAM_DEFAULTS[s.streamType]
+    streamMeta[s.streamType] = { label: d.label, icon: d.icon, image: d.image, description: d.description, bullets: d.bullets, statusLabel: d.statusLabel }
+  }
 
   return (
     <div className="space-y-12">
@@ -410,21 +414,15 @@ export default async function PublicReportView({ report }: { report: any }) {
 
 
 
-      <AncillaryServices streams={coreStreams} formatCurrency={formatCurrency} />
-
       {hasStreams && (
-        <PublicRevenueSummary
+        <InteractiveStreamSection
+          streams={streamSummaries}
+          streamMeta={streamMeta}
           locationCount={locationCount}
           totalCurrentRevenue={totalCurrentRevenue}
           upliftValue={upliftValue}
           growthPercent={computedGrowthPercent}
-          streams={coreStreams}
-          formatCurrency={formatCurrency}
         />
-      )}
-
-      {hasAltStreams && (
-        <AlternativeRevenueStreams streams={altStreams} formatCurrency={formatCurrency} />
       )}
 
       <CommercialOffer />

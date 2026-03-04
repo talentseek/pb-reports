@@ -458,14 +458,7 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       <h2 className="text-xl font-semibold">Revenue Streams</h2>
       <p className="text-sm text-gray-600 mb-3">Toggle ancillary revenue streams to include in the public report. Amounts are per site per year unless noted.</p>
       <div className="space-y-4">
-        {streams.filter((s) => CORE_STREAM_TYPES.includes(s.streamType)).map((stream) => renderStreamCard(stream))}
-      </div>
-
-      <hr className="my-6" />
-      <h2 className="text-xl font-semibold">Alternative Revenue Streams</h2>
-      <p className="text-sm text-gray-600 mb-3">Additional revenue opportunities shown as informational options in the report. These do <strong>not</strong> add to the portfolio total — all subject to survey.</p>
-      <div className="space-y-4">
-        {streams.filter((s) => ALT_STREAM_TYPES.includes(s.streamType)).map((stream) => renderStreamCard(stream))}
+        {streams.map((stream) => renderStreamCard(stream))}
       </div>
     </main>
   );
