@@ -96,7 +96,7 @@ export default function DemoNav({
             <style jsx>{`
                 .demo-brand-strip {
                     position: absolute;
-                    bottom: 55px;
+                    bottom: 72px;
                     left: 0;
                     right: 0;
                     z-index: 39;
@@ -123,7 +123,7 @@ export default function DemoNav({
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
                     border-top: 1px solid rgba(0, 0, 0, 0.06);
-                    padding: 6px 8px 10px;
+                    padding: 6px 8px 24px;
                 }
             `}</style>
         </>
