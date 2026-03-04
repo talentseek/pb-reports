@@ -45,8 +45,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/90 z-10" />
             </div>
 
-            {/* Content — positioned towards top, away from map pin */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-start pt-4 px-4 pb-28">
+            {/* Content — heading at top, search bar at bottom */}
+            <div className="relative z-20 flex-1 flex flex-col items-center justify-between pt-4 px-4 pb-24">
                 {/* Main heading */}
                 <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
                     Park. Pay.<br />
@@ -57,7 +57,7 @@ export default function LandingScreen({ config, onNext }: Props) {
                 </p>
 
                 {/* Co-branding */}
-                <div className="flex items-center gap-2 mb-8">
+                <div className="flex items-center gap-2 mb-4">
                     <Image
                         src={operator.logo}
                         alt={operator.name}
@@ -65,16 +65,16 @@ export default function LandingScreen({ config, onNext }: Props) {
                         height={20}
                         className="h-4 w-auto object-contain"
                         unoptimized
-                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.5 }}
+                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
                     />
-                    <span className="text-white/30 text-xs">×</span>
+                    <span className="text-white/50 text-xs">×</span>
                     <Image
                         src="/logo.png"
                         alt="ParkBunny"
                         width={80}
                         height={20}
                         className="h-4 w-auto object-contain"
-                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.5 }}
+                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
                     />
                 </div>
 
