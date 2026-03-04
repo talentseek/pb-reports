@@ -36,6 +36,20 @@ export default function AppHeader() {
           >
             Outreach
           </Link>
+          <Link
+            href="/bespoke"
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname?.startsWith('/bespoke') ? 'text-primary' : 'text-muted-foreground'
+              }`}
+          >
+            Bespoke Reports
+          </Link>
+          <Link
+            href="/demos"
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname?.startsWith('/demos') ? 'text-primary' : 'text-muted-foreground'
+              }`}
+          >
+            App Demos
+          </Link>
           <Link href="/dashboard/help" className="text-sm underline">Help & Guide</Link>
           <HeaderAuth />
         </nav>

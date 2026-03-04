@@ -1,24 +1,27 @@
 import { notFound } from 'next/navigation'
-import { getDemoConfig } from '@/lib/demo-configs'
+import { prisma } from '@/lib/db'
+import { transformToConfig } from '@/lib/demo-transform'
 import { enrichDeals } from '@/lib/demo-places'
 import ClientDemo from './ClientDemo'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-    const config = getDemoConfig(params.slug)
-    if (!config) return { title: 'Demo Not Found' }
+    const demo = await prisma.appDemo.findUnique({ where: { slug: params.slug } })
+    if (!demo) return { title: 'Demo Not Found' }
 
     return {
-        title: `${config.operator.name} × ParkBunny — Interactive Demo`,
-        description: config.operator.tagline,
+        title: `${demo.operatorName} × ParkBunny — Interactive Demo`,
+        description: demo.operatorTagline,
         robots: 'noindex, nofollow',
     }
 }
 
 export default async function DemoPage({ params }: { params: { slug: string } }) {
-    const config = getDemoConfig(params.slug)
-    if (!config) return notFound()
+    const demo = await prisma.appDemo.findUnique({ where: { slug: params.slug } })
+    if (!demo) return notFound()
+
+    const config = transformToConfig(demo)
 
     // Geocode if lat/lng not pre-set
     let lat = config.location.lat
@@ -35,7 +38,6 @@ export default async function DemoPage({ params }: { params: { slug: string } })
                 lng = data.result.longitude
             }
         } catch {
-            // Use defaults
             lat = 51.5074
             lng = -0.1278
         }

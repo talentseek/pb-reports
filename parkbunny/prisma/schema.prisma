@@ -276,3 +276,48 @@ model RevenueStreamExclusion {
 
   @@unique([revenueStreamId, locationId])
 }
+
+model AppDemo {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Operator
+  operatorName    String
+  operatorTagline String
+  operatorLogo    String
+  operatorLogoAlt String?
+  operatorFont    String   @default("Arial, sans-serif")
+
+  // Brand Strip (optional)
+  brandStripLogo       String?
+  brandStripAlt        String?
+  brandStripBackground String?
+
+  // Colours
+  colorPrimary    String
+  colorSecondary  String
+  colorAccent     String
+  colorBackground String @default("#f0f4ff")
+  colorText       String @default("#0f172a")
+  colorCardBg     String @default("rgba(255,255,255,0.92)")
+  colorCta        String
+
+  // Location
+  locationName     String
+  locationAddress  String
+  locationPostcode String
+  locationPhone    String @default("")
+  locationCode     String @default("")
+  locationCity     String
+  totalSpaces      Int
+  hourlyRate       Float
+  lat              Float?
+  lng              Float?
+
+  // Complex data as JSON
+  deals       Json @default("[]")
+  partnerView Json @default("{}")
+}
