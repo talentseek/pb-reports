@@ -32,57 +32,53 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/30 to-slate-900/80 z-10" />
             </div>
 
-            {/* TOP SECTION — logo, heading, tagline, co-branding */}
-            <div className="relative z-20 flex flex-col items-center pt-12 px-4">
-                {/* Header logo */}
-                <Image
-                    src={operator.logo}
-                    alt={operator.name}
-                    width={180}
-                    height={45}
-                    className="h-9 w-auto object-contain mb-6"
-                    unoptimized
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                />
-
-                {/* Heading */}
-                <h1 className="text-3xl font-bold text-white text-center mb-1 tracking-tight leading-tight">
-                    Park. Pay.<br />
-                    <span style={{ color: colors.accent }}>Get rewarded.</span>
-                </h1>
-                <p className="text-white/60 text-sm text-center max-w-xs mb-3">
-                    {operator.tagline}
-                </p>
-
-                {/* Co-branding */}
-                <div className="flex items-center gap-3">
+            {/* Content overlay — top/bottom split, 120px clearance for nav area */}
+            <div
+                className="relative z-20 flex-1 flex flex-col justify-between pt-12 px-4"
+                style={{ paddingBottom: '120px' }}
+            >
+                {/* TOP GROUP — logo, heading, tagline, co-branding */}
+                <div className="flex flex-col items-center">
                     <Image
                         src={operator.logo}
                         alt={operator.name}
-                        width={100}
-                        height={28}
-                        className="h-5 w-auto object-contain"
+                        width={180}
+                        height={45}
+                        className="h-9 w-auto object-contain mb-5"
                         unoptimized
-                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+                        style={{ filter: 'brightness(0) invert(1)' }}
                     />
-                    <span className="text-white/50 text-sm">×</span>
-                    <Image
-                        src="/logo.png"
-                        alt="ParkBunny"
-                        width={100}
-                        height={28}
-                        className="h-5 w-auto object-contain"
-                        unoptimized
-                        style={{ opacity: 1 }}
-                    />
+                    <h1 className="text-3xl font-bold text-white text-center mb-1 tracking-tight leading-tight">
+                        Park. Pay.<br />
+                        <span style={{ color: colors.accent }}>Get rewarded.</span>
+                    </h1>
+                    <p className="text-white/60 text-sm text-center max-w-xs mb-3">
+                        {operator.tagline}
+                    </p>
+                    <div className="flex items-center gap-3">
+                        <Image
+                            src={operator.logo}
+                            alt={operator.name}
+                            width={100}
+                            height={28}
+                            className="h-5 w-auto object-contain"
+                            unoptimized
+                            style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+                        />
+                        <span className="text-white/50 text-sm">×</span>
+                        <Image
+                            src="/logo.png"
+                            alt="ParkBunny"
+                            width={100}
+                            height={28}
+                            className="h-5 w-auto object-contain"
+                            unoptimized
+                            style={{ opacity: 1 }}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* MIDDLE — empty space for map pin to be visible */}
-            <div className="flex-1" />
-
-            {/* BOTTOM SECTION — search bar, above ECP strip + nav */}
-            <div className="relative z-20 px-4 pb-28">
+                {/* BOTTOM GROUP — search bar */}
                 <div className="w-full max-w-xs mx-auto">
                     <div className="glass rounded-2xl p-3 shadow-2xl">
                         <div className="flex items-center gap-2 px-2 py-2 mb-2">
