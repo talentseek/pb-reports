@@ -6,7 +6,7 @@ import PublicHeader from "@/components/report/public/PublicHeader"
 import { HeadlineMetrics, ContextMetrics } from "@/components/report/public/PublicMetrics"
 import PublicRevenueTabs from "@/components/report/public/PublicRevenueTabs"
 import { ExecutiveAreaSummary, AppShowcase, WhatMakesDifferent, ActivationPlan, MeasurementReporting, ComplianceGoodPractice } from "@/components/report/public/PublicSections"
-import { AncillaryServices, CommercialOffer, CommercialTerms } from "@/components/report/public/PublicCommercial"
+import { AncillaryServices, AlternativeRevenueStreams, CommercialOffer, CommercialTerms } from "@/components/report/public/PublicCommercial"
 import { SingleMap, MultiLocationSection } from "@/components/report/public/PublicLocations"
 import PublicRevenueSummary from "@/components/report/public/PublicRevenueSummary"
 import { getStreamsForReport, calculateStreamRevenue } from "@/lib/revenue-streams"
@@ -134,7 +134,10 @@ export default async function PublicReportView({ report }: { report: any }) {
   // ── Revenue Streams ──────────────────────────────────────────────
   const dbStreams = await getStreamsForReport(report.id)
   const streamSummaries = dbStreams.map((s) => calculateStreamRevenue(s, locationCount))
-  const hasStreams = streamSummaries.length > 0
+  const coreStreams = streamSummaries.filter((s) => !s.isAlternative)
+  const altStreams = streamSummaries.filter((s) => s.isAlternative)
+  const hasStreams = coreStreams.length > 0
+  const hasAltStreams = altStreams.length > 0
 
   return (
     <div className="space-y-12">
@@ -407,7 +410,7 @@ export default async function PublicReportView({ report }: { report: any }) {
 
 
 
-      <AncillaryServices streams={streamSummaries} formatCurrency={formatCurrency} />
+      <AncillaryServices streams={coreStreams} formatCurrency={formatCurrency} />
 
       {hasStreams && (
         <PublicRevenueSummary
@@ -415,9 +418,13 @@ export default async function PublicReportView({ report }: { report: any }) {
           totalCurrentRevenue={totalCurrentRevenue}
           upliftValue={upliftValue}
           growthPercent={computedGrowthPercent}
-          streams={streamSummaries}
+          streams={coreStreams}
           formatCurrency={formatCurrency}
         />
+      )}
+
+      {hasAltStreams && (
+        <AlternativeRevenueStreams streams={altStreams} formatCurrency={formatCurrency} />
       )}
 
       <CommercialOffer />
