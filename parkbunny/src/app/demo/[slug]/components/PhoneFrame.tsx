@@ -2,14 +2,16 @@
 
 import React from 'react'
 import Image from 'next/image'
+import { Eye } from 'lucide-react'
 import type { DemoConfig } from '@/lib/demo-configs/types'
 
 type Props = {
   config: DemoConfig
   children: React.ReactNode
+  onTogglePartner?: () => void
 }
 
-export default function PhoneFrame({ config, children }: Props) {
+export default function PhoneFrame({ config, children, onTogglePartner }: Props) {
   const { colors, name, logo } = config.operator
 
   return (
@@ -36,6 +38,18 @@ export default function PhoneFrame({ config, children }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Partner view toggle — outside phone frame, desktop only */}
+        {onTogglePartner && (
+          <button
+            onClick={onTogglePartner}
+            className="phone-partner-toggle"
+            title="Toggle Partner View"
+          >
+            <Eye className="w-5 h-5 text-white" />
+            <span>Partner View</span>
+          </button>
+        )}
 
         {/* iPhone device */}
         <div className="phone-device">
@@ -251,6 +265,31 @@ export default function PhoneFrame({ config, children }: Props) {
             background: rgba(255,255,255,0.3);
             border-radius: 3px;
             z-index: 30;
+          }
+          /* Partner toggle — desktop bottom-right */
+          .phone-partner-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .phone-partner-toggle:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
           }
         }
       `}</style>

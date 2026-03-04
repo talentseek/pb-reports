@@ -1,14 +1,14 @@
 'use client'
 
 import React from 'react'
-import { MapPin, Car, CreditCard, Gift, Eye } from 'lucide-react'
+import Image from 'next/image'
+import { MapPin, Car, CreditCard, Gift } from 'lucide-react'
 
 type Props = {
     currentStep: number
     highestStep: number
     journeyComplete: boolean
     onStepChange: (step: number) => void
-    onTogglePartner: () => void
     showPartnerView: boolean
     primaryColor: string
     accentColor: string
@@ -24,9 +24,8 @@ const TABS = [
 export default function DemoNav({
     currentStep,
     highestStep,
-    onStepChange,
-    onTogglePartner,
     showPartnerView,
+    onStepChange,
     primaryColor,
     accentColor,
 }: Props) {
@@ -37,7 +36,19 @@ export default function DemoNav({
 
     return (
         <>
-            {/* Always-visible bottom tab bar */}
+            {/* Euro Car Parks branding strip */}
+            <div className="demo-brand-strip">
+                <Image
+                    src="/ecp-logo.gif"
+                    alt="Euro Car Parks"
+                    width={120}
+                    height={30}
+                    className="demo-brand-logo"
+                    unoptimized
+                />
+            </div>
+
+            {/* Bottom tab bar */}
             <div className="demo-tab-bar">
                 <div className="flex items-center justify-around w-full max-w-xs mx-auto">
                     {TABS.map(tab => {
@@ -82,19 +93,26 @@ export default function DemoNav({
                 </div>
             </div>
 
-            {/* Partner view floating button — above tab bar */}
-            <button
-                onClick={onTogglePartner}
-                className="demo-partner-btn"
-                style={{
-                    background: `linear-gradient(135deg, ${primaryColor}, #003399)`,
-                }}
-                title="Toggle Partner View"
-            >
-                <Eye className="w-4 h-4 text-white" />
-            </button>
-
             <style jsx>{`
+                .demo-brand-strip {
+                    position: absolute;
+                    bottom: 52px;
+                    left: 0;
+                    right: 0;
+                    z-index: 39;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 6px 0;
+                    background: rgba(0, 51, 153, 0.9);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                }
+                .demo-brand-logo {
+                    height: 20px;
+                    width: auto;
+                    object-fit: contain;
+                }
                 .demo-tab-bar {
                     position: absolute;
                     bottom: 0;
@@ -106,28 +124,6 @@ export default function DemoNav({
                     -webkit-backdrop-filter: blur(20px);
                     border-top: 1px solid rgba(0, 0, 0, 0.06);
                     padding: 6px 8px 10px;
-                }
-                .demo-partner-btn {
-                    position: absolute;
-                    bottom: 60px;
-                    right: 12px;
-                    z-index: 50;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.2s;
-                    border: none;
-                    cursor: pointer;
-                }
-                .demo-partner-btn:hover {
-                    transform: scale(1.1);
-                }
-                .demo-partner-btn:active {
-                    transform: scale(0.95);
                 }
             `}</style>
         </>
