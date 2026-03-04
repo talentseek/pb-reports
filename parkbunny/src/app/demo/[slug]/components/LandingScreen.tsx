@@ -75,8 +75,11 @@ export default function LandingScreen({ config, onNext }: Props) {
                     </div>
                 </div>
 
-                {/* SEARCH BAR — pushed to bottom via mt-auto, responsive margin for nav clearance */}
-                <div className="mt-auto w-full max-w-xs mx-auto mb-[100px] md:mb-[120px]">
+                {/* Spacer — pushes search bar to vertical centre of gap */}
+                <div className="flex-1" />
+
+                {/* SEARCH BAR — centred between heading and nav */}
+                <div className="w-full max-w-xs mx-auto">
                     <div className="glass rounded-2xl p-3 shadow-2xl">
                         <div className="flex items-center gap-2 px-2 py-2 mb-2">
                             <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
@@ -94,6 +97,9 @@ export default function LandingScreen({ config, onNext }: Props) {
                         </button>
                     </div>
                 </div>
+
+                {/* Spacer — equal to above, with min-height to clear nav */}
+                <div className="flex-1 min-h-[100px] md:min-h-[120px]" />
             </div>
         </div>
     )
