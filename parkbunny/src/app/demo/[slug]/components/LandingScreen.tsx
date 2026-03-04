@@ -32,12 +32,9 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/30 to-slate-900/80 z-10" />
             </div>
 
-            {/* Content overlay — top/bottom split, 120px clearance for nav area */}
-            <div
-                className="relative z-20 flex-1 flex flex-col justify-between pt-12 px-4"
-                style={{ paddingBottom: '120px' }}
-            >
-                {/* TOP GROUP — logo, heading, tagline, co-branding */}
+            {/* Content overlay */}
+            <div className="relative z-20 flex-1 flex flex-col pt-12 px-4">
+                {/* TOP — logo, heading, tagline, co-branding */}
                 <div className="flex flex-col items-center">
                     <Image
                         src={operator.logo}
@@ -78,8 +75,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                     </div>
                 </div>
 
-                {/* BOTTOM GROUP — search bar */}
-                <div className="w-full max-w-xs mx-auto">
+                {/* SEARCH BAR — pushed to bottom via mt-auto, 120px above bottom for nav clearance */}
+                <div className="mt-auto w-full max-w-xs mx-auto" style={{ marginBottom: '120px' }}>
                     <div className="glass rounded-2xl p-3 shadow-2xl">
                         <div className="flex items-center gap-2 px-2 py-2 mb-2">
                             <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
