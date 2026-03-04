@@ -1,8 +1,9 @@
 import { auth } from '@clerk/nextjs/server'
 import prisma from '@/lib/db'
 import type { StreamType } from '@prisma/client'
+import { ALL_STREAM_TYPES } from '@/lib/revenue-streams'
 
-const VALID_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
+const VALID_STREAM_TYPES: StreamType[] = ALL_STREAM_TYPES
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
     const { userId } = await auth()

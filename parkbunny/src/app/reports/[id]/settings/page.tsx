@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { defaultSettings } from "@/lib/calculations";
 
 type StreamType = 'LOCKER' | 'CAR_WASH' | 'EV_CHARGING' | 'FARMERS_MARKET'
+  | 'TESLA_DEMO' | 'WE_BUY_ANY_CAR' | 'GIANT_WASHING_MACHINE' | 'DOG_GROOMING'
+  | 'NHS_MRI_SCANNER' | 'FILM_CREW_HOSTING' | 'ELECTRIC_BIKE_BAY' | 'WATERLESS_CAR_WASH' | 'DIGITAL_SIGNAGE'
 
 type StreamConfig = {
   id?: string
@@ -25,6 +27,15 @@ const STREAM_LABELS: Record<StreamType, string> = {
   CAR_WASH: 'Self-Service Car Wash',
   EV_CHARGING: 'EV Charging (RevShare)',
   FARMERS_MARKET: 'Farmers Markets',
+  TESLA_DEMO: 'Tesla Demo Vehicles',
+  WE_BUY_ANY_CAR: 'We Buy Any Car — Site Pod',
+  GIANT_WASHING_MACHINE: 'Giant Washing Machines',
+  DOG_GROOMING: 'Dog Grooming Stations',
+  NHS_MRI_SCANNER: 'NHS Mobile MRI Scanner',
+  FILM_CREW_HOSTING: 'Unit Base — Film Crew Hosting',
+  ELECTRIC_BIKE_BAY: 'Electric Bike Bays',
+  WATERLESS_CAR_WASH: 'Waterless Car Wash',
+  DIGITAL_SIGNAGE: 'Digital Signage',
 }
 
 const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
@@ -32,9 +43,23 @@ const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: n
   CAR_WASH: { min: 10000, max: 20000 },
   EV_CHARGING: { rate: 3600 },
   FARMERS_MARKET: { isTextOnly: true, textDisplay: '£1,000 – £2,500 per day' },
+  TESLA_DEMO: { rate: 50000 },
+  WE_BUY_ANY_CAR: { rate: 15000 },
+  GIANT_WASHING_MACHINE: { rate: 1500 },
+  DOG_GROOMING: { min: 5000, max: 10000 },
+  NHS_MRI_SCANNER: { rate: 7500 },
+  FILM_CREW_HOSTING: { min: 5000, max: 50000 },
+  ELECTRIC_BIKE_BAY: { isTextOnly: true, textDisplay: '£5,000+ per bay per year' },
+  WATERLESS_CAR_WASH: { min: 15000, max: 45000 },
+  DIGITAL_SIGNAGE: { min: 10000, max: 50000 },
 }
 
-const ALL_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
+const CORE_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
+const ALT_STREAM_TYPES: StreamType[] = [
+  'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
+  'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
+]
+const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
 type Settings = {
   upliftPercentages?: Record<string, number>
@@ -433,94 +458,103 @@ export default function ReportSettingsPage({ params }: { params: { id: string } 
       <h2 className="text-xl font-semibold">Revenue Streams</h2>
       <p className="text-sm text-gray-600 mb-3">Toggle ancillary revenue streams to include in the public report. Amounts are per site per year unless noted.</p>
       <div className="space-y-4">
-        {streams.map((stream) => {
-          const def = STREAM_DEFAULTS[stream.streamType]
-          const isEnabled = stream.enabled
-          return (
-            <div key={stream.streamType} className="rounded border p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="font-medium flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={isEnabled}
-                    onChange={(e) => toggleStream(stream.streamType, e.target.checked)}
-                    className="h-4 w-4"
-                  />
-                  {STREAM_LABELS[stream.streamType]}
-                </label>
-                {isEnabled && (
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
-                )}
-              </div>
+        {streams.filter((s) => CORE_STREAM_TYPES.includes(s.streamType)).map((stream) => renderStreamCard(stream))}
+      </div>
 
-              {isEnabled && !def.isTextOnly && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {def.rate !== undefined && (
-                    <div>
-                      <label className="block text-sm text-gray-600">Rate per site/year (£)</label>
-                      <input
-                        className="w-full rounded border px-3 py-2"
-                        type="number"
-                        value={stream.ratePerSite ?? def.rate}
-                        onChange={(e) => updateStreamRate(stream.streamType, 'ratePerSite', Number(e.target.value))}
-                      />
-                    </div>
-                  )}
-                  {def.min !== undefined && (
-                    <div>
-                      <label className="block text-sm text-gray-600">Min rate per site/year (£)</label>
-                      <input
-                        className="w-full rounded border px-3 py-2"
-                        type="number"
-                        value={stream.rateMin ?? def.min}
-                        onChange={(e) => updateStreamRate(stream.streamType, 'rateMin', Number(e.target.value))}
-                      />
-                    </div>
-                  )}
-                  {def.max !== undefined && (
-                    <div>
-                      <label className="block text-sm text-gray-600">Max rate per site/year (£)</label>
-                      <input
-                        className="w-full rounded border px-3 py-2"
-                        type="number"
-                        value={stream.rateMax ?? def.max}
-                        onChange={(e) => updateStreamRate(stream.streamType, 'rateMax', Number(e.target.value))}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {isEnabled && def.isTextOnly && (
-                <p className="text-sm text-gray-600">{def.textDisplay}</p>
-              )}
-
-              {/* Per-location exclusion grid */}
-              {isEnabled && stream.id && locations.length > 1 && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">Per-location overrides (uncheck to exclude a site):</p>
-                  <div className="flex flex-wrap gap-2">
-                    {locations.map((loc) => {
-                      const isExcluded = stream.excludedLocations.some((e) => e.locationId === loc.id)
-                      return (
-                        <label key={loc.id} className="flex items-center gap-1 text-sm border rounded px-2 py-1">
-                          <input
-                            type="checkbox"
-                            checked={!isExcluded}
-                            onChange={(e) => toggleLocationExclusion(stream, loc.id, !e.target.checked)}
-                            className="h-3 w-3"
-                          />
-                          <span className="text-xs">{loc.postcode}</span>
-                        </label>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
+      <hr className="my-6" />
+      <h2 className="text-xl font-semibold">Alternative Revenue Streams</h2>
+      <p className="text-sm text-gray-600 mb-3">Additional revenue opportunities shown as informational options in the report. These do <strong>not</strong> add to the portfolio total — all subject to survey.</p>
+      <div className="space-y-4">
+        {streams.filter((s) => ALT_STREAM_TYPES.includes(s.streamType)).map((stream) => renderStreamCard(stream))}
       </div>
     </main>
   );
+
+  function renderStreamCard(stream: StreamConfig) {
+    const def = STREAM_DEFAULTS[stream.streamType]
+    const isEnabled = stream.enabled
+    return (
+      <div key={stream.streamType} className="rounded border p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="font-medium flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={isEnabled}
+              onChange={(e) => toggleStream(stream.streamType, e.target.checked)}
+              className="h-4 w-4"
+            />
+            {STREAM_LABELS[stream.streamType]}
+          </label>
+          {isEnabled && (
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+          )}
+        </div>
+
+        {isEnabled && !def.isTextOnly && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {def.rate !== undefined && (
+              <div>
+                <label className="block text-sm text-gray-600">Rate per site/year (£)</label>
+                <input
+                  className="w-full rounded border px-3 py-2"
+                  type="number"
+                  value={stream.ratePerSite ?? def.rate}
+                  onChange={(e) => updateStreamRate(stream.streamType, 'ratePerSite', Number(e.target.value))}
+                />
+              </div>
+            )}
+            {def.min !== undefined && (
+              <div>
+                <label className="block text-sm text-gray-600">Min rate per site/year (£)</label>
+                <input
+                  className="w-full rounded border px-3 py-2"
+                  type="number"
+                  value={stream.rateMin ?? def.min}
+                  onChange={(e) => updateStreamRate(stream.streamType, 'rateMin', Number(e.target.value))}
+                />
+              </div>
+            )}
+            {def.max !== undefined && (
+              <div>
+                <label className="block text-sm text-gray-600">Max rate per site/year (£)</label>
+                <input
+                  className="w-full rounded border px-3 py-2"
+                  type="number"
+                  value={stream.rateMax ?? def.max}
+                  onChange={(e) => updateStreamRate(stream.streamType, 'rateMax', Number(e.target.value))}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {isEnabled && def.isTextOnly && (
+          <p className="text-sm text-gray-600">{def.textDisplay}</p>
+        )}
+
+        {/* Per-location exclusion grid */}
+        {isEnabled && stream.id && locations.length > 1 && (
+          <div>
+            <p className="text-xs text-gray-500 mb-2">Per-location overrides (uncheck to exclude a site):</p>
+            <div className="flex flex-wrap gap-2">
+              {locations.map((loc) => {
+                const isExcluded = stream.excludedLocations.some((e) => e.locationId === loc.id)
+                return (
+                  <label key={loc.id} className="flex items-center gap-1 text-sm border rounded px-2 py-1">
+                    <input
+                      type="checkbox"
+                      checked={!isExcluded}
+                      onChange={(e) => toggleLocationExclusion(stream, loc.id, !e.target.checked)}
+                      className="h-3 w-3"
+                    />
+                    <span className="text-xs">{loc.postcode}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 }
