@@ -19,20 +19,7 @@ export default function LandingScreen({ config, onNext }: Props) {
 
     return (
         <div className="relative flex flex-col" style={{ height: '100%' }}>
-            {/* Header — just ECP logo, centred */}
-            <header className="relative z-20 flex items-center justify-center px-4 pt-12 pb-2">
-                <Image
-                    src={operator.logo}
-                    alt={operator.name}
-                    width={180}
-                    height={45}
-                    className="h-9 w-auto object-contain"
-                    unoptimized
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                />
-            </header>
-
-            {/* Map background */}
+            {/* Map background — fills entire screen */}
             <div className="absolute inset-0 z-0">
                 {location.lat && location.lng && (
                     <DemoMap
@@ -42,13 +29,24 @@ export default function LandingScreen({ config, onNext }: Props) {
                         locationName={location.name}
                     />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/90 z-10" />
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/30 to-slate-900/80 z-10" />
             </div>
 
-            {/* Content — centred in screen, pb-40 shifts centre above map pin */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-40">
-                {/* Main heading */}
-                <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
+            {/* TOP SECTION — logo, heading, tagline, co-branding */}
+            <div className="relative z-20 flex flex-col items-center pt-12 px-4">
+                {/* Header logo */}
+                <Image
+                    src={operator.logo}
+                    alt={operator.name}
+                    width={180}
+                    height={45}
+                    className="h-9 w-auto object-contain mb-6"
+                    unoptimized
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                />
+
+                {/* Heading */}
+                <h1 className="text-3xl font-bold text-white text-center mb-1 tracking-tight leading-tight">
                     Park. Pay.<br />
                     <span style={{ color: colors.accent }}>Get rewarded.</span>
                 </h1>
@@ -56,8 +54,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                     {operator.tagline}
                 </p>
 
-                {/* Co-branding — right below heading */}
-                <div className="flex items-center gap-3 mb-8">
+                {/* Co-branding */}
+                <div className="flex items-center gap-3">
                     <Image
                         src={operator.logo}
                         alt={operator.name}
@@ -78,9 +76,14 @@ export default function LandingScreen({ config, onNext }: Props) {
                         style={{ opacity: 1 }}
                     />
                 </div>
+            </div>
 
-                {/* Search bar — stacked layout */}
-                <div className="w-full max-w-xs">
+            {/* MIDDLE — empty space for map pin to be visible */}
+            <div className="flex-1" />
+
+            {/* BOTTOM SECTION — search bar, above ECP strip + nav */}
+            <div className="relative z-20 px-4 pb-28">
+                <div className="w-full max-w-xs mx-auto">
                     <div className="glass rounded-2xl p-3 shadow-2xl">
                         <div className="flex items-center gap-2 px-2 py-2 mb-2">
                             <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
