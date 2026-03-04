@@ -79,7 +79,7 @@ export default function PhoneFrame({ config, children, onTogglePartner }: Props)
       </div>
 
       {/* Mobile: full-bleed passthrough */}
-      <div className="phone-frame-mobile">
+      <div className="phone-frame-mobile" style={{ position: 'relative', minHeight: '100dvh' }}>
         {children}
       </div>
 
