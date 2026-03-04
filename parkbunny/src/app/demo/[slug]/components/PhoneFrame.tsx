@@ -160,12 +160,12 @@ export default function PhoneFrame({ config, children, onTogglePartner }: Props)
             filter: brightness(0) invert(1);
           }
 
-          /* Device frame */
+          /* Device frame — scales to fit viewport */
           .phone-device {
             position: relative;
             z-index: 10;
             width: 393px;
-            height: 852px;
+            height: min(852px, calc(100vh - 40px));
             border-radius: 50px;
             background: #1a1a1a;
             padding: 12px;

@@ -45,36 +45,37 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/90 z-10" />
             </div>
 
-            {/* Content — heading at top, search bar at bottom */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-between pt-4 px-4 pb-24">
+            {/* Content — centred in screen */}
+            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-24">
                 {/* Main heading */}
                 <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
                     Park. Pay.<br />
                     <span style={{ color: colors.accent }}>Get rewarded.</span>
                 </h1>
-                <p className="text-white/60 text-sm text-center max-w-xs mb-6">
+                <p className="text-white/60 text-sm text-center max-w-xs mb-3">
                     {operator.tagline}
                 </p>
 
-                {/* Co-branding */}
-                <div className="flex items-center gap-2 mb-4">
+                {/* Co-branding — right below heading */}
+                <div className="flex items-center gap-3 mb-8">
                     <Image
                         src={operator.logo}
                         alt={operator.name}
-                        width={80}
-                        height={20}
-                        className="h-4 w-auto object-contain"
+                        width={100}
+                        height={28}
+                        className="h-5 w-auto object-contain"
                         unoptimized
                         style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
                     />
-                    <span className="text-white/50 text-xs">×</span>
+                    <span className="text-white/50 text-sm">×</span>
                     <Image
                         src="/logo.png"
                         alt="ParkBunny"
-                        width={80}
-                        height={20}
-                        className="h-4 w-auto object-contain"
-                        style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+                        width={100}
+                        height={28}
+                        className="h-5 w-auto object-contain"
+                        unoptimized
+                        style={{ opacity: 1 }}
                     />
                 </div>
 
