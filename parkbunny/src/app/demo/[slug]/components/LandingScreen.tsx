@@ -75,8 +75,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                     </div>
                 </div>
 
-                {/* SEARCH BAR — pushed to bottom via mt-auto, 120px above bottom for nav clearance */}
-                <div className="mt-auto w-full max-w-xs mx-auto" style={{ marginBottom: '120px' }}>
+                {/* SEARCH BAR — pushed to bottom via mt-auto, responsive margin for nav clearance */}
+                <div className="mt-auto w-full max-w-xs mx-auto mb-[100px] md:mb-[120px]">
                     <div className="glass rounded-2xl p-3 shadow-2xl">
                         <div className="flex items-center gap-2 px-2 py-2 mb-2">
                             <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
