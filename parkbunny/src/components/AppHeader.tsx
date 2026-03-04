@@ -7,7 +7,7 @@ import Image from 'next/image'
 
 export default function AppHeader() {
   const pathname = usePathname()
-  if (pathname?.startsWith('/share') || pathname?.startsWith('/investordeck') || pathname?.startsWith('/jollysailor')) return null
+  if (pathname?.startsWith('/share') || pathname?.startsWith('/investordeck') || pathname?.startsWith('/jollysailor') || pathname?.startsWith('/demo')) return null
   return (
     <header className="border-b">
       <div className="mx-auto max-w-5xl p-4 flex items-center justify-between">
