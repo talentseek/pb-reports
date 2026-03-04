@@ -96,20 +96,20 @@ export default function DemoNav({
             <style jsx>{`
                 .demo-brand-strip {
                     position: absolute;
-                    bottom: 52px;
+                    bottom: 55px;
                     left: 0;
                     right: 0;
                     z-index: 39;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 6px 0;
-                    background: rgba(0, 51, 153, 0.9);
+                    padding: 8px 0;
+                    background: rgba(0, 51, 153, 0.95);
                     backdrop-filter: blur(12px);
                     -webkit-backdrop-filter: blur(12px);
                 }
                 .demo-brand-logo {
-                    height: 20px;
+                    height: 24px;
                     width: auto;
                     object-fit: contain;
                 }
