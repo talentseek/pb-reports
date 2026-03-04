@@ -4,7 +4,7 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import type { DemoConfig } from '@/lib/demo-configs/types'
-import { MapPin, Search, Sparkles } from 'lucide-react'
+import { MapPin, Search } from 'lucide-react'
 
 const DemoMap = dynamic(() => import('./DemoMap'), { ssr: false })
 
@@ -45,21 +45,8 @@ export default function LandingScreen({ config, onNext }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/90 z-10" />
             </div>
 
-            {/* Content */}
-            <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 pb-28">
-                {/* Hero badge */}
-                <div
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-5"
-                    style={{
-                        background: `${colors.accent}25`,
-                        color: colors.accent,
-                        border: `1px solid ${colors.accent}50`,
-                    }}
-                >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    ECP ParkBuddy Rewards
-                </div>
-
+            {/* Content — positioned towards top, away from map pin */}
+            <div className="relative z-20 flex-1 flex flex-col items-center justify-start pt-4 px-4 pb-28">
                 {/* Main heading */}
                 <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight leading-tight">
                     Park. Pay.<br />

@@ -73,7 +73,7 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
     } as React.CSSProperties
 
     return (
-        <PhoneFrame config={config}>
+        <PhoneFrame config={config} onTogglePartner={() => setShowPartnerView(prev => !prev)}>
             <div
                 className="relative overflow-hidden"
                 style={{
@@ -149,7 +149,6 @@ export default function ClientDemo({ config, enrichedDeals }: Props) {
                     highestStep={highestStep}
                     journeyComplete={journeyComplete}
                     onStepChange={goToStep}
-                    onTogglePartner={() => setShowPartnerView(prev => !prev)}
                     showPartnerView={showPartnerView}
                     primaryColor={colors.primary}
                     accentColor={colors.accent}
