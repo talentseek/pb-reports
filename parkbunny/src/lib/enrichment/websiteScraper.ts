@@ -218,6 +218,47 @@ export function extractDomainFromUrl(url: string): string {
     }
 }
 
+/**
+ * Lightweight raw HTML fetch to extract mailto: links.
+ * Fallback for when Firecrawl/Crawl4AI strip mailto: href attributes
+ * from their markdown output (e.g., social icon email links).
+ */
+export async function fetchMailtoEmails(url: string): Promise<string[]> {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml',
+            },
+            signal: AbortSignal.timeout(10000),
+            redirect: 'follow',
+        });
+
+        if (!response.ok) return [];
+
+        const html = await response.text();
+
+        // Extract all mailto: links from raw HTML
+        const mailtoRegex = /mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi;
+        const matches: string[] = [];
+        let match;
+
+        while ((match = mailtoRegex.exec(html)) !== null) {
+            const email = match[1].toLowerCase();
+            // Skip junk
+            if (email.includes('noreply') || email.includes('no-reply')) continue;
+            if (email.includes('example.com')) continue;
+            if (!matches.includes(email)) {
+                matches.push(email);
+            }
+        }
+
+        return matches;
+    } catch {
+        return [];
+    }
+}
+
 function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

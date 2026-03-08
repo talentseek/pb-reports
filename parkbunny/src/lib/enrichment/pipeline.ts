@@ -20,7 +20,7 @@
 import prisma from '@/lib/db';
 import { classifyBusiness, type ChainClassification } from './chainClassifier';
 import { getPrimaryType, isNonProspect } from './typePriority';
-import { scrapeWebsite, extractDomainFromUrl as scrapeDomain, type ScrapeResult } from './websiteScraper';
+import { scrapeWebsite, fetchMailtoEmails, extractDomainFromUrl as scrapeDomain, type ScrapeResult } from './websiteScraper';
 import { extractIdentity, type ExtractedIdentity } from './llmExtractor';
 import { lookupCompany, type CompanyLookupResult } from './companiesHouse';
 import { searchPeopleByDomain, searchPeopleByCompany, searchChainBranchManager, type ApolloSearchResult } from './apolloService';
@@ -194,6 +194,24 @@ export async function enrichBusiness(place: {
         } catch (err: any) {
             layerResults.websiteScrape = { method: 'failed', pagesScraped: 0, error: err.message };
         }
+    }
+
+    // Step 1b: Raw HTML mailto: extraction
+    // Catches emails hidden in mailto: href attributes that markdown scrapers strip
+    if (!ownerEmail && place.website) {
+        try {
+            const mailtoEmails = await fetchMailtoEmails(place.website);
+            if (mailtoEmails.length > 0) {
+                // Prefer non-generic emails
+                const nonGeneric = mailtoEmails.filter((e: string) => {
+                    const local = e.split('@')[0];
+                    return !['info', 'contact', 'hello', 'enquiries', 'support', 'admin', 'webmaster', 'privacy', 'careers', 'jobs', 'recruitment'].includes(local);
+                });
+                const bestEmail = nonGeneric.length > 0 ? nonGeneric[0] : mailtoEmails[0];
+                ownerEmail = bestEmail;
+                dataSources.push('mailto_extraction');
+            }
+        } catch { /* skip */ }
     }
 
     // Step 2: Companies House (INDEPENDENTS ONLY — for chains, CH returns HQ directors who are useless)

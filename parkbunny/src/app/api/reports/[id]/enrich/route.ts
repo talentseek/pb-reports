@@ -131,14 +131,22 @@ export async function POST(
                 for (let i = 0; i < toEnrich.length; i++) {
                     const biz = toEnrich[i];
                     try {
-                        const result = await enrichBusiness({
-                            id: biz.id,
-                            name: biz.name,
-                            types: biz.types,
-                            website: biz.website,
-                            address: biz.address,
-                            phone: biz.phone,
-                        });
+                        console.log(`[enrich] ${i + 1}/${toEnrich.length}: ${biz.name}`);
+
+                        // 90s timeout per business to prevent hanging
+                        const result = await Promise.race([
+                            enrichBusiness({
+                                id: biz.id,
+                                name: biz.name,
+                                types: biz.types,
+                                website: biz.website,
+                                address: biz.address,
+                                phone: biz.phone,
+                            }),
+                            new Promise<never>((_, reject) =>
+                                setTimeout(() => reject(new Error('Enrichment timeout (90s)')), 90000)
+                            ),
+                        ]);
 
                         // Save to database
                         await savePipelineResult(result, reportId);
