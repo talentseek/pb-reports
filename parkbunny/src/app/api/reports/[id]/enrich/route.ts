@@ -159,8 +159,15 @@ export async function POST(
                             ownerName: result.ownerName,
                             ownerEmail: result.ownerEmail,
                             ownerRole: result.ownerRole,
+                            ownerPhone: result.ownerPhone,
+                            ownerLinkedIn: result.ownerLinkedIn,
+                            companyName: result.companyName,
+                            chainName: result.chainClassification?.chainName || null,
+                            chainClassification: result.chainClassification?.classification || null,
                             confidence: result.overallConfidence,
                             emailVerified: result.emailVerified,
+                            dataSources: result.dataSources,
+                            layers: result.layerResults,
                         });
                     } catch (err: any) {
                         failed++;

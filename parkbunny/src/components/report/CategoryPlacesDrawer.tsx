@@ -167,7 +167,7 @@ export default function CategoryPlacesDrawer({
                 return next
               })
               // Live update the place's enrichment data
-              if (data.status === 'resolved' || data.status === 'partial') {
+              if (data.status !== 'failed') {
                 setPlaces(prev => (prev || []).map(p =>
                   p.id === data.placeId ? {
                     ...p,
@@ -176,14 +176,14 @@ export default function CategoryPlacesDrawer({
                       ownerName: data.ownerName || null,
                       ownerRole: data.ownerRole || null,
                       ownerEmail: data.ownerEmail || null,
-                      ownerPhone: null,
-                      ownerLinkedIn: null,
-                      companyName: null,
-                      chainClassification: null,
-                      chainName: null,
+                      ownerPhone: data.ownerPhone || null,
+                      ownerLinkedIn: data.ownerLinkedIn || null,
+                      companyName: data.companyName || null,
+                      chainClassification: data.chainClassification || null,
+                      chainName: data.chainName || null,
                       emailVerified: data.emailVerified || false,
                       overallConfidence: data.confidence || null,
-                      dataSources: null,
+                      dataSources: data.dataSources || null,
                       lastEnrichedAt: new Date().toISOString(),
                     },
                   } : p
