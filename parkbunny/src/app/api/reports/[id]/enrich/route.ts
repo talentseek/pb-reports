@@ -1,15 +1,18 @@
 /**
- * Report Enrichment API
+ * Report Enrichment API — Sector-level enrichment
  * 
- * POST — Start enrichment for businesses in a report
- * GET  — Get enrichment status and results for a report
+ * POST — Start enrichment for a specific sector's included businesses
+ *   Body: { category: string, postcode?: string, dryRun?: boolean }
+ *   dryRun=true returns preview (count, businesses list)
+ *   dryRun=false/omitted runs enrichment with SSE progress stream
+ * 
+ * GET — Get enrichment results for a report
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/db';
-import { enrichBatch, savePipelineResult } from '@/lib/enrichment/pipeline';
-import { getPrimaryType, isNonProspect } from '@/lib/enrichment/typePriority';
+import { enrichBusiness, savePipelineResult, type PipelineResult } from '@/lib/enrichment/pipeline';
 
 export async function POST(
     request: NextRequest,
@@ -23,108 +26,167 @@ export async function POST(
     try {
         const reportId = params.id;
         const body = await request.json();
-        const { types, placeIds } = body as {
-            types?: string[];
-            placeIds?: string[];
+        const { category, postcode, dryRun } = body as {
+            category: string;
+            postcode?: string;
+            dryRun?: boolean;
         };
 
-        // Verify report exists and belongs to user
+        if (!category) {
+            return NextResponse.json({ error: 'Missing category' }, { status: 400 });
+        }
+
+        // Verify report exists
         const report = await prisma.report.findFirst({
             where: { id: reportId },
+            select: { id: true },
         });
-
         if (!report) {
             return NextResponse.json({ error: 'Report not found' }, { status: 404 });
         }
 
-        // Get places for this report
-        const reportLocationPlaces = await prisma.reportLocationPlace.findMany({
-            where: { location: { reportId } },
-            include: { place: true },
+        // Get locations for this report (optionally filtered by postcode)
+        const locations = await prisma.reportLocation.findMany({
+            where: { reportId, ...(postcode ? { postcode } : {}) },
+            select: { id: true },
         });
-
-        let places = reportLocationPlaces.map(rlp => rlp.place);
-
-        // Filter by types if specified
-        if (types && types.length > 0) {
-            places = places.filter(p => {
-                const primaryType = getPrimaryType(p.types);
-                return types.includes(primaryType);
-            });
+        if (locations.length === 0) {
+            return NextResponse.json({ error: 'No locations found' }, { status: 404 });
         }
+        const locationIds = locations.map(l => l.id);
 
-        // Filter by specific place IDs if specified
-        if (placeIds && placeIds.length > 0) {
-            places = places.filter(p => placeIds.includes(p.id));
-        }
-
-        // Filter out non-prospects
-        places = places.filter(p => !isNonProspect(p.types));
-
-        if (places.length === 0) {
-            return NextResponse.json({
-                error: 'No eligible businesses found for enrichment',
-            }, { status: 400 });
-        }
-
-        // Check for already-enriched places (skip if resolved recently)
-        const existingResults = await prisma.enrichmentResult.findMany({
+        // Get included businesses for this category
+        const links = await prisma.reportLocationPlace.findMany({
             where: {
-                placeId: { in: places.map(p => p.id) },
-                reportId,
-                status: 'resolved',
-                lastEnrichedAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }, // Last 30 days
+                locationId: { in: locationIds },
+                groupedCategory: category,
+                included: true,
             },
-            select: { placeId: true },
+            include: {
+                place: {
+                    include: {
+                        enrichmentResults: {
+                            where: { reportId },
+                            take: 1,
+                        },
+                    },
+                },
+            },
         });
 
-        const alreadyResolved = new Set(existingResults.map(r => r.placeId));
-        const placesToEnrich = places.filter(p => !alreadyResolved.has(p.id));
+        // Separate already-enriched from pending
+        const businesses = links.map(link => {
+            const enrichment = link.place.enrichmentResults[0];
+            const isEnriched = enrichment && ['resolved', 'partial'].includes(enrichment.status);
+            return {
+                id: link.place.id,
+                name: link.place.name,
+                types: link.place.types,
+                website: link.place.website,
+                address: link.place.address,
+                phone: link.place.phone,
+                enriched: !!isEnriched,
+                enrichmentStatus: enrichment?.status || null,
+            };
+        });
 
-        if (placesToEnrich.length === 0) {
+        const toEnrich = businesses.filter(b => !b.enriched);
+        const alreadyEnriched = businesses.filter(b => b.enriched);
+
+        // Dry run: return preview without enriching
+        if (dryRun) {
             return NextResponse.json({
-                message: 'All businesses are already enriched',
-                skipped: places.length,
+                toEnrich: toEnrich.length,
+                alreadyEnriched: alreadyEnriched.length,
+                total: businesses.length,
+                businesses: businesses.map(b => ({
+                    id: b.id,
+                    name: b.name,
+                    enriched: b.enriched,
+                    status: b.enrichmentStatus,
+                })),
             });
         }
 
-        // Mark as in_progress
-        await Promise.all(
-            placesToEnrich.map(p =>
-                prisma.enrichmentResult.upsert({
-                    where: { placeId_reportId: { placeId: p.id, reportId } },
-                    create: { placeId: p.id, reportId, status: 'in_progress' },
-                    update: { status: 'in_progress' },
-                }),
-            ),
-        );
+        if (toEnrich.length === 0) {
+            return NextResponse.json({
+                message: 'All included businesses are already enriched',
+                alreadyEnriched: alreadyEnriched.length,
+            });
+        }
 
-        // Run the pipeline (non-blocking via streaming response pattern)
-        const pipelineInput = placesToEnrich.map(p => ({
-            id: p.id,
-            name: p.name,
-            types: p.types,
-            website: p.website,
-            address: p.address,
-            phone: p.phone,
-        }));
+        // SSE streaming response for real-time progress
+        const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+            async start(controller) {
+                const send = (data: Record<string, any>) => {
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+                };
 
-        // Start enrichment in background
-        enrichBatch(pipelineInput, 3, async (completed, total, result) => {
-            try {
-                await savePipelineResult(result, reportId);
-            } catch (err) {
-                console.error(`Failed to save result for ${result.placeId}:`, err);
-            }
-        }).catch(err => {
-            console.error('Pipeline batch error:', err);
+                send({ type: 'start', total: toEnrich.length, alreadyEnriched: alreadyEnriched.length });
+
+                let resolved = 0, partial = 0, failed = 0;
+
+                // Process sequentially (1 at a time for reliability + real-time updates)
+                for (let i = 0; i < toEnrich.length; i++) {
+                    const biz = toEnrich[i];
+                    try {
+                        const result = await enrichBusiness({
+                            id: biz.id,
+                            name: biz.name,
+                            types: biz.types,
+                            website: biz.website,
+                            address: biz.address,
+                            phone: biz.phone,
+                        });
+
+                        // Save to database
+                        await savePipelineResult(result, reportId);
+
+                        // Update counters
+                        if (result.status === 'resolved') resolved++;
+                        else if (result.status === 'partial') partial++;
+                        else failed++;
+
+                        // Stream progress
+                        send({
+                            type: 'progress',
+                            current: i + 1,
+                            total: toEnrich.length,
+                            placeId: biz.id,
+                            name: biz.name,
+                            status: result.status,
+                            ownerName: result.ownerName,
+                            ownerEmail: result.ownerEmail,
+                            ownerRole: result.ownerRole,
+                            confidence: result.overallConfidence,
+                            emailVerified: result.emailVerified,
+                        });
+                    } catch (err: any) {
+                        failed++;
+                        send({
+                            type: 'progress',
+                            current: i + 1,
+                            total: toEnrich.length,
+                            placeId: biz.id,
+                            name: biz.name,
+                            status: 'failed',
+                            error: err.message,
+                        });
+                    }
+                }
+
+                send({ type: 'complete', resolved, partial, failed, total: toEnrich.length });
+                controller.close();
+            },
         });
 
-        return NextResponse.json({
-            message: 'Enrichment started',
-            total: placesToEnrich.length,
-            skipped: alreadyResolved.size,
-            reportId,
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+            },
         });
     } catch (err: any) {
         console.error('Enrichment API error:', err);
@@ -143,10 +205,32 @@ export async function GET(
 
     try {
         const reportId = params.id;
+        const { searchParams } = new URL(request.url);
+        const category = searchParams.get('category');
 
-        // Get all enrichment results for this report
+        // Base query
+        const whereClause: any = { reportId };
+
+        // If category specified, filter to places in that category
+        let placeIdFilter: string[] | undefined;
+        if (category) {
+            const locations = await prisma.reportLocation.findMany({
+                where: { reportId },
+                select: { id: true },
+            });
+            const links = await prisma.reportLocationPlace.findMany({
+                where: {
+                    locationId: { in: locations.map(l => l.id) },
+                    groupedCategory: category,
+                },
+                select: { placeId: true },
+            });
+            placeIdFilter = links.map(l => l.placeId);
+            whereClause.placeId = { in: placeIdFilter };
+        }
+
         const results = await prisma.enrichmentResult.findMany({
-            where: { reportId },
+            where: whereClause,
             include: {
                 place: {
                     select: {
@@ -156,34 +240,22 @@ export async function GET(
                         address: true,
                         website: true,
                         phone: true,
-                        rating: true,
                     },
                 },
             },
             orderBy: { updatedAt: 'desc' },
         });
 
-        // Compute stats
         const stats = {
             total: results.length,
             resolved: results.filter(r => r.status === 'resolved').length,
             partial: results.filter(r => r.status === 'partial').length,
             failed: results.filter(r => r.status === 'failed').length,
             inProgress: results.filter(r => r.status === 'in_progress').length,
-            pending: results.filter(r => r.status === 'pending').length,
-            needsReview: results.filter(r => r.status === 'needs_review').length,
-            skipped: results.filter(r => r.status === 'skipped').length,
-        };
-
-        const classificationStats = {
-            independent: results.filter(r => r.chainClassification === 'independent').length,
-            national_chain: results.filter(r => r.chainClassification === 'national_chain').length,
-            local_group: results.filter(r => r.chainClassification === 'local_group').length,
         };
 
         return NextResponse.json({
             stats,
-            classificationStats,
             results: results.map(r => ({
                 id: r.id,
                 placeId: r.placeId,
@@ -195,19 +267,18 @@ export async function GET(
                 ownerRole: r.ownerRole,
                 ownerEmail: r.ownerEmail,
                 ownerPhone: r.ownerPhone,
+                ownerLinkedIn: r.ownerLinkedIn,
                 emailVerified: r.emailVerified,
                 emailVerificationResult: r.emailVerificationResult,
                 overallConfidence: r.overallConfidence,
                 dataSources: r.dataSources,
                 companyName: r.companyName,
-                companyType: r.companyType,
                 companiesHouseNumber: r.companiesHouseNumber,
                 lastEnrichedAt: r.lastEnrichedAt,
-                failureReason: r.failureReason,
             })),
         });
     } catch (err: any) {
-        console.error('Enrichment status error:', err);
+        console.error('Enrichment GET error:', err);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

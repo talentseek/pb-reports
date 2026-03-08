@@ -30,22 +30,51 @@ export async function GET(
     const locationIds = locations.map((l) => l.id)
     const links = await prisma.reportLocationPlace.findMany({
       where: { locationId: { in: locationIds }, groupedCategory: category },
-      include: { place: true, location: true },
+      include: {
+        place: {
+          include: {
+            enrichmentResults: {
+              where: { reportId: report.id },
+              take: 1,
+              orderBy: { updatedAt: 'desc' },
+            },
+          },
+        },
+        location: true,
+      },
       take: 200,
     })
 
-    const places = links.map((link) => ({
-      id: link.placeId,
-      name: link.place.name,
-      address: link.place.address || '',
-      rating: link.place.rating,
-      priceLevel: link.place.priceLevel,
-      website: link.place.website,
-      phone: link.place.phone,
-      parkingOptions: link.place.parkingOptions,
-      included: link.included,
-      postcode: link.location.postcode,
-    }))
+    const places = links.map((link) => {
+      const enrichment = link.place.enrichmentResults?.[0] || null
+      return {
+        id: link.placeId,
+        name: link.place.name,
+        address: link.place.address || '',
+        rating: link.place.rating,
+        priceLevel: link.place.priceLevel,
+        website: link.place.website,
+        phone: link.place.phone,
+        parkingOptions: link.place.parkingOptions,
+        included: link.included,
+        postcode: link.location.postcode,
+        enrichment: enrichment ? {
+          status: enrichment.status,
+          ownerName: enrichment.ownerName,
+          ownerRole: enrichment.ownerRole,
+          ownerEmail: enrichment.ownerEmail,
+          ownerPhone: enrichment.ownerPhone,
+          ownerLinkedIn: enrichment.ownerLinkedIn,
+          companyName: enrichment.companyName,
+          chainClassification: enrichment.chainClassification,
+          chainName: enrichment.chainName,
+          emailVerified: enrichment.emailVerified,
+          overallConfidence: enrichment.overallConfidence,
+          dataSources: enrichment.dataSources,
+          lastEnrichedAt: enrichment.lastEnrichedAt,
+        } : null,
+      }
+    })
 
     return NextResponse.json({ places })
   } catch (e: any) {

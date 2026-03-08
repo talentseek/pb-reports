@@ -17,7 +17,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             include: {
                 places: {
                     include: {
-                        place: true,
+                        place: {
+                            include: {
+                                enrichmentResults: {
+                                    where: { reportId: report.id },
+                                    take: 1,
+                                    orderBy: { updatedAt: 'desc' },
+                                },
+                            },
+                        },
                     },
                 },
             },
@@ -40,29 +48,47 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 status: loc.status,
                 radiusMeters: loc.radiusMeters,
                 lastFetchedAt: loc.lastFetchedAt,
-                businesses: loc.places.map((link) => ({
-                    id: link.place.id,
-                    placeId: link.place.placeId,
-                    name: link.place.name,
-                    category: link.groupedCategory || 'Uncategorized',
-                    included: link.included,
-                    types: (() => {
-                        try {
-                            return JSON.parse(link.place.types || '[]')
-                        } catch {
-                            return []
-                        }
-                    })(),
-                    address: link.place.address,
-                    phone: link.place.phone,
-                    website: link.place.website,
-                    rating: link.place.rating,
-                    priceLevel: link.place.priceLevel,
-                    latitude: link.place.lat,
-                    longitude: link.place.lng,
-                    businessStatus: link.place.status,
-                    googleMapsUrl: ((link.place.raw as any)?.googleMapsUri) || null,
-                })),
+                businesses: loc.places.map((link) => {
+                    const enrichment = link.place.enrichmentResults?.[0] || null
+                    return {
+                        id: link.place.id,
+                        placeId: link.place.placeId,
+                        name: link.place.name,
+                        category: link.groupedCategory || 'Uncategorized',
+                        included: link.included,
+                        types: (() => {
+                            try {
+                                return JSON.parse(link.place.types || '[]')
+                            } catch {
+                                return []
+                            }
+                        })(),
+                        address: link.place.address,
+                        phone: link.place.phone,
+                        website: link.place.website,
+                        rating: link.place.rating,
+                        priceLevel: link.place.priceLevel,
+                        latitude: link.place.lat,
+                        longitude: link.place.lng,
+                        businessStatus: link.place.status,
+                        googleMapsUrl: ((link.place.raw as any)?.googleMapsUri) || null,
+                        enrichment: enrichment ? {
+                            status: enrichment.status,
+                            ownerName: enrichment.ownerName,
+                            ownerRole: enrichment.ownerRole,
+                            ownerEmail: enrichment.ownerEmail,
+                            ownerPhone: enrichment.ownerPhone,
+                            ownerLinkedIn: enrichment.ownerLinkedIn,
+                            companyName: enrichment.companyName,
+                            chainClassification: enrichment.chainClassification,
+                            chainName: enrichment.chainName,
+                            emailVerified: enrichment.emailVerified,
+                            overallConfidence: enrichment.overallConfidence,
+                            dataSources: enrichment.dataSources,
+                            lastEnrichedAt: enrichment.lastEnrichedAt,
+                        } : null,
+                    }
+                }),
             })),
             exportedAt: new Date().toISOString(),
         }
