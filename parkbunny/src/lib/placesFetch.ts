@@ -18,6 +18,7 @@ const PLACES_FIELD_MASK = [
   'places.businessStatus',
   'places.googleMapsUri',
   'places.parkingOptions',
+  'places.chains',
 ]
 
 export type FetchConfig = {
@@ -193,11 +194,11 @@ async function placesSearchText(lat?: number, lng?: number, radiusMeters?: numbe
     const places: any[] = data?.places ?? []
     const filtered = (lat != null && lng != null && radiusMeters != null)
       ? places.filter((p: any) => {
-          const plat = p.location?.latitude
-          const plng = p.location?.longitude
-          if (typeof plat !== 'number' || typeof plng !== 'number') return false
-          return haversineDistanceMeters(lat, lng, plat, plng) <= radiusMeters
-        })
+        const plat = p.location?.latitude
+        const plng = p.location?.longitude
+        if (typeof plat !== 'number' || typeof plng !== 'number') return false
+        return haversineDistanceMeters(lat, lng, plat, plng) <= radiusMeters
+      })
       : places
 
     for (const place of filtered) {

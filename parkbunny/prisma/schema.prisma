@@ -33,6 +33,7 @@ model Report {
   user              User?            @relation(fields: [userId], references: [id])
   locations         ReportLocation[]
   revenueStreams    RevenueStream[]
+  enrichmentResults EnrichmentResult[]
 }
 
 model Business {
@@ -89,12 +90,15 @@ model Place {
   enrichedAt     DateTime?
   enrichmentStatus EnrichmentStatus    @default(NOT_ENRICHED)
   
-  // Comprehensive Outscraper data
+  // Comprehensive Outscraper data (legacy)
   allEmails      Json?  // Array of all emails found with sources
   allPhones      Json?  // Array of all phone numbers found with sources
   contactPeople  Json?  // Array of contact people with names, titles, LinkedIn profiles
   businessDetails Json?  // Company size, industry, founded date, etc.
   siteData       Json?  // Website metadata, descriptions, etc.
+
+  // New enrichment pipeline results
+  enrichmentResults EnrichmentResult[]
 }
 
 model ReportLocationPlace {
@@ -320,4 +324,61 @@ model AppDemo {
   // Complex data as JSON
   deals       Json @default("[]")
   partnerView Json @default("{}")
+}
+
+// Spatial-to-Identity enrichment pipeline results
+model EnrichmentResult {
+  id                  String   @id @default(cuid())
+  placeId             String
+  place               Place    @relation(fields: [placeId], references: [id])
+  reportId            String?
+  report              Report?  @relation(fields: [reportId], references: [id])
+
+  // Classification
+  businessType        String?  // Primary Google type
+  allTypes            Json?    // All Google types array
+  chainClassification String?  // "independent" | "local_group" | "national_chain"
+  chainName           String?  // "Travelodge", "PureGym", etc.
+  classificationConfidence String? // "high" | "medium" | "low"
+  classificationMethod String? // "lookup_table" | "domain_cluster" | "google_chains" | "manual"
+
+  // Resolved Identity
+  ownerName           String?
+  ownerRole           String?  // "Owner", "Director", "Manager"
+  ownerEmail          String?
+  ownerPhone          String?
+  ownerLinkedIn       String?
+
+  // Company Data
+  companiesHouseNumber String?
+  companyName         String?
+  companyType         String?  // "ltd" | "llp" | "plc" | "sole_trader" | "unknown"
+  sicCodes            Json?
+  directors           Json?
+
+  // Email Verification
+  emailVerified       Boolean  @default(false)
+  emailVerificationResult String? // "valid" | "invalid" | "catch_all" | "unknown"
+
+  // Confidence & Source Tracking
+  overallConfidence   String?  // "high" | "medium" | "low"
+  dataSources         Json?    // ["website", "companies_house", "apollo"]
+  layerResults        Json?    // What each waterfall layer found
+
+  // Pipeline Status
+  status              String   @default("pending") // pending | in_progress | resolved | failed | needs_review
+  failureReason       String?
+  lastEnrichedAt      DateTime?
+
+  // Raw Data (for re-extraction)
+  websiteMarkdown     String?  @db.Text
+  websitePages        Json?    // Which pages were scraped & their URLs
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([placeId, reportId])
+  @@index([status])
+  @@index([chainClassification])
+  @@index([reportId])
 }
