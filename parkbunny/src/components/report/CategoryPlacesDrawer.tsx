@@ -212,10 +212,11 @@ export default function CategoryPlacesDrawer({
     }
   }, [reportId, category, postcode])
 
-  // Count included businesses that aren't enriched yet
+  // Count included businesses that aren't enriched yet (failed counts as re-enrichable)
   const includedCount = places?.filter(p => p.included).length || 0
-  const unenrichedCount = places?.filter(p => p.included && !p.enrichment).length || 0
-  const enrichedCount = places?.filter(p => p.enrichment).length || 0
+  const unenrichedCount = places?.filter(p => p.included && (!p.enrichment || p.enrichment.status === 'failed')).length || 0
+  const enrichedCount = places?.filter(p => p.enrichment && p.enrichment.status !== 'failed').length || 0
+  const failedCount = places?.filter(p => p.enrichment?.status === 'failed').length || 0
 
   return (
     <div className="fixed inset-0 z-50 flex" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
@@ -241,7 +242,7 @@ export default function CategoryPlacesDrawer({
                   onClick={handleEnrichClick}
                   className="text-xs px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                 >
-                  🔍 Enrich {unenrichedCount} business{unenrichedCount !== 1 ? 'es' : ''}
+                  🔍 {failedCount > 0 && failedCount === unenrichedCount ? `Re-enrich ${failedCount} failed` : `Enrich ${unenrichedCount} business${unenrichedCount !== 1 ? 'es' : ''}`}
                 </button>
               )}
               {!enriching && unenrichedCount === 0 && includedCount > 0 && (
