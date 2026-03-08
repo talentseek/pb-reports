@@ -219,9 +219,12 @@ export function extractDomainFromUrl(url: string): string {
 }
 
 /**
- * Lightweight raw HTML fetch to extract mailto: links.
- * Fallback for when Firecrawl/Crawl4AI strip mailto: href attributes
- * from their markdown output (e.g., social icon email links).
+ * Lightweight raw HTML fetch to extract emails from raw page source.
+ * Catches emails that markdown scrapers miss:
+ *   - mailto: href attributes (social icon links)
+ *   - URL-encoded mailto (%40 → @)
+ *   - Malformed mailto (mailto:>email)
+ *   - Plain-text emails in HTML content
  */
 export async function fetchMailtoEmails(url: string): Promise<string[]> {
     try {
@@ -243,28 +246,42 @@ export async function fetchMailtoEmails(url: string): Promise<string[]> {
         try {
             decodedHtml = decodeURIComponent(html.replace(/&amp;/g, '&'));
         } catch {
-            // Fallback: just decode %40 manually (most common case)
             decodedHtml = html.replace(/%40/g, '@');
         }
 
-        // Extract all mailto: links from raw HTML
-        const mailtoRegex = /mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi;
         const matches: string[] = [];
-        let match;
 
+        // 1. Extract mailto: links (handles malformed like mailto:>email)
+        const mailtoRegex = /mailto:[>]?([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi;
+        let match;
         while ((match = mailtoRegex.exec(decodedHtml)) !== null) {
-            const email = match[1].toLowerCase();
-            // Skip junk
-            if (email.includes('noreply') || email.includes('no-reply')) continue;
-            if (email.includes('example.com')) continue;
-            if (!matches.includes(email)) {
-                matches.push(email);
-            }
+            addEmail(matches, match[1]);
+        }
+
+        // 2. Extract ALL emails from plain text in HTML (catches Google Sites etc.)
+        const plainEmailRegex = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+        while ((match = plainEmailRegex.exec(decodedHtml)) !== null) {
+            addEmail(matches, match[0]);
         }
 
         return matches;
     } catch {
         return [];
+    }
+}
+
+function addEmail(matches: string[], rawEmail: string): void {
+    const email = rawEmail.toLowerCase();
+    // Skip junk
+    if (email.includes('noreply') || email.includes('no-reply')) return;
+    if (email.includes('example.com') || email.includes('test.com')) return;
+    if (email.includes('sentry.io') || email.includes('wixpress.com')) return;
+    if (email.includes('gstatic.com') || email.includes('googleapis.com')) return;
+    if (email.includes('schema.org') || email.includes('w3.org')) return;
+    if (/\.(png|jpg|jpeg|gif|svg|webp|ico|css|js)$/i.test(email)) return;
+    if (email.includes('@2x') || email.startsWith('%.')) return;
+    if (!matches.includes(email)) {
+        matches.push(email);
     }
 }
 
