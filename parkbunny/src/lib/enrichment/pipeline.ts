@@ -448,6 +448,7 @@ export async function enrichBusiness(place: {
 
     // Step 5: Chain Email Pattern Fallback
     // For chains where scraping failed, try known email patterns
+    // Accept 'unknown' verification (catch-all domains) since these are high-confidence derived patterns
     if (!ownerEmail && isChain && place.website) {
         const chainPatternEmails = deriveChainEmailPatterns(place.website, place.name, place.address);
         if (chainPatternEmails.length > 0) {
@@ -458,7 +459,8 @@ export async function enrichBusiness(place: {
                 attempted.push(email);
                 try {
                     const result = await verifyEmail(email);
-                    if (result.isDeliverable || result.isSafeToSend) {
+                    // Accept deliverable, safeToSend, OR unknown (catch-all chains)
+                    if (result.isDeliverable || result.isSafeToSend || result.status === 'unknown') {
                         validEmails.push(email);
                         ownerEmail = email;
                         dataSources.push('chain_email_pattern');
@@ -928,11 +930,13 @@ function deriveChainEmailPatterns(websiteUrl: string, businessName: string, addr
 
     // Leonardo Hotels
     // Pattern: {City}{Property}@leonardohotels.com
+    // URL: /birmingham/leonardo-royal-hotel-birmingham → BirminghamRoyal@leonardohotels.com
     if (url.includes('leonardo-hotels.com')) {
         const pathMatch = url.match(/leonardo-hotels\.com\/([^\/]+)\/leonardo-([^\/\?]+)/);
         if (pathMatch) {
-            const urlCity = pathMatch[1];
-            const words = pathMatch[2].split('-').filter((w: string) => w !== 'hotel');
+            const urlCity = pathMatch[1].toLowerCase();
+            // Filter out 'hotel' AND the city name from the property part to avoid duplication
+            const words = pathMatch[2].split('-').filter((w: string) => w !== 'hotel' && w.toLowerCase() !== urlCity);
             const pascalCase = words.map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join('');
             const cityPascal = urlCity.charAt(0).toUpperCase() + urlCity.slice(1);
             candidates.push(`${cityPascal}${pascalCase}@leonardohotels.com`);
