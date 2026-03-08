@@ -57,6 +57,7 @@ type LayerResults = {
     apollo?: { found: boolean; peopleCount: number; creditsUsed: number; error?: string };
     vatTrace?: { found: boolean; vatNumber: string; companyName: string | null; error?: string };
     emailConstruction?: { attempted: string[]; validEmails: string[] };
+    chainEmailPattern?: { attempted: string[]; validEmails: string[] };
     emailVerification?: { email: string; result: string };
 };
 
@@ -444,6 +445,32 @@ export async function enrichBusiness(place: {
             }
         } // end if (!hostedDomain)
     } // end if (!ownerEmail && place.website)
+
+    // Step 5: Chain Email Pattern Fallback
+    // For chains where scraping failed, try known email patterns
+    if (!ownerEmail && isChain && place.website) {
+        const chainPatternEmails = deriveChainEmailPatterns(place.website, place.name, place.address);
+        if (chainPatternEmails.length > 0) {
+            const attempted: string[] = [];
+            const validEmails: string[] = [];
+
+            for (const email of chainPatternEmails) {
+                attempted.push(email);
+                try {
+                    const result = await verifyEmail(email);
+                    if (result.isDeliverable || result.isSafeToSend) {
+                        validEmails.push(email);
+                        ownerEmail = email;
+                        dataSources.push('chain_email_pattern');
+                        break;
+                    }
+                } catch { /* skip */ }
+                await delay(200);
+            }
+
+            layerResults.chainEmailPattern = { attempted, validEmails };
+        }
+    }
 
     // Final: Verify the best email we found
     if (ownerEmail) {
@@ -837,23 +864,22 @@ function extractAreaFromAddress(address: string, businessName: string): string |
  */
 function extractEmailsFromText(text: string, businessDomain: string): string[] {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-    const allEmails = text.match(emailRegex) || [];
+    const matches = text.match(emailRegex) || [];
 
-    // Deduplicate and filter out junk
     const seen = new Set<string>();
     const filtered: string[] = [];
 
-    for (const email of allEmails) {
+    for (const email of matches) {
         const lower = email.toLowerCase();
         if (seen.has(lower)) continue;
         seen.add(lower);
 
-        // Skip obvious junk
+        // Skip junk
         if (lower.includes('noreply') || lower.includes('no-reply')) continue;
         if (lower.includes('example.com') || lower.includes('test.com')) continue;
-        if (lower.includes('careers@') || lower.includes('jobs@') || lower.includes('recruitment@')) continue;
-        if (lower.includes('privacy@') || lower.includes('unsubscribe@')) continue;
-        if (lower.endsWith('.png') || lower.endsWith('.jpg')) continue; // Image URLs misidentified
+        if (lower.includes('sentry.io') || lower.includes('wixpress.com')) continue;
+        if (/\.(png|jpg|jpeg|gif|svg|webp|ico|css|js)$/i.test(lower)) continue;
+        if (lower.includes('@2x')) continue;
 
         // Prioritize emails from the business domain
         if (businessDomain && lower.endsWith(`@${businessDomain}`)) {
@@ -864,4 +890,71 @@ function extractEmailsFromText(text: string, businessDomain: string): string[] {
     }
 
     return filtered;
+}
+
+/**
+ * Derive email patterns for known chain hotels based on URL and business name.
+ * These patterns are verified before use — this is a last-resort fallback
+ * for chains where Firecrawl fails to scrape the website.
+ */
+function deriveChainEmailPatterns(websiteUrl: string, businessName: string, address: string | null): string[] {
+    const url = websiteUrl.toLowerCase();
+    const city = extractCityFromAddress(address)?.toLowerCase() || '';
+    const candidates: string[] = [];
+
+    // Accor hotels (ibis, Novotel, Mercure, Pullman, Sofitel)
+    // Pattern: h{hotel_code}@accor.com — extract code from URL
+    if (url.includes('accor.com')) {
+        const codeMatch = url.match(/code_hotel=(\d+)/) || url.match(/hotel\/(\d+)/);
+        if (codeMatch) {
+            candidates.push(`h${codeMatch[1]}@accor.com`);
+            candidates.push(`H${codeMatch[1]}@accor.com`);
+        }
+    }
+
+    // Radisson (Radisson Blu, Radisson RED, Park Inn)
+    // Pattern: info.{city}@radissonblu.com
+    if (url.includes('radissonhotels.com') || url.includes('radissonblu.com')) {
+        if (city) {
+            candidates.push(`info.${city}@radissonblu.com`);
+            candidates.push(`reservations.${city}@radissonblu.com`);
+        }
+        const locMatch = url.match(/radisson-blu-([a-z-]+)/);
+        if (locMatch) {
+            const loc = locMatch[1].replace(/-/g, '');
+            candidates.push(`info.${loc}@radissonblu.com`);
+        }
+    }
+
+    // Leonardo Hotels
+    // Pattern: {City}{Property}@leonardohotels.com
+    if (url.includes('leonardo-hotels.com')) {
+        const pathMatch = url.match(/leonardo-hotels\.com\/([^\/]+)\/leonardo-([^\/\?]+)/);
+        if (pathMatch) {
+            const urlCity = pathMatch[1];
+            const words = pathMatch[2].split('-').filter((w: string) => w !== 'hotel');
+            const pascalCase = words.map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+            const cityPascal = urlCity.charAt(0).toUpperCase() + urlCity.slice(1);
+            candidates.push(`${cityPascal}${pascalCase}@leonardohotels.com`);
+        }
+        if (city) {
+            candidates.push(`${city}@leonardohotels.com`);
+        }
+    }
+
+    // Premier Inn
+    if (url.includes('premierinn.com')) {
+        if (city) {
+            candidates.push(`${city}@premierinn.com`);
+        }
+    }
+
+    // Hilton (Hampton, DoubleTree, Hilton Garden Inn)
+    if (url.includes('hilton.com')) {
+        if (city) {
+            candidates.push(`reservations@hilton${city}.com`);
+        }
+    }
+
+    return Array.from(new Set(candidates));
 }
