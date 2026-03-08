@@ -238,12 +238,21 @@ export async function fetchMailtoEmails(url: string): Promise<string[]> {
 
         const html = await response.text();
 
+        // Decode URL-encoded content (e.g., %40 → @) before matching
+        let decodedHtml: string;
+        try {
+            decodedHtml = decodeURIComponent(html.replace(/&amp;/g, '&'));
+        } catch {
+            // Fallback: just decode %40 manually (most common case)
+            decodedHtml = html.replace(/%40/g, '@');
+        }
+
         // Extract all mailto: links from raw HTML
         const mailtoRegex = /mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi;
         const matches: string[] = [];
         let match;
 
-        while ((match = mailtoRegex.exec(html)) !== null) {
+        while ((match = mailtoRegex.exec(decodedHtml)) !== null) {
             const email = match[1].toLowerCase();
             // Skip junk
             if (email.includes('noreply') || email.includes('no-reply')) continue;
