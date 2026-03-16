@@ -217,7 +217,7 @@ export async function getCampaignAnalytics(campaignId: string): Promise<Campaign
  * Needed to populate the email_list when creating campaigns.
  */
 export async function listEmailAccounts(): Promise<{ items: Array<{ email: string; status: string }> }> {
-    return instantlyFetch<{ items: Array<{ email: string; status: string }> }>('/email-accounts?limit=50');
+    return instantlyFetch<{ items: Array<{ email: string; status: string }> }>('/accounts?limit=50');
 }
 
 // --- Default Schedule ---

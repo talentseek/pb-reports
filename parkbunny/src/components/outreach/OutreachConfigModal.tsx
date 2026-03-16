@@ -72,12 +72,32 @@ export default function OutreachConfigModal({
         }
     }
 
+    // Re-fetch breakdown after review queue changes
+    const refreshBreakdown = async () => {
+        setShowReviewQueue(false)
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/reports/${reportId}/outreach`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sector: category, discountLevel, launch: false }),
+            })
+            if (!res.ok) throw new Error(await res.text())
+            const data = await res.json()
+            setBreakdown(data.breakdown)
+        } catch {
+            // Silently fail — the user can re-click Preview
+        } finally {
+            setLoading(false)
+        }
+    }
+
     if (showReviewQueue) {
         return (
             <OutreachReviewQueue
                 reportId={reportId}
                 sector={category}
-                onApproved={() => setShowReviewQueue(false)}
+                onApproved={refreshBreakdown}
                 onClose={() => setShowReviewQueue(false)}
             />
         )
