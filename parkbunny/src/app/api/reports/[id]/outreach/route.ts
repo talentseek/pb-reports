@@ -51,11 +51,28 @@ export async function POST(
         return NextResponse.json({ error: 'No locations in report' }, { status: 400 });
     }
 
-    // 2. Query enriched businesses for this sector
+    // 2. Find places in this sector via the report location link table
+    const locationIds = report.locations.map(l => l.id);
+    const sectorLinks = await prisma.reportLocationPlace.findMany({
+        where: {
+            locationId: { in: locationIds },
+            groupedCategory: sector,
+        },
+        select: { placeId: true },
+    });
+    const sectorPlaceIds = sectorLinks.map(l => l.placeId);
+
+    if (sectorPlaceIds.length === 0) {
+        return NextResponse.json({
+            error: 'No places found for this sector',
+        }, { status: 400 });
+    }
+
+    // 3. Query enriched businesses with emails for these places
     const enrichments = await prisma.enrichmentResult.findMany({
         where: {
             reportId,
-            businessType: sector,
+            placeId: { in: sectorPlaceIds },
             ownerEmail: { not: null },
         },
         include: {
