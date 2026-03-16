@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import OutreachConfigModal from '@/components/outreach/OutreachConfigModal'
 
 type Enrichment = {
   status: string
@@ -70,6 +71,7 @@ export default function CategoryPlacesDrawer({
   const [enrichComplete, setEnrichComplete] = useState<{ resolved: number; partial: number; failed: number } | null>(null)
   const [dryRunData, setDryRunData] = useState<{ toEnrich: number; alreadyEnriched: number } | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [showOutreach, setShowOutreach] = useState(false)
 
   useEffect(() => {
     const url = new URL(`/api/reports/${reportId}/placesByCategory`, window.location.origin)
@@ -292,6 +294,16 @@ export default function CategoryPlacesDrawer({
               Enrichment complete: {enrichComplete.resolved} ✅ resolved, {enrichComplete.partial} 🟡 partial, {enrichComplete.failed} ❌ failed
             </div>
           )}
+
+          {/* Launch Outreach button — shows when we have enriched businesses */}
+          {!enriching && enrichedCount > 0 && (
+            <button
+              onClick={() => setShowOutreach(true)}
+              className="mt-2 w-full text-xs px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700 transition-colors"
+            >
+              📧 Launch Email Outreach ({enrichedCount} enriched)
+            </button>
+          )}
         </div>
 
         {/* Places list */}
@@ -399,6 +411,16 @@ export default function CategoryPlacesDrawer({
           )}
         </div>
       </div>
+
+      {/* Outreach Config Modal */}
+      {showOutreach && (
+        <OutreachConfigModal
+          reportId={reportId}
+          category={category}
+          enrichedCount={enrichedCount}
+          onClose={() => setShowOutreach(false)}
+        />
+      )}
     </div>
   )
 }

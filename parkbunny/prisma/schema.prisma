@@ -34,6 +34,7 @@ model Report {
   locations         ReportLocation[]
   revenueStreams    RevenueStream[]
   enrichmentResults EnrichmentResult[]
+  outreachCampaigns OutreachCampaign[]
 }
 
 model Business {
@@ -377,8 +378,50 @@ model EnrichmentResult {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
+  outreachLeads       OutreachLead[]
+
   @@unique([placeId, reportId])
   @@index([status])
   @@index([chainClassification])
   @@index([reportId])
+}
+
+model OutreachCampaign {
+  id                  String   @id @default(cuid())
+  reportId            String
+  report              Report   @relation(fields: [reportId], references: [id])
+  sector              String   // "Lodging (Hotels)", "Food and Drink", etc.
+  instantlyCampaignId String?  @unique // Instantly's campaign UUID
+  status              String   @default("draft") // draft | review | active | paused | completed
+  discountLevel       String?  // "10%", "15%", "20%"
+  leadsTotal          Int      @default(0)
+  leadsApproved       Int      @default(0)
+  leadsSkipped        Int      @default(0)
+  leadsInReview       Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  leads               OutreachLead[]
+
+  @@unique([reportId, sector])
+  @@index([status])
+}
+
+model OutreachLead {
+  id              String   @id @default(cuid())
+  campaignId      String
+  campaign        OutreachCampaign @relation(fields: [campaignId], references: [id])
+  enrichmentId    String
+  enrichment      EnrichmentResult @relation(fields: [enrichmentId], references: [id])
+  email           String
+  firstName       String?
+  businessName    String
+  confidence      String   // "high" | "medium" | "low"
+  reviewStatus    String   @default("auto_approved") // auto_approved | pending_review | approved | rejected | skipped
+  instantlyLeadId String?  // Instantly's lead UUID
+  sentAt          DateTime?
+  repliedAt       DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([campaignId])
+  @@index([reviewStatus])
 }
