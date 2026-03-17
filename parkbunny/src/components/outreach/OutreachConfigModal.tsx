@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import OutreachReviewQueue from './OutreachReviewQueue'
+import OutreachEmailPreview from './OutreachEmailPreview'
 
 type OutreachBreakdown = {
     total: number
@@ -27,6 +28,8 @@ export default function OutreachConfigModal({
     const [breakdown, setBreakdown] = useState<OutreachBreakdown | null>(null)
     const [launched, setLaunched] = useState(false)
     const [showReviewQueue, setShowReviewQueue] = useState(false)
+    const [showPreview, setShowPreview] = useState(false)
+    const [previewApproved, setPreviewApproved] = useState(false)
     const [instantlyResult, setInstantlyResult] = useState<{
         campaignId: string; pushed: number; failed: number
     } | null>(null)
@@ -51,7 +54,7 @@ export default function OutreachConfigModal({
         }
     }
 
-    // Step 2: Launch — push auto-approved leads to Instantly
+    // Step 3: Launch — push approved leads to Instantly
     const launchCampaign = async () => {
         setLoading(true)
         setError(null)
@@ -80,7 +83,6 @@ export default function OutreachConfigModal({
             const res = await fetch(`/api/reports/${reportId}/outreach`)
             if (!res.ok) throw new Error(await res.text())
             const data = await res.json()
-            // Find the campaign for this sector
             const campaign = data.campaigns?.find((c: { sector: string }) => c.sector === category)
             if (campaign) {
                 const leads = campaign.leads || []
@@ -98,12 +100,13 @@ export default function OutreachConfigModal({
                 })
             }
         } catch {
-            // Silently fail — the user can re-click Preview
+            // Silently fail
         } finally {
             setLoading(false)
         }
     }
 
+    // Show review queue
     if (showReviewQueue) {
         return (
             <OutreachReviewQueue
@@ -111,6 +114,22 @@ export default function OutreachConfigModal({
                 sector={category}
                 onApproved={refreshBreakdown}
                 onClose={() => setShowReviewQueue(false)}
+            />
+        )
+    }
+
+    // Show email preview
+    if (showPreview) {
+        return (
+            <OutreachEmailPreview
+                reportId={reportId}
+                sector={category}
+                discountLevel={discountLevel}
+                onConfirm={() => {
+                    setShowPreview(false)
+                    setPreviewApproved(true)
+                }}
+                onBack={() => setShowPreview(false)}
             />
         )
     }
@@ -152,7 +171,7 @@ export default function OutreachConfigModal({
                                 {['10%', '15%', '20%', '25%'].map(level => (
                                     <button
                                         key={level}
-                                        onClick={() => setDiscountLevel(level)}
+                                        onClick={() => { setDiscountLevel(level); setPreviewApproved(false) }}
                                         className={`flex-1 py-2 rounded text-sm border transition-colors ${discountLevel === level
                                             ? 'bg-blue-600 text-white border-blue-600'
                                             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -164,7 +183,7 @@ export default function OutreachConfigModal({
                             </div>
                         </div>
 
-                        {/* Preview / Breakdown */}
+                        {/* Preview Campaign / Breakdown */}
                         {!breakdown && (
                             <button
                                 onClick={createCampaign}
@@ -201,11 +220,24 @@ export default function OutreachConfigModal({
                                     <br />💰 Discount: {discountLevel} off parking for staff &amp; {category.includes('Hotel') ? 'guests' : category.includes('Food') ? 'diners' : 'customers'}
                                 </div>
 
+                                {/* Preview emails button */}
+                                <button
+                                    onClick={() => setShowPreview(true)}
+                                    className={`w-full py-2 rounded text-sm border transition-colors ${
+                                        previewApproved
+                                            ? 'bg-green-50 text-green-700 border-green-300'
+                                            : 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
+                                    }`}
+                                >
+                                    {previewApproved ? '✅ Emails previewed & approved' : '👁️ Preview Emails (required)'}
+                                </button>
+
                                 <div className="flex gap-2">
                                     <button
                                         onClick={launchCampaign}
-                                        disabled={loading || breakdown.autoApproved === 0}
+                                        disabled={loading || breakdown.autoApproved === 0 || !previewApproved}
                                         className="flex-1 py-2 rounded bg-green-600 text-white text-sm hover:bg-green-700 disabled:opacity-50"
+                                        title={!previewApproved ? 'Preview emails first' : undefined}
                                     >
                                         {loading ? 'Launching...' : `🚀 Launch (${breakdown.autoApproved} leads)`}
                                     </button>
