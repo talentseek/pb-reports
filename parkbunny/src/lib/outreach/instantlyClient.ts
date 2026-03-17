@@ -239,7 +239,7 @@ export function getDefaultSchedule(): InstantlyCampaignSchedule {
                 '5': true,  // Friday
                 '6': false, // Saturday
             },
-            timezone: 'Europe/London',
+            timezone: 'Etc/GMT',
         }],
     };
 }
