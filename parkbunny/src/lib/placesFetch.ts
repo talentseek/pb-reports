@@ -18,7 +18,6 @@ const PLACES_FIELD_MASK = [
   'places.businessStatus',
   'places.googleMapsUri',
   'places.parkingOptions',
-  'places.chains',
 ]
 
 export type FetchConfig = {
