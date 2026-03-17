@@ -216,8 +216,8 @@ export async function getCampaignAnalytics(campaignId: string): Promise<Campaign
  * List sending email accounts in the workspace.
  * Needed to populate the email_list when creating campaigns.
  */
-export async function listEmailAccounts(): Promise<{ items: Array<{ email: string; status: string }> }> {
-    return instantlyFetch<{ items: Array<{ email: string; status: string }> }>('/accounts?limit=50');
+export async function listEmailAccounts(): Promise<{ items: Array<{ email: string; status: string | number }> }> {
+    return instantlyFetch<{ items: Array<{ email: string; status: string | number }> }>('/accounts?limit=50');
 }
 
 // --- Default Schedule ---

@@ -170,7 +170,7 @@ export async function POST(
             // Get sending accounts
             const accounts = await listEmailAccounts();
             const emailList = accounts.items
-                .filter(a => a.status === 'active' || a.status === '1')
+                .filter(a => a.status === 1 || a.status === 'active' || a.status === '1')
                 .map(a => a.email);
 
             if (emailList.length === 0) {
