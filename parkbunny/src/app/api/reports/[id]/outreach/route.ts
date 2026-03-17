@@ -246,6 +246,10 @@ export async function POST(
                 });
 
             const pushResult = await createLeadsBatch(instantlyCampaign.id, leadsForInstantly);
+            console.log(`[outreach] Push results: ${pushResult.succeeded.length} succeeded, ${pushResult.failed.length} failed`);
+            if (pushResult.failed.length > 0) {
+                console.log('[outreach] Failed leads:', JSON.stringify(pushResult.failed));
+            }
 
             // Update OutreachLead records with Instantly IDs
             for (const lead of pushResult.succeeded) {

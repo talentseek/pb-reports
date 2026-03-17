@@ -31,7 +31,8 @@ export default function OutreachConfigModal({
     const [showPreview, setShowPreview] = useState(false)
     const [previewApproved, setPreviewApproved] = useState(false)
     const [instantlyResult, setInstantlyResult] = useState<{
-        campaignId: string; pushed: number; failed: number
+        campaignId: string; pushed: number; failed: number;
+        failedEmails?: Array<{ email: string; error: string }>
     } | null>(null)
 
     // Step 1: Create campaign (review mode) to see breakdown
@@ -155,6 +156,16 @@ export default function OutreachConfigModal({
                                 3-email sequence will send over the next 2 weeks.
                             </p>
                         </div>
+                        {instantlyResult.failedEmails && instantlyResult.failedEmails.length > 0 && (
+                            <div className="p-3 bg-red-50 border border-red-200 rounded text-sm space-y-1">
+                                <p className="font-medium text-red-700">Failed leads:</p>
+                                {instantlyResult.failedEmails.map((f, i) => (
+                                    <div key={i} className="text-xs text-red-600">
+                                        <strong>{f.email}</strong>: {f.error}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <button onClick={onClose} className="w-full py-2 rounded bg-gray-100 text-sm hover:bg-gray-200">
                             Done
                         </button>
