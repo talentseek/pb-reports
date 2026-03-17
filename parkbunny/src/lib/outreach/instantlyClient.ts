@@ -239,7 +239,7 @@ export function getDefaultSchedule(): InstantlyCampaignSchedule {
                 '5': true,  // Friday
                 '6': false, // Saturday
             },
-            timezone: 'Etc/GMT',
+            timezone: 'Europe/Isle_of_Man',
         }],
     };
 }
