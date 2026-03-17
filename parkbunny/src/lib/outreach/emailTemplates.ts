@@ -72,75 +72,63 @@ export function buildTemplateVars(
     };
 }
 
-// --- Email Templates ---
+// --- Email Templates using Instantly {{variable}} syntax ---
+// These use Instantly's merge tag syntax so each lead gets personalised content.
+// Variables available on each lead: {{first_name}}, {{company_name}}
+// Custom variables: {{businessName}}, {{carParkName}}, {{postcode}},
+//                   {{sectorNoun}}, {{sectorPain}}, {{discountLevel}}
 
 interface EmailStep {
     subject: string;
     body: string;
 }
 
-function greeting(v: TemplateVars): string {
-    if (v.firstName) return `Hi ${v.firstName},`;
-    return `Hi there,`;
-}
+function email1(): EmailStep {
+    const subject = `Parking discount for {{company_name}} {{sectorNoun}}`;
 
-function signOff(): string {
-    return `Best,\nThe ParkBunny Team`;
-}
+    const body = `Hi {{first_name | there}},
 
-// Email 1: Intro — who we are, what we're offering
-function email1(v: TemplateVars): EmailStep {
-    const subject = v.firstName
-        ? `Parking discount for ${v.businessName} ${v.sectorNoun}`
-        : `Partnership opportunity for ${v.businessName}`;
+I'm reaching out because ParkBunny now manages parking near {{company_name}} in {{postcode}}, and I thought this could be useful for you.
 
-    const body = `${greeting(v)}
+We'd like to offer your {{sectorNoun}} and staff a {{discountLevel}} discount on parking — {{sectorPain}}, and we want to make it easier.
 
-I'm reaching out because ParkBunny now manages parking near ${v.businessName} in ${v.postcode}, and I thought this could be useful for you.
-
-We'd like to offer your ${v.sectorNoun} and staff a ${v.discountLevel} discount on parking — ${v.sectorPain}, and we want to make it easier.
-
-There's no cost to you. We simply set up a discount code your ${v.sectorNoun} can use when parking with us.
+There's no cost to you. We simply set up a discount code your {{sectorNoun}} can use when parking with us.
 
 Would this be of interest? Happy to explain more if you reply to this email.
 
-${signOff()}`;
+Best,
+The ParkBunny Team`;
 
     return { subject, body };
 }
 
-// Email 2: Follow-up — different angle, staff benefit
-function email2(v: TemplateVars): EmailStep {
-    const subject = v.firstName
-        ? `Quick follow up — ${v.firstName}`
-        : `Following up — parking for ${v.businessName}`;
+function email2(): EmailStep {
+    const subject = `Quick follow up — parking for {{company_name}}`;
 
-    const body = `${greeting(v)}
+    const body = `Hi {{first_name | there}},
 
-Just following up on my previous email about discounted parking for ${v.businessName}.
+Just following up on my previous email about discounted parking for {{company_name}}.
 
-As well as ${v.sectorNoun} parking, this also works really well as a staff benefit — your team would get ${v.discountLevel} off every time they park with us, which can add up quite quickly.
+As well as {{sectorNoun}} parking, this also works really well as a staff benefit — your team would get {{discountLevel}} off every time they park with us, which can add up quite quickly.
 
-It takes about 5 minutes to set up and there's genuinely no catch — we want more people using our car park, and your ${v.sectorNoun} and staff are the perfect fit.
+It takes about 5 minutes to set up and there's genuinely no catch — we want more people using our car park, and your {{sectorNoun}} and staff are the perfect fit.
 
 Worth a quick chat?
 
-${signOff()}`;
+Best,
+The ParkBunny Team`;
 
     return { subject, body };
 }
 
-// Email 3: Break-up — final, short, leaves door open
-function email3(v: TemplateVars): EmailStep {
-    const subject = v.firstName
-        ? `Last one from me, ${v.firstName}`
-        : `Last one from me — ${v.businessName}`;
+function email3(): EmailStep {
+    const subject = `Last one from me — {{company_name}}`;
 
-    const body = `${greeting(v)}
+    const body = `Hi {{first_name | there}},
 
 I don't want to clog up your inbox, so this will be my last email.
 
-If discounted parking for your ${v.sectorNoun} and staff ever becomes useful, the offer stands — just reply to this email whenever you're ready.
+If discounted parking for your {{sectorNoun}} and staff ever becomes useful, the offer stands — just reply to this email whenever you're ready.
 
 All the best,
 The ParkBunny Team`;
@@ -151,20 +139,40 @@ The ParkBunny Team`;
 // --- Public API ---
 
 export function generateSequence(v: TemplateVars): EmailStep[] {
-    return [email1(v), email2(v), email3(v)];
+    // These are for preview purposes — replace merge tags with actual values
+    const steps = [email1(), email2(), email3()];
+    return steps.map(step => ({
+        subject: replaceTags(step.subject, v),
+        body: replaceTags(step.body, v),
+    }));
+}
+
+function replaceTags(template: string, v: TemplateVars): string {
+    return template
+        .replace(/\{\{first_name \| there\}\}/g, v.firstName ?? 'there')
+        .replace(/\{\{first_name\}\}/g, v.firstName ?? '')
+        .replace(/\{\{company_name\}\}/g, v.businessName)
+        .replace(/\{\{businessName\}\}/g, v.businessName)
+        .replace(/\{\{carParkName\}\}/g, v.carParkName)
+        .replace(/\{\{postcode\}\}/g, v.postcode)
+        .replace(/\{\{sectorNoun\}\}/g, v.sectorNoun)
+        .replace(/\{\{sectorPain\}\}/g, v.sectorPain)
+        .replace(/\{\{discountLevel\}\}/g, v.discountLevel);
 }
 
 /**
  * Build the Instantly-compatible sequence format.
- * 3 steps, 3 working days (approximately 5 calendar days with weekends) between each.
+ * Uses {{variable}} merge tags — Instantly interpolates per-lead at send time.
+ * 3 steps, 3 working days between each.
  */
-export function buildInstantlySequence(v: TemplateVars) {
-    const steps = generateSequence(v);
+export function buildInstantlySequence(_v: TemplateVars) {
+    // Use raw templates with merge tags — Instantly personalises per lead
+    const steps = [email1(), email2(), email3()];
 
     return {
         steps: steps.map((step, i) => ({
             type: 'email' as const,
-            delay: i === 0 ? 0 : 3, // 3 days delay after first email
+            delay: i === 0 ? 0 : 3,
             variants: [{
                 subject: step.subject,
                 body: step.body,

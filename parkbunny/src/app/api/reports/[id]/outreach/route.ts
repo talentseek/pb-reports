@@ -237,6 +237,7 @@ export async function POST(
                             carParkName: vars.carParkName,
                             postcode: vars.postcode,
                             sectorNoun: vars.sectorNoun,
+                            sectorPain: vars.sectorPain,
                             discountLevel: vars.discountLevel,
                         },
                         skip_if_in_workspace: true,
