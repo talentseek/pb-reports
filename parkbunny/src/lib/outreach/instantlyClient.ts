@@ -91,7 +91,6 @@ export interface CreateLeadPayload {
     custom_variables?: Record<string, unknown>;
     skip_if_in_workspace?: boolean;
     skip_if_in_campaign?: boolean;
-    [key: string]: unknown; // Allow arbitrary custom fields for merge tags
 }
 
 export interface InstantlyLead {
@@ -167,13 +166,10 @@ export async function pauseCampaign(campaignId: string): Promise<InstantlyCampai
  * Uses skip_if_in_workspace to prevent duplicate sends.
  */
 export async function createLead(payload: CreateLeadPayload): Promise<InstantlyLead> {
-    // Spread custom_variables as top-level fields so Instantly resolves {{tags}}
-    const { custom_variables, ...rest } = payload;
     return instantlyFetch<InstantlyLead>('/leads', {
         method: 'POST',
         body: {
-            ...rest,
-            ...custom_variables, // Flatten to top level for merge tag resolution
+            ...payload,
             skip_if_in_workspace: payload.skip_if_in_workspace ?? true,
             skip_if_in_campaign: payload.skip_if_in_campaign ?? true,
         },
@@ -193,11 +189,11 @@ export async function createLeadsBatch(
 
     for (const lead of leads) {
         try {
-            const result = await createLead({ ...lead, campaign: campaignId } as CreateLeadPayload);
+            const result = await createLead({ ...lead, campaign: campaignId });
             succeeded.push(result);
         } catch (err) {
             failed.push({
-                email: lead.email as string,
+                email: lead.email,
                 error: err instanceof Error ? err.message : 'Unknown error',
             });
         }
