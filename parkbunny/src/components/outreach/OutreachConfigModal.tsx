@@ -72,19 +72,31 @@ export default function OutreachConfigModal({
         }
     }
 
-    // Re-fetch breakdown after review queue changes
+    // Re-fetch breakdown after review queue changes (use GET to preserve review decisions)
     const refreshBreakdown = async () => {
         setShowReviewQueue(false)
         setLoading(true)
         try {
-            const res = await fetch(`/api/reports/${reportId}/outreach`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sector: category, discountLevel, launch: false }),
-            })
+            const res = await fetch(`/api/reports/${reportId}/outreach`)
             if (!res.ok) throw new Error(await res.text())
             const data = await res.json()
-            setBreakdown(data.breakdown)
+            // Find the campaign for this sector
+            const campaign = data.campaigns?.find((c: { sector: string }) => c.sector === category)
+            if (campaign) {
+                const leads = campaign.leads || []
+                setBreakdown({
+                    total: leads.length,
+                    autoApproved: leads.filter((l: { reviewStatus: string }) =>
+                        l.reviewStatus === 'auto_approved' || l.reviewStatus === 'approved'
+                    ).length,
+                    needsReview: leads.filter((l: { reviewStatus: string }) =>
+                        l.reviewStatus === 'pending_review'
+                    ).length,
+                    skipped: leads.filter((l: { reviewStatus: string }) =>
+                        l.reviewStatus === 'skipped' || l.reviewStatus === 'rejected'
+                    ).length,
+                })
+            }
         } catch {
             // Silently fail — the user can re-click Preview
         } finally {

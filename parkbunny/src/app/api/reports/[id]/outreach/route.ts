@@ -157,15 +157,26 @@ export async function POST(
         })),
     ];
 
-    // Delete existing leads for this campaign (re-creation)
-    await prisma.outreachLead.deleteMany({ where: { campaignId: campaign.id } });
+    // Only create leads if the campaign doesn't already have them
+    const existingLeadCount = await prisma.outreachLead.count({ where: { campaignId: campaign.id } });
 
-    // Batch create
-    await prisma.outreachLead.createMany({ data: leadsToCreate });
+    if (existingLeadCount === 0) {
+        await prisma.outreachLead.createMany({ data: leadsToCreate });
+    }
 
-    // 6. If launch=true, push to Instantly
+    // 6. If launch=true, push approved leads to Instantly
     let instantlyResult = null;
-    if (launch && autoApproved.length > 0) {
+
+    // Get all leads that should be pushed (auto_approved + manually approved)
+    const approvedLeads = await prisma.outreachLead.findMany({
+        where: {
+            campaignId: campaign.id,
+            reviewStatus: { in: ['auto_approved', 'approved'] },
+        },
+        include: { enrichment: { include: { place: true } } },
+    });
+
+    if (launch && approvedLeads.length > 0) {
         try {
             // Get sending accounts
             const accounts = await listEmailAccounts();
@@ -181,9 +192,9 @@ export async function POST(
             }
 
             // Build the email sequence from the first lead (template is same for all)
-            const firstEnrichment = autoApproved[0];
+            const firstLead = approvedLeads[0];
             const templateVars = buildTemplateVars(
-                firstEnrichment,
+                firstLead.enrichment,
                 report,
                 location,
                 sector,
@@ -210,17 +221,17 @@ export async function POST(
                 data: { instantlyCampaignId: instantlyCampaign.id },
             });
 
-            // Push all auto-approved leads
+            // Push all approved leads (auto + manually approved)
             const leadsForInstantly: Omit<CreateLeadPayload, 'campaign'>[] =
-                autoApproved.map(e => {
-                    const vars = buildTemplateVars(e, report, location, sector, discountLevel);
+                approvedLeads.map(lead => {
+                    const vars = buildTemplateVars(lead.enrichment, report, location, sector, discountLevel);
                     return {
-                        email: e.ownerEmail!,
+                        email: lead.email,
                         first_name: vars.firstName ?? undefined,
-                        last_name: e.ownerName?.split(' ').slice(1).join(' ') || undefined,
-                        company_name: e.place.name,
-                        phone: e.place.phone ?? undefined,
-                        website: e.place.website ?? undefined,
+                        last_name: lead.enrichment.ownerName?.split(' ').slice(1).join(' ') || undefined,
+                        company_name: lead.enrichment.place.name,
+                        phone: lead.enrichment.place.phone ?? undefined,
+                        website: lead.enrichment.place.website ?? undefined,
                         custom_variables: {
                             businessName: vars.businessName,
                             carParkName: vars.carParkName,
