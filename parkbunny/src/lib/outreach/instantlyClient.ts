@@ -17,12 +17,15 @@ async function instantlyFetch<T>(
     options: { method?: string; body?: unknown } = {},
 ): Promise<T> {
     const { method = 'GET', body } = options;
+    const headers: Record<string, string> = {
+        'Authorization': `Bearer ${getApiKey()}`,
+    };
+    if (body) {
+        headers['Content-Type'] = 'application/json';
+    }
     const res = await fetch(`${INSTANTLY_BASE}${path}`, {
         method,
-        headers: {
-            'Authorization': `Bearer ${getApiKey()}`,
-            'Content-Type': 'application/json',
-        },
+        headers,
         ...(body ? { body: JSON.stringify(body) } : {}),
     });
 
