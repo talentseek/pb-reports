@@ -145,7 +145,7 @@ export async function getCampaign(campaignId: string): Promise<InstantlyCampaign
  * Launch (activate) a campaign. Changes status from draft to active.
  */
 export async function launchCampaign(campaignId: string): Promise<InstantlyCampaign> {
-    return instantlyFetch<InstantlyCampaign>(`/campaigns/${campaignId}/launch`, {
+    return instantlyFetch<InstantlyCampaign>(`/campaigns/${campaignId}/activate`, {
         method: 'POST',
     });
 }
@@ -154,7 +154,7 @@ export async function launchCampaign(campaignId: string): Promise<InstantlyCampa
  * Pause an active campaign.
  */
 export async function pauseCampaign(campaignId: string): Promise<InstantlyCampaign> {
-    return instantlyFetch<InstantlyCampaign>(`/campaigns/${campaignId}/pause`, {
+    return instantlyFetch<InstantlyCampaign>(`/campaigns/${campaignId}/deactivate`, {
         method: 'POST',
     });
 }
