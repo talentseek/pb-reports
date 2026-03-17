@@ -7,6 +7,7 @@ export const CORE_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGI
 export const ALT_STREAM_TYPES: StreamType[] = [
     'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
     'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
+    'DOMINOS_POD',
 ]
 export const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
@@ -35,6 +36,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/lockerphoto.webp',
         description: 'Minimum revenue per year — this can dramatically increase subject to location and footfall.',
         bullets: [
+            'Spaces required: none – 4 max per locker (underutilised space)',
             'Solar powered — zero energy cost',
             'Fully insured and maintained',
             'Minimum 1-year contract',
@@ -49,10 +51,11 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/selfservicecarwash.webp',
         description: 'All hardware supplied, maintained, and insured including liquids. Zero CAPEX to the operator.',
         bullets: [
+            'Spaces required: 10–15',
             'Zero CAPEX — all equipment provided',
             'All liquids and consumables included',
             'Fully insured and maintained',
-            'Revenue generated from day one',
+            'Longer lease required due to water, power, and capex investment',
         ],
         defaultMin: 10000,
         defaultMax: 20000,
@@ -95,6 +98,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/teslatestdrive.jpg',
         description: 'Host Tesla demo and test drive vehicles on-site, generating fixed annual revenue from dedicated parking spaces.',
         bullets: [
+            'Spaces required: 3–5 + EV charging needed',
             'Fixed annual revenue — £50,000 per site',
             'Tesla manages all vehicles and staffing',
             'Drives premium footfall to the car park',
@@ -125,6 +129,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/washmachine.jpeg',
         description: 'Commercial-grade giant washing machines deployed on a revenue share basis. Ideal for high-footfall locations near residential areas.',
         bullets: [
+            'Spaces required: none – 5 (non-parking space if available)',
             'Revenue share model — £1,500 per year minimum',
             'All equipment supplied and maintained',
             'Popular with residential and commuter car parks',
@@ -140,6 +145,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/dogwash.webp',
         description: 'Self-service dog wash and grooming stations. Popular with pet owners visiting retail and leisure destinations.',
         bullets: [
+            'Spaces required: none – 5 (non-parking space if available)',
             'Revenue range £5,000 – £10,000 per site per year',
             'Self-service model — minimal staffing',
             'Drives repeat visits from pet owners',
@@ -156,6 +162,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/nhs-mri-placeholder.webp',
         description: 'Hosting NHS mobile MRI scanning units on-site, up to 7 days per month. Generates fixed revenue with minimal space requirements.',
         bullets: [
+            'Spaces required: 10 (height access + turning circle for exit)',
             'Fixed annual revenue — £7,500 per site',
             'Maximum 7 days per month occupancy',
             'NHS-managed — fully self-contained unit',
@@ -203,6 +210,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         image: '/waterless-carwash-placeholder.webp',
         description: 'Eco-friendly waterless car wash service operated on-site. Revenue driven by footfall and location.',
         bullets: [
+            'Spaces required: 10–12',
             'Revenue range £15,000 – £45,000 depending on footfall',
             'Environmentally sustainable — zero water usage',
             'Complements self-service car wash offering',
@@ -225,6 +233,23 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
             'Zero CAPEX — all hardware supplied',
         ],
         defaultMin: 10000,
+        defaultMax: 50000,
+        statusLabel: 'Subject to Survey',
+        isAlternative: true,
+    },
+    DOMINOS_POD: {
+        label: "Domino's Pizza Pod",
+        icon: 'Pizza',
+        image: '/dominos-pod.jpg',
+        description: "Self-contained Domino's Pizza pod unit installed in the car park. Power and plumbing costs covered by Domino's — zero CAPEX to the operator.",
+        bullets: [
+            'Spaces required: 10–15 (power and plumbing needed)',
+            'Revenue range £20,000 – £50,000 depending on location',
+            "All power and plumbing costs covered by Domino's",
+            'National brand with proven high-street demand',
+            'Drives significant footfall and dwell time',
+        ],
+        defaultMin: 20000,
         defaultMax: 50000,
         statusLabel: 'Subject to Survey',
         isAlternative: true,

@@ -6,6 +6,7 @@ import { defaultSettings } from "@/lib/calculations";
 type StreamType = 'LOCKER' | 'CAR_WASH' | 'EV_CHARGING' | 'FARMERS_MARKET'
   | 'TESLA_DEMO' | 'WE_BUY_ANY_CAR' | 'GIANT_WASHING_MACHINE' | 'DOG_GROOMING'
   | 'NHS_MRI_SCANNER' | 'FILM_CREW_HOSTING' | 'ELECTRIC_BIKE_BAY' | 'WATERLESS_CAR_WASH' | 'DIGITAL_SIGNAGE'
+  | 'DOMINOS_POD'
 
 type StreamConfig = {
   id?: string
@@ -36,6 +37,7 @@ const STREAM_LABELS: Record<StreamType, string> = {
   ELECTRIC_BIKE_BAY: 'Electric Bike Bays',
   WATERLESS_CAR_WASH: 'Waterless Car Wash',
   DIGITAL_SIGNAGE: 'Digital Signage',
+  DOMINOS_POD: "Domino's Pizza Pod",
 }
 
 const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
@@ -52,12 +54,14 @@ const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: n
   ELECTRIC_BIKE_BAY: { isTextOnly: true, textDisplay: '£5,000+ per bay per year' },
   WATERLESS_CAR_WASH: { min: 15000, max: 45000 },
   DIGITAL_SIGNAGE: { min: 10000, max: 50000 },
+  DOMINOS_POD: { min: 20000, max: 50000 },
 }
 
 const CORE_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
 const ALT_STREAM_TYPES: StreamType[] = [
   'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
   'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
+  'DOMINOS_POD',
 ]
 const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 

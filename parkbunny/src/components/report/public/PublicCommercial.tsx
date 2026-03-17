@@ -133,6 +133,7 @@ function getStreamEmoji(streamType: StreamType): string {
     case 'ELECTRIC_BIKE_BAY': return '🚲'
     case 'WATERLESS_CAR_WASH': return '✨'
     case 'DIGITAL_SIGNAGE': return '📺'
+    case 'DOMINOS_POD': return '🍕'
     default: return '📊'
   }
 }

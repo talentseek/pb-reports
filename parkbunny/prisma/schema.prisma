@@ -250,6 +250,7 @@ enum StreamType {
   ELECTRIC_BIKE_BAY
   WATERLESS_CAR_WASH
   DIGITAL_SIGNAGE
+  DOMINOS_POD
 }
 
 model RevenueStream {
