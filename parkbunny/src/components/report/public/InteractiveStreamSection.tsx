@@ -171,7 +171,9 @@ export default function InteractiveStreamSection({
                                             ) : (
                                                 <div className="bg-indigo-50 rounded-lg p-4">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-gray-600">Per site/year</span>
+                                                        <span className="text-sm text-gray-600">
+                                                            {stream.streamType === 'LOCKER' ? 'Per locker/year' : 'Per site/year'}
+                                                        </span>
                                                         <span className="font-semibold text-indigo-700">
                                                             {fmt(stream.annualRevenue! / Math.max(1, stream.siteCount))}
                                                         </span>

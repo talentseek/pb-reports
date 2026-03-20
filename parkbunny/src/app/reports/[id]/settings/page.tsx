@@ -26,7 +26,7 @@ type LocationInfo = {
 const STREAM_LABELS: Record<StreamType, string> = {
   LOCKER: 'Smart Lockers',
   CAR_WASH: 'Self-Service Car Wash',
-  EV_CHARGING: 'EV Charging (RevShare)',
+  EV_CHARGING: 'EV Charging',
   FARMERS_MARKET: 'Farmers Markets',
   TESLA_DEMO: 'Tesla Demo Vehicles',
   WE_BUY_ANY_CAR: 'We Buy Any Car — Site Pod',
@@ -43,7 +43,7 @@ const STREAM_LABELS: Record<StreamType, string> = {
 const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
   LOCKER: { rate: 900 },
   CAR_WASH: { min: 10000, max: 20000 },
-  EV_CHARGING: { rate: 3600 },
+  EV_CHARGING: { isTextOnly: true, textDisplay: 'Subject to supplier & model selection' },
   FARMERS_MARKET: { isTextOnly: true, textDisplay: '£1,000 – £2,500 per day' },
   TESLA_DEMO: { rate: 50000 },
   WE_BUY_ANY_CAR: { rate: 15000 },
