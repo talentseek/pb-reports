@@ -309,6 +309,44 @@ export default async function PublicReportView({ report }: { report: any }) {
 
       <AppShowcase />
 
+      {/* Driver Rewards & Loyalty */}
+      <section className="space-y-3">
+        <Card className="border-primary/20 overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-primary">Driver Rewards & Loyalty</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-gray-700">
+              ParkBunny incentivises drivers with exclusive rewards, cashback, and partner offers — driving repeat visits, higher dwell time, and increased spend across on-site services.
+            </p>
+            <div className="rounded-xl overflow-hidden border">
+              <img
+                src="/rewards-new.png"
+                alt="ParkBunny driver rewards and loyalty programme"
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+              <div className="rounded-lg bg-primary/5 p-3">
+                <p className="text-lg font-bold text-primary">🎁</p>
+                <p className="text-xs font-medium text-gray-700">Exclusive Rewards</p>
+                <p className="text-xs text-gray-500">Partner offers and cashback for regular drivers</p>
+              </div>
+              <div className="rounded-lg bg-primary/5 p-3">
+                <p className="text-lg font-bold text-primary">🔄</p>
+                <p className="text-xs font-medium text-gray-700">Repeat Visits</p>
+                <p className="text-xs text-gray-500">Loyalty incentives that keep drivers coming back</p>
+              </div>
+              <div className="rounded-lg bg-primary/5 p-3">
+                <p className="text-lg font-bold text-primary">📈</p>
+                <p className="text-xs font-medium text-gray-700">Increased Spend</p>
+                <p className="text-xs text-gray-500">Higher dwell time drives revenue across all services</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
       {/* Distribution visualization is provided within Revenue tabs */}
 
       {/* Partnership Opportunity Model */}
