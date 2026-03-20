@@ -29,7 +29,7 @@ export function AppShowcase() {
         <CardHeader>
           <CardTitle className="text-primary">Smart Parking Management (App)</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div className="md:col-span-2">
               <p className="text-sm text-gray-700">
@@ -41,6 +41,12 @@ export function AppShowcase() {
             </div>
             <div className="w-full h-24 lg:h-28 flex items-center justify-center rounded overflow-hidden">
               <Image src="/dashboard.webp" alt="Dashboard mockup" width={3252} height={2096} className="w-full h-full object-contain" />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">The Driver Experience</p>
+            <div className="rounded-xl overflow-hidden border">
+              <Image src="/screens.png" alt="ParkBunny app flow — search, park, earn rewards, redeem offers" width={2400} height={600} className="w-full h-auto" />
             </div>
           </div>
         </CardContent>
