@@ -426,3 +426,29 @@ model OutreachLead {
   @@index([campaignId])
   @@index([reviewStatus])
 }
+
+// ─── Customer Support Voice Agent ───
+
+model SupportCall {
+  id               String   @id @default(cuid())
+  vapiCallId       String   @unique
+  callerNumber     String?
+  callerName       String?
+  callerEmail      String?
+  status           String   @default("in_progress") // in_progress | completed | transferred
+  category         String?  // FAQ category matched
+  questionsAsked   Json?    // Array of matched FAQ questions
+  summary          String?  @db.Text
+  transcript       String?  @db.Text
+  recordingUrl     String?
+  duration         Int?     // seconds
+  resolved         Boolean  @default(false)
+  escalatedToHuman Boolean  @default(false)
+  callerSentiment  String?  // positive | neutral | negative
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
