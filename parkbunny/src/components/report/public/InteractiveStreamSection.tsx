@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import type { StreamType } from "@prisma/client"
+import { t, type Language } from "@/lib/translations"
 
 // ── Types (serialisable from server) ──────────────────────────────────
 
@@ -36,13 +37,15 @@ type Props = {
     totalCurrentRevenue: number
     upliftValue: number
     growthPercent: number
+    lang?: Language
+    currency?: string
+    locale?: string
+    currencySymbol?: string
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
-function fmt(n: number): string {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n)
-}
+// ── Helpers ───────────────────────────────────────────────────────────
 
 function getEmoji(st: StreamType): string {
     const map: Record<string, string> = {
@@ -64,8 +67,20 @@ export default function InteractiveStreamSection({
     totalCurrentRevenue,
     upliftValue,
     growthPercent,
+    lang = 'en',
+    currency = 'GBP',
+    locale = 'en-GB',
+    currencySymbol = '£',
 }: Props) {
     const [included, setIncluded] = useState<Set<string>>(new Set())
+
+    function fmt(n: number): string {
+        return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 0 }).format(n)
+    }
+
+    function replaceCurrency(text: string): string {
+        return text.replace(/£/g, currencySymbol)
+    }
 
     if (streams.length === 0) return null
 
@@ -103,10 +118,10 @@ export default function InteractiveStreamSection({
             <section className="space-y-6">
                 <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
                     <CardHeader>
-                        <CardTitle className="text-primary">Additional Portfolio Uplift</CardTitle>
+                        <CardTitle className="text-primary">{t(lang, 'section.additionalUplift')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <p className="text-sm text-gray-700">Subject to site surveys — projected upside from additional services deployed across the portfolio.</p>
+                        <p className="text-sm text-gray-700">{t(lang, 'section.additionalUplift.subtitle')}</p>
 
                         {streams.map((stream) => {
                             const meta = streamMeta[stream.streamType]
@@ -134,7 +149,7 @@ export default function InteractiveStreamSection({
                                                 {meta.bullets.map((b, i) => (
                                                     <li key={i} className="flex items-start gap-2">
                                                         <span className="text-green-500 mt-0.5">✓</span>
-                                                        <span>{b}</span>
+                                                        <span>{replaceCurrency(b)}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -143,43 +158,43 @@ export default function InteractiveStreamSection({
                                             {stream.isTextOnly ? (
                                                 <div className="bg-amber-50 rounded-lg p-4">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-gray-600">Estimated per event</span>
+                                                        <span className="text-sm text-gray-600">{t(lang, 'stream.estimatedPerEvent')}</span>
                                                         <span className="font-semibold text-amber-700">{stream.textDisplay}</span>
                                                     </div>
                                                     <p className="text-sm font-bold text-gray-800 mt-3 bg-amber-100 rounded px-3 py-2">
-                                                        ⚠️ Subject to survey
+                                                        {t(lang, 'stream.subjectToSurvey')}
                                                     </p>
                                                 </div>
                                             ) : stream.isRange ? (
                                                 <div className="bg-blue-50 rounded-lg p-4">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-gray-600">Estimated per site/year</span>
+                                                        <span className="text-sm text-gray-600">{t(lang, 'stream.estimatedPerSiteYear')}</span>
                                                         <span className="font-semibold text-blue-700">
                                                             {fmt(stream.annualMin! / Math.max(1, stream.siteCount))} – {fmt(stream.annualMax! / Math.max(1, stream.siteCount))}
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between items-center mt-2 pt-2 border-t border-blue-200">
-                                                        <span className="font-medium">Portfolio Total ({stream.siteCount} sites)</span>
+                                                        <span className="font-medium">{t(lang, 'stream.portfolioTotal')} ({stream.siteCount} {stream.siteCount === 1 ? t(lang, 'header.locations') : t(lang, 'header.locations_plural')})</span>
                                                         <span className="text-xl font-bold text-blue-700">
                                                             {fmt(stream.annualMin ?? 0)} – {fmt(stream.annualMax ?? 0)}/yr
                                                         </span>
                                                     </div>
                                                     <p className="text-sm font-bold text-gray-800 mt-3 bg-amber-100 rounded px-3 py-2">
-                                                        ⚠️ Subject to survey
+                                                        {t(lang, 'stream.subjectToSurvey')}
                                                     </p>
                                                 </div>
                                             ) : (
                                                 <div className="bg-indigo-50 rounded-lg p-4">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-gray-600">
-                                                            {stream.streamType === 'LOCKER' ? 'Per locker/year' : 'Per site/year'}
+                                                            <span className="text-sm text-gray-600">
+                                                            {stream.streamType === 'LOCKER' ? t(lang, 'stream.perLockerYear') : t(lang, 'stream.perSiteYear')}
                                                         </span>
                                                         <span className="font-semibold text-indigo-700">
                                                             {fmt(stream.annualRevenue! / Math.max(1, stream.siteCount))}
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between items-center mt-2 pt-2 border-t border-indigo-200">
-                                                        <span className="font-medium">Portfolio Total ({stream.siteCount} sites)</span>
+                                                        <span className="font-medium">{t(lang, 'stream.portfolioTotal')} ({stream.siteCount} {stream.siteCount === 1 ? t(lang, 'header.locations') : t(lang, 'header.locations_plural')})</span>
                                                         <span className="text-xl font-bold text-indigo-700">
                                                             {fmt(stream.annualRevenue ?? 0)}/yr
                                                         </span>
@@ -201,7 +216,7 @@ export default function InteractiveStreamSection({
                                                     className="h-4 w-4 rounded accent-green-600"
                                                 />
                                                 <span className="text-sm font-medium">
-                                                    {isIncluded ? '✓ Included in Revenue Summary' : 'Include in Revenue Summary'}
+                                                    {isIncluded ? t(lang, 'stream.includedInSummary') : t(lang, 'stream.includeInSummary')}
                                                 </span>
                                             </label>
                                         </div>
@@ -218,8 +233,8 @@ export default function InteractiveStreamSection({
                         })}
 
                         <div className="rounded border p-4 text-xs text-gray-600">
-                            <p className="font-medium">Implementation Notes</p>
-                            <p>All opportunities subject to site survey and feasibility assessment. Partnership negotiations and planning permissions may apply.</p>
+                            <p className="font-medium">{t(lang, 'stream.implementationNotes')}</p>
+                            <p>{t(lang, 'stream.implementationNotesText')}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -229,33 +244,33 @@ export default function InteractiveStreamSection({
             <section className="space-y-4">
                 <Card className="border-primary/20 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
                     <CardHeader>
-                        <CardTitle className="text-white">Portfolio Revenue Summary</CardTitle>
+                        <CardTitle className="text-white">{t(lang, 'section.revenueSummary')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-gray-600">
-                                        <th className="text-left py-2 pr-4 font-medium text-gray-300">Revenue Stream</th>
-                                        <th className="text-center py-2 px-4 font-medium text-gray-300">Sites</th>
-                                        <th className="text-right py-2 pl-4 font-medium text-gray-300">Annual Revenue</th>
-                                        <th className="text-right py-2 pl-4 font-medium text-gray-300">Status</th>
+                                        <th className="text-left py-2 pr-4 font-medium text-gray-300">{t(lang, 'section.revenueSummary.stream')}</th>
+                                        <th className="text-center py-2 px-4 font-medium text-gray-300">{t(lang, 'section.revenueSummary.sites')}</th>
+                                        <th className="text-right py-2 pl-4 font-medium text-gray-300">{t(lang, 'section.revenueSummary.annual')}</th>
+                                        <th className="text-right py-2 pl-4 font-medium text-gray-300">{t(lang, 'section.revenueSummary.status')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {/* Baseline — always shown */}
                                     <tr className="border-b border-gray-700">
-                                        <td className="py-3 pr-4">Portfolio Baseline</td>
+                                        <td className="py-3 pr-4">{t(lang, 'section.revenueSummary.baseline')}</td>
                                         <td className="py-3 px-4 text-center">{locationCount}</td>
                                         <td className="py-3 pl-4 text-right font-medium">{fmt(totalCurrentRevenue)}</td>
                                         <td className="py-3 pl-4 text-right">
-                                            <span className="bg-gray-600 text-gray-200 text-xs px-2 py-1 rounded-full">Current</span>
+                                            <span className="bg-gray-600 text-gray-200 text-xs px-2 py-1 rounded-full">{t(lang, 'section.revenueSummary.current')}</span>
                                         </td>
                                     </tr>
 
                                     {/* Local Offers Uplift — always shown */}
                                     <tr className="border-b border-gray-700">
-                                        <td className="py-3 pr-4">Local Offers Uplift</td>
+                                        <td className="py-3 pr-4">{t(lang, 'section.revenueSummary.localOffers')}</td>
                                         <td className="py-3 px-4 text-center">{locationCount}</td>
                                         <td className="py-3 pl-4 text-right font-medium text-green-400">+{fmt(upliftValue)}</td>
                                         <td className="py-3 pl-4 text-right">
@@ -283,7 +298,7 @@ export default function InteractiveStreamSection({
 
                                     {/* Total */}
                                     <tr className="border-t-2 border-white">
-                                        <td className="py-4 pr-4 font-bold text-base">Total Revenue Opportunity</td>
+                                        <td className="py-4 pr-4 font-bold text-base">{t(lang, 'section.revenueSummary.total')}</td>
                                         <td className="py-4 px-4 text-center font-bold">{locationCount}</td>
                                         <td className="py-4 pl-4 text-right font-bold text-base text-green-400">
                                             {hasRange
@@ -291,7 +306,7 @@ export default function InteractiveStreamSection({
                                                 : fmt(grandTotalMin)}
                                         </td>
                                         <td className="py-4 pl-4 text-right">
-                                            <span className="bg-green-700 text-white text-xs px-2 py-1 rounded-full font-medium">Projected</span>
+                                            <span className="bg-green-700 text-white text-xs px-2 py-1 rounded-full font-medium">{t(lang, 'section.revenueSummary.projected')}</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -300,12 +315,12 @@ export default function InteractiveStreamSection({
 
                         {hasIncluded && (
                             <p className="text-xs text-gray-400 mt-4">
-                                {includedStreams.length} additional stream{includedStreams.length === 1 ? '' : 's'} included. All ancillary figures are annualised estimates subject to site surveys and feasibility assessment.
+                                {includedStreams.length} {t(lang, 'stream.includedHint')}
                             </p>
                         )}
                         {!hasIncluded && (
                             <p className="text-xs text-gray-400 mt-4">
-                                Use the checkboxes above to include additional revenue streams in this summary.
+                                {t(lang, 'stream.notIncludedHint')}
                             </p>
                         )}
                     </CardContent>

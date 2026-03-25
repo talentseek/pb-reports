@@ -1,4 +1,5 @@
 import prisma from '@/lib/db'
+import { getMarketFromSettings } from './market-config'
 import { PLACE_CATEGORIES, groupForPlace } from './placesCategories'
 
 const PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY
@@ -66,10 +67,10 @@ function normalizePriceLevel(input: any): number | null {
   return null
 }
 
-async function geocodePostcode(postcode: string): Promise<{ lat: number; lng: number } | null> {
+async function geocodePostcode(postcode: string, region: string = 'uk'): Promise<{ lat: number; lng: number } | null> {
   const url = new URL('https://maps.googleapis.com/maps/api/geocode/json')
   url.searchParams.set('address', postcode)
-  url.searchParams.set('region', 'uk')
+  url.searchParams.set('region', region)
   url.searchParams.set('key', PLACES_API_KEY as string)
   const res = await fetch(url.toString())
   if (!res.ok) {
@@ -221,6 +222,11 @@ export async function refreshReportLocations(reportId: string, postcodes: string
   if (!PLACES_API_KEY) {
     return { ok: false, reason: 'no_api_key' as const }
   }
+  // Read market from report settings for geocoding region
+  const report = await prisma.report.findUnique({ where: { id: reportId }, select: { settings: true } })
+  const marketConfig = getMarketFromSettings(report?.settings as Record<string, unknown> | null)
+  const geocodeRegion = marketConfig.geocodeRegion
+
   const radiusMeters = milesToMeters(cfg.radiusMiles)
   const maxPerType = Math.max(1, Math.min(cfg.maxPerType, MAX_RESULTS_PER_TYPE))
   const staleMs = Math.max(0, Math.round((cfg.staleHours ?? 12) * 60 * 60 * 1000))
@@ -239,7 +245,7 @@ export async function refreshReportLocations(reportId: string, postcodes: string
       }
     }
     // Geocode postcode
-    const geo = await geocodePostcode(pc)
+    const geo = await geocodePostcode(pc, geocodeRegion)
     const loc = await prisma.reportLocation.upsert({
       where: { reportId_postcode: { reportId, postcode: pc } },
       update: { radiusMeters, params: { maxPerType } },

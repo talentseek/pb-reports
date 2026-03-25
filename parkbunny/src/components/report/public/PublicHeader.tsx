@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { PLACE_CATEGORIES } from "@/lib/placesCategories"
+import { t, type Language } from "@/lib/translations"
+import type { MarketCode } from "@/lib/market-config"
 
 function iconForCategory(cat: string): string {
   switch (cat) {
@@ -32,21 +34,32 @@ export default function PublicHeader({
   locationCount,
   postcodes,
   topCategoryLabels,
+  lang = 'en',
+  marketCode = 'GB',
+  locale = 'en-GB',
 }: {
   reportName: string
   locationCount: number
   postcodes: string
   topCategoryLabels: string[]
+  lang?: Language
+  marketCode?: MarketCode
+  locale?: string
 }) {
+  const locationsLabel = locationCount > 1
+    ? t(lang, 'header.locations_plural')
+    : t(lang, 'header.locations')
+  const marketContextKey = `header.marketContext.${marketCode}`
+
   return (
     <header className="space-y-6 print:space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Image src="/logo.png" alt="ParkBunny" width={200} height={48} className="h-12 w-auto" />
           <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold">Revenue Enhancement Report</h1>
-            <p className="text-sm text-gray-600">Prepared for: {reportName || 'Client'}</p>
-            <p className="text-xs text-gray-600 mt-1">Scope: {locationCount} location{locationCount > 1 ? 's' : ''} • Postcodes analyzed: {postcodes} • Report date: {new Date().toLocaleDateString('en-GB')}</p>
+            <h1 className="text-2xl sm:text-3xl font-semibold">{t(lang, 'header.title')}</h1>
+            <p className="text-sm text-gray-600">{t(lang, 'header.preparedFor')}: {reportName || 'Client'}</p>
+            <p className="text-xs text-gray-600 mt-1">{t(lang, 'header.scope')}: {locationCount} {locationsLabel} • {t(lang, 'header.postcodesAnalyzed')}: {postcodes} • {t(lang, 'header.reportDate')}: {new Date().toLocaleDateString(locale)}</p>
           </div>
         </div>
         <DownloadPdfButton />
@@ -56,11 +69,14 @@ export default function PublicHeader({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             <div className="lg:col-span-2">
               <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
-                Unlock <span className="text-primary font-bold">new revenue</span> by activating nearby businesses and rewarding drivers
-                <span className="text-gray-800"> — with no CapEx or extra ops.</span>
+                {lang === 'nl' ? (
+                  <>Ontgrendel <span className="text-primary font-bold">nieuwe inkomsten</span> door nabijgelegen bedrijven te activeren en bestuurders te belonen <span className="text-gray-800">— zonder CapEx of extra operationele kosten.</span></>
+                ) : (
+                  <>Unlock <span className="text-primary font-bold">new revenue</span> by activating nearby businesses and rewarding drivers <span className="text-gray-800">— with no CapEx or extra ops.</span></>
+                )}
               </h2>
-              <p className="text-sm text-gray-700 mt-3">There are ~17k–20k public off‑street car parks in Great Britain, yet most remain transactional rather than demand‑driven.</p>
-              <p className="text-xs text-gray-700 mt-3">ParkBunny activates partnerships through deals with:</p>
+              <p className="text-sm text-gray-700 mt-3">{t(lang, marketContextKey)}</p>
+              <p className="text-xs text-gray-700 mt-3">{t(lang, 'header.partnershipsIntro')}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {PLACE_CATEGORIES.map((c) => (
                   <Badge key={c.group} variant="default" className="capitalize">
@@ -80,5 +96,3 @@ export default function PublicHeader({
     </header>
   )
 }
-
-

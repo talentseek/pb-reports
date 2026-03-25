@@ -10,6 +10,8 @@ import { CommercialOffer, CommercialTerms } from "@/components/report/public/Pub
 import { SingleMap, MultiLocationSection } from "@/components/report/public/PublicLocations"
 import InteractiveStreamSection from "@/components/report/public/InteractiveStreamSection"
 import { getStreamsForReport, calculateStreamRevenue, STREAM_DEFAULTS } from "@/lib/revenue-streams"
+import { getMarketFromSettings, formatCurrencyForMarket } from "@/lib/market-config"
+import { t, type Language } from "@/lib/translations"
 
 function getCategoryBreakdown(businesses: any[]) {
   const counts: Record<string, number> = {}
@@ -38,12 +40,10 @@ function pseudoRandomPercentFromCode(code: string): number {
   return Math.round((min + (max - min) * frac) * 10) / 10
 }
 
-function formatCurrency(n: number): string {
-  try {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n)
-  } catch {
-    return `£${Math.round(n).toLocaleString('en-GB')}`
-  }
+function createCurrencyFormatter(report: any) {
+  const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {}
+  const market = getMarketFromSettings(safeSettings)
+  return (n: number): string => formatCurrencyForMarket(n, market)
 }
 
 function iconForCategory(cat: string): string {
@@ -77,6 +77,9 @@ function rateForCategory(settings: any, cat: string): { uplift: number; signUp: 
 
 export default async function PublicReportView({ report }: { report: any }) {
   const safeSettings = (report.settings && typeof report.settings === 'object') ? (report.settings as any) : {}
+  const market = getMarketFromSettings(safeSettings)
+  const lang: Language = market.language as Language
+  const formatCurrency = createCurrencyFormatter(report)
   const postcodes = parsePostcodes(report.postcodes)
   const locationSummaries = await getReportLocationSummaries(report.id)
   const includedBusinessList = locationSummaries.flatMap((loc) =>
@@ -150,6 +153,9 @@ export default async function PublicReportView({ report }: { report: any }) {
         locationCount={locationCount}
         postcodes={report.postcodes}
         topCategoryLabels={topCategories.map((c) => `${iconForCategory(c.name)} ${c.name}`)}
+        lang={lang}
+        marketCode={(safeSettings.market ?? 'GB') as any}
+        locale={market.locale}
       />
 
       <HeadlineMetrics
@@ -307,17 +313,17 @@ export default async function PublicReportView({ report }: { report: any }) {
         </section>
       )}
 
-      <AppShowcase />
+      <AppShowcase lang={lang} />
 
       {/* Driver Rewards & Loyalty */}
       <section className="space-y-3">
         <Card className="border-primary/20 overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-primary">Driver Rewards & Loyalty</CardTitle>
+            <CardTitle className="text-primary">{t(lang, 'section.driverRewards')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-gray-700">
-              ParkBunny incentivises drivers with exclusive rewards, cashback, and partner offers — driving repeat visits, higher dwell time, and increased spend across on-site services.
+              {t(lang, 'section.driverRewards.description')}
             </p>
             <div className="rounded-xl overflow-hidden border">
               <img
@@ -329,18 +335,18 @@ export default async function PublicReportView({ report }: { report: any }) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
               <div className="rounded-lg bg-primary/5 p-3">
                 <p className="text-lg font-bold text-primary">🎁</p>
-                <p className="text-xs font-medium text-gray-700">Exclusive Rewards</p>
-                <p className="text-xs text-gray-500">Partner offers and cashback for regular drivers</p>
+                <p className="text-xs font-medium text-gray-700">{t(lang, 'section.driverRewards.exclusive')}</p>
+                <p className="text-xs text-gray-500">{t(lang, 'section.driverRewards.exclusiveDesc')}</p>
               </div>
               <div className="rounded-lg bg-primary/5 p-3">
                 <p className="text-lg font-bold text-primary">🔄</p>
-                <p className="text-xs font-medium text-gray-700">Repeat Visits</p>
-                <p className="text-xs text-gray-500">Loyalty incentives that keep drivers coming back</p>
+                <p className="text-xs font-medium text-gray-700">{t(lang, 'section.driverRewards.repeat')}</p>
+                <p className="text-xs text-gray-500">{t(lang, 'section.driverRewards.repeatDesc')}</p>
               </div>
               <div className="rounded-lg bg-primary/5 p-3">
                 <p className="text-lg font-bold text-primary">📈</p>
-                <p className="text-xs font-medium text-gray-700">Increased Spend</p>
-                <p className="text-xs text-gray-500">Higher dwell time drives revenue across all services</p>
+                <p className="text-xs font-medium text-gray-700">{t(lang, 'section.driverRewards.spend')}</p>
+                <p className="text-xs text-gray-500">{t(lang, 'section.driverRewards.spendDesc')}</p>
               </div>
             </div>
           </CardContent>
@@ -437,18 +443,18 @@ export default async function PublicReportView({ report }: { report: any }) {
                 })
               })()}
             </div>
-            <p className="text-xs text-gray-600 mt-2">Drivers: partner sign‑ups, offer redemption/validation, off‑peak pricing optimisation, and repeat behaviour (loyalty).</p>
+            <p className="text-xs text-gray-600 mt-2">{t(lang, 'revenue.drivers')}</p>
           </CardContent>
         </Card>
       </section>
 
-      <WhatMakesDifferent />
+      <WhatMakesDifferent lang={lang} />
 
-      <ActivationPlan />
+      <ActivationPlan lang={lang} />
 
-      <MeasurementReporting />
+      <MeasurementReporting lang={lang} />
 
-      <ComplianceGoodPractice />
+      <ComplianceGoodPractice lang={lang} />
 
 
 
@@ -460,6 +466,10 @@ export default async function PublicReportView({ report }: { report: any }) {
           totalCurrentRevenue={totalCurrentRevenue}
           upliftValue={upliftValue}
           growthPercent={computedGrowthPercent}
+          lang={lang}
+          currency={market.currency}
+          locale={market.locale}
+          currencySymbol={market.currencySymbol}
         />
       )}
 
