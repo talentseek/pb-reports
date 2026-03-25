@@ -50,6 +50,7 @@ export default function AppHeader() {
           >
             App Demos
           </Link>
+          <Link href="/dashboard/support" className="text-sm underline">Voice Support</Link>
           <Link href="/dashboard/help" className="text-sm underline">Help & Guide</Link>
           <HeaderAuth />
         </nav>
