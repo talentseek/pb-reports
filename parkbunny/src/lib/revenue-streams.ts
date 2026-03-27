@@ -7,7 +7,7 @@ export const CORE_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGI
 export const ALT_STREAM_TYPES: StreamType[] = [
     'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
     'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
-    'DOMINOS_POD',
+    'DOMINOS_POD', 'LAST_MILE_LOCKER',
 ]
 export const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
@@ -253,6 +253,26 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         ],
         defaultMin: 20000,
         defaultMax: 50000,
+        statusLabel: 'Subject to Survey',
+        isAlternative: true,
+    },
+    LAST_MILE_LOCKER: {
+        label: 'Last Mile Logistics Locker',
+        icon: 'Warehouse',
+        image: '/lastmile.jpg',
+        description: 'Micro warehouse locker for tradespeople (Hotpoint, Sky engineers etc.) to collect parts. Battery operated, fully maintained, and requires 2.5m height clearance.',
+        bullets: [
+            'Spaces required: 3–4+ (subject to survey)',
+            'Revenue range £3,000 – £4,000 + VAT per location per year',
+            'Battery operated — zero energy cost to the operator',
+            'Requires 2.5m height clearance',
+            'Can be installed on non-concrete areas — locker company pays for base installation',
+            'Fully maintained — acts as a micro warehouse',
+            '1-year contract then rolling',
+            'UK-wide demand from trade and logistics networks',
+        ],
+        defaultMin: 3000,
+        defaultMax: 4000,
         statusLabel: 'Subject to Survey',
         isAlternative: true,
     },

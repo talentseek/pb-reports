@@ -53,7 +53,7 @@ function getEmoji(st: StreamType): string {
         TESLA_DEMO: '🚘', WE_BUY_ANY_CAR: '🏷️', GIANT_WASHING_MACHINE: '🧺',
         DOG_GROOMING: '🐕', NHS_MRI_SCANNER: '🏥', FILM_CREW_HOSTING: '🎬',
         ELECTRIC_BIKE_BAY: '🚲', WATERLESS_CAR_WASH: '✨', DIGITAL_SIGNAGE: '📺',
-        DOMINOS_POD: '🍕',
+        DOMINOS_POD: '🍕', LAST_MILE_LOCKER: '🏭',
     }
     return map[st] ?? '📊'
 }
