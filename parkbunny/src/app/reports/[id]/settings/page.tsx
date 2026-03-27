@@ -23,7 +23,7 @@ type LocationInfo = {
   postcode: string
 }
 
-const STREAM_LABELS: Record<StreamType, string> = {
+const STREAM_LABELS: Record<string, string> = {
   LOCKER: 'Smart Lockers',
   CAR_WASH: 'Self-Service Car Wash',
   EV_CHARGING: 'EV Charging',
@@ -38,9 +38,10 @@ const STREAM_LABELS: Record<StreamType, string> = {
   WATERLESS_CAR_WASH: 'Waterless Car Wash',
   DIGITAL_SIGNAGE: 'Digital Signage',
   DOMINOS_POD: "Domino's Pizza Pod",
+  LAST_MILE_LOCKER: 'Last Mile Logistics Locker',
 }
 
-const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
+const STREAM_DEFAULTS: Record<string, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
   LOCKER: { rate: 900 },
   CAR_WASH: { min: 10000, max: 20000 },
   EV_CHARGING: { isTextOnly: true, textDisplay: 'Subject to supplier & model selection' },
@@ -58,13 +59,13 @@ const STREAM_DEFAULTS: Record<StreamType, { rate?: number; min?: number; max?: n
   LAST_MILE_LOCKER: { min: 3000, max: 4000 },
 }
 
-const CORE_STREAM_TYPES: StreamType[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
-const ALT_STREAM_TYPES: StreamType[] = [
+const CORE_STREAM_TYPES: string[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
+const ALT_STREAM_TYPES: string[] = [
   'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
   'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
   'DOMINOS_POD', 'LAST_MILE_LOCKER',
 ]
-const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
+const ALL_STREAM_TYPES: string[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
 type Settings = {
   upliftPercentages?: Record<string, number>
