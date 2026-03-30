@@ -83,12 +83,20 @@ export default async function OutreachPage() {
             All outreach campaigns — email &amp; voice
           </p>
         </div>
-        <Link
-          href="/outreach/voice-config"
-          className="inline-flex items-center gap-2 rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
-        >
-          ⚙️ Voice Settings
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/outreach/analytics"
+            className="inline-flex items-center gap-2 rounded bg-primary text-primary-foreground px-4 py-2 hover:opacity-90"
+          >
+            📊 Voice Analytics
+          </Link>
+          <Link
+            href="/outreach/voice-config"
+            className="inline-flex items-center gap-2 rounded bg-secondary text-secondary-foreground px-4 py-2 hover:opacity-90"
+          >
+            ⚙️ Voice Settings
+          </Link>
+        </div>
       </header>
 
       {/* ═══════════════════════════════════════════ */}
