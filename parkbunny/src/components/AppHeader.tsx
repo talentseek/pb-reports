@@ -50,8 +50,19 @@ export default function AppHeader() {
           >
             App Demos
           </Link>
-          <Link href="/dashboard/support" className="text-sm underline">Voice Support</Link>
-          <Link href="/dashboard/help" className="text-sm underline">Help & Guide</Link>
+          <Link
+            href="/dashboard/support"
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/dashboard/support' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            📞 Support
+          </Link>
+          <Link
+            href="/outreach/analytics"
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/outreach/analytics' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            📊 Voice Analytics
+          </Link>
+          <Link href="/dashboard/help" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">Help</Link>
           <HeaderAuth />
         </nav>
       </div>
