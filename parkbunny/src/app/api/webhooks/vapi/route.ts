@@ -34,12 +34,21 @@ export async function POST(req: Request) {
 
 async function handleEndOfCallReport(message: any) {
     const metadata = message?.call?.metadata
-    if (!metadata?.campaignBusinessId) {
-        console.warn('Vapi webhook: missing campaignBusinessId in metadata')
-        return
+    let cbId = metadata?.campaignBusinessId as string | undefined
+
+    // Fallback: look up by vapiCallId if no metadata
+    if (!cbId && message?.call?.id) {
+        const found = await prisma.campaignBusiness.findFirst({
+            where: { vapiCallId: message.call.id },
+            select: { id: true },
+        })
+        if (found) cbId = found.id
     }
 
-    const cbId = metadata.campaignBusinessId as string
+    if (!cbId) {
+        console.warn('Vapi webhook: could not match call to CampaignBusiness', message?.call?.id)
+        return
+    }
 
     // Check if the CampaignBusiness exists
     const existing = await prisma.campaignBusiness.findUnique({ where: { id: cbId } })
@@ -115,12 +124,22 @@ async function handleEndOfCallReport(message: any) {
 
 async function handleStatusUpdate(message: any) {
     const metadata = message?.call?.metadata
-    if (!metadata?.campaignBusinessId) return
+    let cbId = metadata?.campaignBusinessId as string | undefined
+
+    if (!cbId && message?.call?.id) {
+        const found = await prisma.campaignBusiness.findFirst({
+            where: { vapiCallId: message.call.id },
+            select: { id: true },
+        })
+        if (found) cbId = found.id
+    }
+
+    if (!cbId) return
 
     const status = message?.status
     if (status === 'in-progress') {
         await prisma.campaignBusiness.update({
-            where: { id: metadata.campaignBusinessId },
+            where: { id: cbId },
             data: { callStatus: 'IN_PROGRESS' },
         }).catch(() => { })
     }
