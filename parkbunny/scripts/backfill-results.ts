@@ -8,7 +8,7 @@ import { processCallResult } from '../src/lib/voice-agent'
 
 const prisma = new PrismaClient()
 const VAPI_KEY = process.env.VAPI_PRIVATE_API_KEY!
-const CAMPAIGN_ID = 'cmnee2bsg0001sbmz08x8v6ph'
+const CAMPAIGN_ID = process.argv[2] || 'cmnhd59hu0001sb6tcwyjymc9' // B5 4TD default
 
 async function main() {
   const pending = await prisma.campaignBusiness.findMany({
@@ -51,6 +51,7 @@ async function main() {
           extractedEmail: result.extractedEmail,
           extractedPhone: result.extractedPhone,
           callbackTime: result.callbackTime,
+          endedReason: result.endedReason,
         },
       })
 
