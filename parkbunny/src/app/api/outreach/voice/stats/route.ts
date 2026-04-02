@@ -18,6 +18,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const campaignId = searchParams.get('campaignId')
   const locationId = searchParams.get('locationId')
+  const statusFilter = searchParams.get('status') // e.g. LEAD_CAPTURED, VOICEMAIL
+  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'))
+  const pageSize = Math.min(200, Math.max(1, parseInt(searchParams.get('pageSize') ?? '50')))
 
   // Build filter
   const campaignWhere: any = {}
@@ -38,6 +41,7 @@ export async function GET(request: NextRequest) {
     avgDuration,
     sentimentBreakdown,
     recentCalls,
+    totalCallsInList,
     campaignSummaries,
     todaysCalls,
     weeklyTrend,
@@ -73,19 +77,30 @@ export async function GET(request: NextRequest) {
       select: { callStatus: true, callDuration: true },
     }),
 
-    // 5. Recent call activity (last 20)
+    // 5. Paginated call activity
     prisma.campaignBusiness.findMany({
       where: {
         ...campaignWhere,
         lastCallAt: { not: null },
+        ...(statusFilter ? { callStatus: statusFilter } : {}),
       },
       orderBy: { lastCallAt: 'desc' },
-      take: 20,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
       include: {
         reportLocationPlace: {
           include: { place: { select: { name: true, phone: true } } },
         },
         campaign: { select: { name: true, carparkName: true, postcode: true } },
+      },
+    }),
+
+    // 5b. Total count for pagination
+    prisma.campaignBusiness.count({
+      where: {
+        ...campaignWhere,
+        lastCallAt: { not: null },
+        ...(statusFilter ? { callStatus: statusFilter } : {}),
       },
     }),
 
@@ -229,5 +244,11 @@ export async function GET(request: NextRequest) {
       callbackTime: cb.callbackTime,
       lastCallAt: cb.lastCallAt,
     })),
+    pagination: {
+      page,
+      pageSize,
+      totalItems: totalCallsInList,
+      totalPages: Math.ceil(totalCallsInList / pageSize),
+    },
   })
 }

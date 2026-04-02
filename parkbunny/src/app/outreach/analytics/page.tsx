@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
-import { Phone, Target, CalendarDays, Clock, TrendingUp, ArrowUpRight, PhoneCall } from 'lucide-react'
+import { Phone, Target, CalendarDays, Clock, TrendingUp, ArrowUpRight, PhoneCall, ChevronLeft, ChevronRight, Filter } from 'lucide-react'
 
 interface VoiceOutreachStats {
   overview: {
@@ -28,6 +28,12 @@ interface VoiceOutreachStats {
     createdAt: string
   }[]
   recentCalls: RecentCall[]
+  pagination: {
+    page: number
+    pageSize: number
+    totalItems: number
+    totalPages: number
+  }
 }
 
 interface RecentCall {
@@ -106,14 +112,34 @@ function outcomeColor(color: string): string {
   return map[color] ?? 'bg-slate-300'
 }
 
+const STATUS_OPTIONS = [
+  { value: '', label: 'All Outcomes' },
+  { value: 'LEAD_CAPTURED', label: '✅ Lead Captured' },
+  { value: 'CALLBACK_BOOKED', label: '📅 Callback Booked' },
+  { value: 'NOT_INTERESTED', label: '❌ Not Interested' },
+  { value: 'VOICEMAIL', label: '📞 Voicemail' },
+  { value: 'GATEKEEPER_BLOCKED', label: '🚫 Gatekeeper Blocked' },
+  { value: 'NO_ANSWER', label: '📵 No Answer' },
+  { value: 'FAILED', label: '⚠️ Failed' },
+  { value: 'IN_PROGRESS', label: '🔵 In Progress' },
+]
+
 export default function VoiceOutreachDashboard() {
   const [stats, setStats] = useState<VoiceOutreachStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedCall, setSelectedCall] = useState<RecentCall | null>(null)
+  const [statusFilter, setStatusFilter] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 50
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/outreach/voice/stats')
+      const params = new URLSearchParams()
+      if (statusFilter) params.set('status', statusFilter)
+      params.set('page', currentPage.toString())
+      params.set('pageSize', pageSize.toString())
+
+      const res = await fetch(`/api/outreach/voice/stats?${params}`)
       if (res.ok) {
         const data = await res.json()
         setStats(data)
@@ -123,13 +149,18 @@ export default function VoiceOutreachDashboard() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [statusFilter, currentPage])
 
   useEffect(() => {
     fetchStats()
     const interval = setInterval(fetchStats, 30_000)
     return () => clearInterval(interval)
   }, [fetchStats])
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [statusFilter])
 
   if (loading) {
     return (
@@ -146,6 +177,7 @@ export default function VoiceOutreachDashboard() {
     conversionRate: 0, contactRate: 0, rejectionRate: 0, avgDuration: 0, avgSuccessDuration: 0,
   }
 
+  const pagination = stats?.pagination ?? { page: 1, pageSize: 50, totalItems: 0, totalPages: 1 }
   const maxOutcome = Math.max(1, ...(stats?.outcomeBreakdown?.map(o => o.count) ?? [1]))
   const maxTrend = Math.max(1, ...(stats?.weeklyTrend?.map(d => d.count) ?? [1]))
 
@@ -221,8 +253,15 @@ export default function VoiceOutreachDashboard() {
           ) : (
             <div className="space-y-3">
               {stats.outcomeBreakdown.map((o) => (
-                <div key={o.outcome} className="flex items-center gap-3">
-                  <span className="text-sm w-44 truncate text-muted-foreground">{o.outcome}</span>
+                <button
+                  key={o.outcome}
+                  className="flex items-center gap-3 w-full hover:bg-muted/50 rounded-lg px-2 py-1 transition-colors"
+                  onClick={() => {
+                    const statusKey = o.outcome.toUpperCase().replace(/ /g, '_')
+                    setStatusFilter(prev => prev === statusKey ? '' : statusKey)
+                  }}
+                >
+                  <span className="text-sm w-44 truncate text-muted-foreground text-left">{o.outcome}</span>
                   <div className="flex-1 h-6 rounded-full bg-muted overflow-hidden">
                     <div
                       className={`h-full rounded-full ${outcomeColor(o.color)} transition-all duration-500`}
@@ -230,7 +269,7 @@ export default function VoiceOutreachDashboard() {
                     />
                   </div>
                   <span className="text-sm font-medium w-8 text-right">{o.count}</span>
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -264,82 +303,135 @@ export default function VoiceOutreachDashboard() {
         </div>
       </div>
 
-      {/* Recent Calls Table */}
+      {/* Calls Table with Filter + Pagination */}
       <div className="rounded-lg border bg-card">
-        <div className="p-5 border-b flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Recent Calls</h2>
-          {stats?.recentCalls && stats.recentCalls.length > 0 && (
+        <div className="p-5 border-b flex items-center justify-between flex-wrap gap-3">
+          <h2 className="text-lg font-semibold">All Calls</h2>
+          <div className="flex items-center gap-3">
+            {/* Status Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="text-sm border rounded-md px-2 py-1.5 bg-background text-foreground"
+              >
+                {STATUS_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
             <span className="text-xs text-muted-foreground">
-              Showing last {stats.recentCalls.length} calls
+              {pagination.totalItems} total {statusFilter && `(filtered)`}
             </span>
-          )}
+          </div>
         </div>
         {!stats?.recentCalls?.length ? (
           <div className="p-12 text-center text-muted-foreground">
             <PhoneCall className="h-12 w-12 mx-auto mb-3 opacity-30" />
-            <p className="text-lg font-medium">No calls yet</p>
+            <p className="text-lg font-medium">No calls {statusFilter ? 'matching this filter' : 'yet'}</p>
             <p className="text-sm mt-1">
-              Calls will appear here once voice campaigns start running.
+              {statusFilter ? 'Try a different filter.' : 'Calls will appear here once voice campaigns start running.'}
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left text-muted-foreground">
-                  <th className="px-5 py-3 font-medium">Business</th>
-                  <th className="px-5 py-3 font-medium">Campaign</th>
-                  <th className="px-5 py-3 font-medium">Outcome</th>
-                  <th className="px-5 py-3 font-medium">Contact Found</th>
-                  <th className="px-5 py-3 font-medium">Duration</th>
-                  <th className="px-5 py-3 font-medium">Time</th>
-                  <th className="px-5 py-3 font-medium"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.recentCalls.map((call) => (
-                  <tr key={call.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
-                    <td className="px-5 py-3">
-                      <div className="font-medium">{call.businessName}</div>
-                      <div className="text-xs text-muted-foreground">{call.phone ?? '—'}</div>
-                    </td>
-                    <td className="px-5 py-3 text-muted-foreground text-xs">
-                      {call.campaignName}
-                    </td>
-                    <td className="px-5 py-3">{outcomeBadge(call.callStatus)}</td>
-                    <td className="px-5 py-3">
-                      {call.extractedName ? (
-                        <div>
-                          <div className="text-xs font-medium">{call.extractedName}</div>
-                          {call.extractedEmail && (
-                            <div className="text-xs text-blue-600">{call.extractedEmail}</div>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3 text-muted-foreground">{formatDuration(call.callDuration)}</td>
-                    <td className="px-5 py-3 text-muted-foreground text-xs">
-                      {call.lastCallAt
-                        ? new Date(call.lastCallAt).toLocaleString('en-GB', {
-                            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-                          })
-                        : '—'}
-                    </td>
-                    <td className="px-5 py-3">
-                      <button
-                        onClick={() => setSelectedCall(call)}
-                        className="text-primary hover:underline text-xs flex items-center gap-1"
-                      >
-                        Details <ArrowUpRight className="h-3 w-3" />
-                      </button>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-muted-foreground">
+                    <th className="px-5 py-3 font-medium">Business</th>
+                    <th className="px-5 py-3 font-medium">Campaign</th>
+                    <th className="px-5 py-3 font-medium">Outcome</th>
+                    <th className="px-5 py-3 font-medium">Contact Found</th>
+                    <th className="px-5 py-3 font-medium">Duration</th>
+                    <th className="px-5 py-3 font-medium">Time</th>
+                    <th className="px-5 py-3 font-medium"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {stats.recentCalls.map((call) => (
+                    <tr key={call.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="font-medium">{call.businessName}</div>
+                        <div className="text-xs text-muted-foreground">{call.phone ?? '—'}</div>
+                      </td>
+                      <td className="px-5 py-3 text-muted-foreground text-xs">
+                        {call.campaignName}
+                      </td>
+                      <td className="px-5 py-3">{outcomeBadge(call.callStatus)}</td>
+                      <td className="px-5 py-3">
+                        {call.extractedName ? (
+                          <div>
+                            <div className="text-xs font-medium">{call.extractedName}</div>
+                            {call.extractedEmail && (
+                              <div className="text-xs text-blue-600">{call.extractedEmail}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3 text-muted-foreground">{formatDuration(call.callDuration)}</td>
+                      <td className="px-5 py-3 text-muted-foreground text-xs">
+                        {call.lastCallAt
+                          ? new Date(call.lastCallAt).toLocaleString('en-GB', {
+                              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+                            })
+                          : '—'}
+                      </td>
+                      <td className="px-5 py-3">
+                        <button
+                          onClick={() => setSelectedCall(call)}
+                          className="text-primary hover:underline text-xs flex items-center gap-1"
+                        >
+                          Details <ArrowUpRight className="h-3 w-3" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="p-4 border-t flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">
+                  Page {pagination.page} of {pagination.totalPages} ({pagination.totalItems} calls)
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentPage <= 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className="p-1.5 rounded-md border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setCurrentPage(p)}
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                        p === currentPage
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  <button
+                    disabled={currentPage >= pagination.totalPages}
+                    onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
+                    className="p-1.5 rounded-md border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
