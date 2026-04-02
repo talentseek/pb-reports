@@ -413,8 +413,12 @@ export async function getCallableBusinesses(campaignId: string, maxAttempts: num
 // ─── Deduplication ───
 
 /**
- * Check if a business (by placeId) has already been contacted in any campaign.
+ * Check if a business (by Google placeId) has already been contacted in any campaign.
  * Returns the campaign name if duplicate, null if safe to call.
+ * 
+ * NOTE: The `placeId` parameter must be the Google Places API ID (e.g., 'ChIJ...')
+ * NOT the internal Prisma Place.id (cuid). The query traverses:
+ * CampaignBusiness → ReportLocationPlace → Place.placeId
  */
 export async function checkDuplicateBusiness(
     placeId: string,
@@ -422,7 +426,9 @@ export async function checkDuplicateBusiness(
 ): Promise<string | null> {
     const existing = await prisma.campaignBusiness.findFirst({
         where: {
-            reportLocationPlace: { placeId },
+            reportLocationPlace: {
+                place: { placeId },
+            },
             callStatus: { notIn: ['PENDING', 'QUEUED', 'DUPLICATE_SKIPPED'] },
             ...(excludeCampaignId ? { campaignId: { not: excludeCampaignId } } : {}),
         },
@@ -430,3 +436,4 @@ export async function checkDuplicateBusiness(
     })
     return existing ? existing.campaign.name : null
 }
+
