@@ -165,10 +165,12 @@ export async function GET(request: NextRequest) {
   const notInterested = outcomes['NOT_INTERESTED'] ?? 0
   const voicemail = outcomes['VOICEMAIL'] ?? 0
   const gatekeeperBlocked = outcomes['GATEKEEPER_BLOCKED'] ?? 0
+  const ivrBlocked = outcomes['IVR_BLOCKED'] ?? 0
   const noAnswer = outcomes['NO_ANSWER'] ?? 0
   const invalidNumber = outcomes['INVALID_NUMBER'] ?? 0
   const failed = outcomes['FAILED'] ?? 0
   const ctpsBlocked = outcomes['CTPS_BLOCKED'] ?? 0
+  const duplicateSkipped = outcomes['DUPLICATE_SKIPPED'] ?? 0
 
   // Conversion rate: leads / total calls made
   const conversionRate = totalCalls > 0
@@ -211,10 +213,12 @@ export async function GET(request: NextRequest) {
       { outcome: 'Not Interested', count: notInterested, color: 'red' },
       { outcome: 'Voicemail', count: voicemail, color: 'amber' },
       { outcome: 'Gatekeeper Blocked', count: gatekeeperBlocked, color: 'rose' },
+      { outcome: 'IVR Blocked', count: ivrBlocked, color: 'orange' },
       { outcome: 'No Answer', count: noAnswer, color: 'slate' },
       { outcome: 'Invalid Number', count: invalidNumber, color: 'gray' },
       { outcome: 'Failed', count: failed, color: 'gray' },
       { outcome: 'CTPS Blocked', count: ctpsBlocked, color: 'gray' },
+      { outcome: 'Duplicate Skipped', count: duplicateSkipped, color: 'gray' },
     ].filter(o => o.count > 0),
     weeklyTrend,
     campaigns: campaignSummaries.map(c => ({

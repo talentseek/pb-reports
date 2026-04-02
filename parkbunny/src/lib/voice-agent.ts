@@ -119,6 +119,7 @@ export interface ProcessedCallResult {
     extractedEmail: string | null
     extractedPhone: string | null
     callbackTime: string | null
+    endedReason: string | null
 }
 
 export function processCallResult(payload: any): ProcessedCallResult {
@@ -135,13 +136,32 @@ export function processCallResult(payload: any): ProcessedCallResult {
     let callStatus: CallStatus = outcomeMap[rawOutcome ?? ''] ?? 'FAILED'
 
     // Map Vapi endedReason to our statuses
-    const endedReason = payload?.endedReason
+    const endedReason = payload?.endedReason ?? payload?.call?.endedReason ?? null
     if (endedReason === 'voicemail') callStatus = 'VOICEMAIL'
     if (endedReason === 'customer-did-not-answer') callStatus = 'NO_ANSWER'
+    if (endedReason === 'twilio-failed-to-connect-call') callStatus = 'FAILED'
+
+    // Detect IVR/automated systems:
+    // - max-duration-reached with GATEKEEPER_BLOCKED = stuck in IVR
+    // - silence-timed-out with GATEKEEPER_BLOCKED = IVR dropped
+    // - summary containing 'automated' or 'menu' with GATEKEEPER_BLOCKED
+    const summary = payload?.summary ?? payload?.analysis?.summary ?? ''
+    if (callStatus === 'GATEKEEPER_BLOCKED') {
+        const isIVR =
+            endedReason === 'max-duration-reached' ||
+            endedReason === 'silence-timed-out' ||
+            /automated|menu loop|automated system|ivr|press \d/i.test(summary)
+        if (isIVR) callStatus = 'IVR_BLOCKED'
+    }
+
+    // customer-ended-call with no structured outcome is likely a hang-up, not a "failure"
+    if (callStatus === 'FAILED' && endedReason === 'customer-ended-call') {
+        callStatus = 'NOT_INTERESTED'
+    }
 
     return {
         callStatus,
-        callSummary: payload?.summary ?? null,
+        callSummary: summary || null,
         transcript: payload?.transcript ?? null,
         recordingUrl: payload?.recordingUrl ?? null,
         callDuration: payload?.call?.duration ? Math.round(payload.call.duration) : null,
@@ -149,6 +169,7 @@ export function processCallResult(payload: any): ProcessedCallResult {
         extractedEmail: structured.decision_maker_email ?? null,
         extractedPhone: null,
         callbackTime: structured.best_callback_time ?? null,
+        endedReason,
     }
 }
 
@@ -175,4 +196,25 @@ export async function getCallableBusinesses(campaignId: string, maxAttempts: num
         },
         orderBy: [{ callAttempts: 'asc' }, { createdAt: 'asc' }],
     })
+}
+
+// ─── Deduplication ───
+
+/**
+ * Check if a business (by placeId) has already been contacted in any campaign.
+ * Returns the campaign name if duplicate, null if safe to call.
+ */
+export async function checkDuplicateBusiness(
+    placeId: string,
+    excludeCampaignId?: string,
+): Promise<string | null> {
+    const existing = await prisma.campaignBusiness.findFirst({
+        where: {
+            reportLocationPlace: { placeId },
+            callStatus: { notIn: ['PENDING', 'QUEUED', 'DUPLICATE_SKIPPED'] },
+            ...(excludeCampaignId ? { campaignId: { not: excludeCampaignId } } : {}),
+        },
+        include: { campaign: { select: { name: true } } },
+    })
+    return existing ? existing.campaign.name : null
 }

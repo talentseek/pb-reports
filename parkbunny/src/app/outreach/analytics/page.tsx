@@ -69,11 +69,13 @@ function outcomeIcon(status: string): string {
     NOT_INTERESTED: '❌',
     VOICEMAIL: '📞',
     GATEKEEPER_BLOCKED: '🚫',
+    IVR_BLOCKED: '🤖',
     NO_ANSWER: '📵',
     IN_PROGRESS: '🔵',
     FAILED: '⚠️',
     CTPS_BLOCKED: '🛑',
     INVALID_NUMBER: '❓',
+    DUPLICATE_SKIPPED: '🔄',
   }
   return map[status] ?? '•'
 }
@@ -85,11 +87,13 @@ function outcomeBadge(status: string) {
     NOT_INTERESTED: 'bg-red-100 text-red-700',
     VOICEMAIL: 'bg-amber-100 text-amber-700',
     GATEKEEPER_BLOCKED: 'bg-rose-100 text-rose-700',
+    IVR_BLOCKED: 'bg-orange-100 text-orange-700',
     NO_ANSWER: 'bg-slate-100 text-slate-600',
     IN_PROGRESS: 'bg-blue-100 text-blue-700',
     FAILED: 'bg-red-100 text-red-700',
     CTPS_BLOCKED: 'bg-red-200 text-red-800',
     INVALID_NUMBER: 'bg-slate-100 text-slate-500',
+    DUPLICATE_SKIPPED: 'bg-gray-100 text-gray-600',
   }
   const label = status.toLowerCase().replace(/_/g, ' ')
   return (
@@ -119,8 +123,10 @@ const STATUS_OPTIONS = [
   { value: 'NOT_INTERESTED', label: '❌ Not Interested' },
   { value: 'VOICEMAIL', label: '📞 Voicemail' },
   { value: 'GATEKEEPER_BLOCKED', label: '🚫 Gatekeeper Blocked' },
+  { value: 'IVR_BLOCKED', label: '🤖 IVR / Phone Menu' },
   { value: 'NO_ANSWER', label: '📵 No Answer' },
   { value: 'FAILED', label: '⚠️ Failed' },
+  { value: 'DUPLICATE_SKIPPED', label: '🔄 Duplicate Skipped' },
   { value: 'IN_PROGRESS', label: '🔵 In Progress' },
 ]
 

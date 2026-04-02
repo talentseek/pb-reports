@@ -72,6 +72,7 @@ async function handleEndOfCallReport(message: any) {
             extractedEmail: result.extractedEmail,
             extractedPhone: result.extractedPhone,
             callbackTime: result.callbackTime,
+            endedReason: result.endedReason,
         },
     })
 

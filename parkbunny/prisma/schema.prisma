@@ -127,6 +127,7 @@ model Campaign {
   status       CampaignStatus    @default(CREATED)
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+  phoneNumberId String?           // VAPI phone number ID for local number
   businesses   CampaignBusiness[]
   location     ReportLocation?   @relation(fields: [locationId], references: [id])
 }
@@ -148,6 +149,7 @@ model CampaignBusiness {
   callSummary           String?
   transcript            String?              @db.Text
   recordingUrl          String?
+  endedReason           String?
 
   // Extracted data from call
   extractedName         String?
@@ -219,6 +221,8 @@ enum CallStatus {
   INVALID_NUMBER
   FAILED
   CTPS_BLOCKED
+  DUPLICATE_SKIPPED
+  IVR_BLOCKED
 }
 
 model VoiceConfig {
