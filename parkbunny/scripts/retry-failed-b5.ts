@@ -20,7 +20,9 @@ async function main() {
   console.log('Retrying ' + failed.length + ' failed calls...')
 
   let ok = 0, err = 0
-  for (const cb of failed) {
+  const WAVE_SIZE = 5
+  for (let i = 0; i < failed.length; i++) {
+    const cb = failed[i]
     const result = await dispatchCall(
       cb as any,
       CARPARK_NAME,
@@ -42,7 +44,13 @@ async function main() {
       err++
       console.log('  ❌ ' + cb.reportLocationPlace.place.name.slice(0, 40) + ' — ' + result.error)
     }
-    await new Promise(r => setTimeout(r, 2000))
+    // Wave gap every 5 calls
+    if ((i + 1) % WAVE_SIZE === 0 && i < failed.length - 1) {
+      console.log('  ⏳ Waiting 60s before next batch...')
+      await new Promise(r => setTimeout(r, 60_000))
+    } else {
+      await new Promise(r => setTimeout(r, 3000))
+    }
   }
   console.log('\nDone: ' + ok + ' retried, ' + err + ' still failed')
 }
