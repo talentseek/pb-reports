@@ -1,4 +1,3 @@
-import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js'
 import prisma from '@/lib/db'
 import type { CampaignBusiness, CallStatus } from '@prisma/client'
 
@@ -8,8 +7,25 @@ const VAPI_API_URL = 'https://api.vapi.ai'
 
 export function formatPhoneE164(phone: string): string | null {
     try {
-        if (!isValidPhoneNumber(phone, 'GB')) return null
-        return parsePhoneNumber(phone, 'GB').format('E.164')
+        // Strip spaces, dashes, parentheses
+        let clean = phone.replace(/[\s\-()]/g, '')
+
+        // Handle +44 prefix
+        if (clean.startsWith('+44')) {
+            clean = '0' + clean.slice(3)
+        } else if (clean.startsWith('44') && clean.length > 10) {
+            clean = '0' + clean.slice(2)
+        }
+
+        // Must start with 0 and be 10-11 digits
+        if (!clean.startsWith('0')) return null
+        if (clean.length < 10 || clean.length > 11) return null
+        
+        // Must be a valid UK prefix
+        if (!/^0[1-9]/.test(clean)) return null
+
+        // Convert to E.164: +44 + number without leading 0
+        return '+44' + clean.slice(1)
     } catch {
         return null
     }
