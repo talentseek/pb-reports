@@ -2,7 +2,7 @@
  * Launch B5 4TD Arcadian Birmingham Campaign
  * 
  * Features:
- * - Wave dispatching: 8 calls per wave, 90s gaps
+ * - Wave dispatching: 4 calls per wave, 120s gaps
  * - IVR pre-filter: skips national prefix numbers (0330/0800/0845/0345/0844/0870)
  * - Deduplication: checks if placeId was already called in any campaign
  * - Uses Birmingham local number (0121)
@@ -24,9 +24,9 @@ const POSTCODE = 'B5 4TD'
 const VAPI_PHONE_NUM_ID = '1ef87949-bce1-418d-abb4-107a6adf8494'
 const VAPI_ASSISTANT_ID = '501d2196-59fe-4860-9f88-749dca9ac096'
 
-const WAVE_SIZE = 8
-const WAVE_GAP_MS = 90_000 // 90 seconds between waves
-const CALL_GAP_MS = 2_000  // 2 seconds between individual calls in a wave
+const WAVE_SIZE = 4
+const WAVE_GAP_MS = 120_000 // 120 seconds between waves
+const CALL_GAP_MS = 5_000   // 5 seconds between individual calls in a wave
 
 const IVR_PREFIXES = ['0330', '0800', '0845', '0345', '0844', '0870']
 
@@ -213,7 +213,7 @@ async function main() {
 
     // Gap between waves (except after last wave)
     if (wave < totalWaves - 1) {
-      console.log('  ⏳ Waiting 90s before next wave...')
+      console.log('  ⏳ Waiting 120s before next wave...')
       await new Promise(r => setTimeout(r, WAVE_GAP_MS))
     }
   }

@@ -138,53 +138,249 @@ export interface ProcessedCallResult {
     endedReason: string | null
 }
 
+// ─── Transcript intelligence ───
+
+const IVR_KEYWORDS = /\bpress \d|press the hash|press option|please hold|your call cannot be transferred|option \d|please select|for .+ press|dial \d|menu loop|automated system|to hear (these|this|the) options? again/i
+
+const CALLBACK_KEYWORDS = /\b(call.{0,5}back|ring.{0,5}back|try again (later|tomorrow)|come back|call .{0,10}(tomorrow|later|morning|afternoon)|call us.{0,5}back)\b/i
+
+const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+\s*(?:@|at)\s*[a-zA-Z0-9.-]+\s*(?:\.|dot)\s*(?:com?|co\s*\.?\s*u\s*k|org|net|uk)/gi
+
+function extractEmailFromTranscript(transcript: string): string | null {
+    // Split transcript into Sarah's lines and Business lines
+    // We want emails that are GIVEN BY the business in conversation,
+    // not IVR scripts mentioning website URLs
+    
+    const lines = transcript.split('\n')
+    
+    // Strategy 1: Look for email explicitly mentioned after Sarah asks for it
+    // Find lines where the business responds to Sarah's email question
+    const emailContextPatterns = [
+        /(?:send it to|email (?:is|address)|it's|that's)\s+([a-zA-Z0-9][\w\s.]{0,30}?)\s*(?:at|@)\s*([a-zA-Z0-9][\w\s.]{0,30}?)\s*dot\s*(co\s*dot\s*u\s*k|com|org|net|uk|io)/i,
+        /(?:send it to|email (?:is|address)|it's|that's)\s+([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i,
+    ]
+    
+    for (const line of lines) {
+        // Only check Business lines (not Sarah's lines)
+        if (line.startsWith('Sarah:')) continue
+        
+        for (const pattern of emailContextPatterns) {
+            const match = line.match(pattern)
+            if (match) {
+                if (match[3]) {
+                    // Spoken email: reconstruct
+                    const local = match[1].trim().replace(/\s+/g, '').replace(/dot/gi, '.')
+                    const domain = match[2].trim().replace(/\s+/g, '').replace(/dot/gi, '.')
+                    const tld = match[3].replace(/\s+/g, '').replace(/dot/gi, '.')
+                    const email = (local + '@' + domain + '.' + tld).toLowerCase()
+                    if (email.length < 50) return email
+                } else {
+                    // Literal email
+                    const email = (match[1] + '@' + match[2]).toLowerCase()
+                    if (email.length < 50) return email
+                }
+            }
+        }
+    }
+    
+    // Strategy 1.5: Broader spoken email on business lines  
+    // Catches "claudia dot white at h i e birmingham city dot com"
+    const IVR_LINE_MARKERS = /\bpress \d|option \d|please hold|please select|booking|website|visit|online|chat service|dial \d|for .+ press|opening hours|menu|automated/i
+    // Strip context-setting prefixes, NOT email words like "mail" or "back"
+    const CONTEXT_PREFIX = /^(say|please|it's|that's|is that|so|if you send it to|send it to| )\s*/i
+    
+    function cleanEmailParts(raw: string): string {
+        let cleaned = raw.trim()
+        for (let i = 0; i < 3; i++) {
+            cleaned = cleaned.replace(CONTEXT_PREFIX, '').trim()
+        }
+        return cleaned.replace(/\s+/g, '').replace(/dot/gi, '.')
+    }
+    
+    for (const line of lines) {
+        if (line.startsWith('Sarah:')) continue
+        // Skip IVR/automated recording lines — they mention websites, not real emails
+        if (IVR_LINE_MARKERS.test(line)) continue
+        // Generic spoken email: word(s) "at" word(s) "dot" tld
+        const broadMatch = line.match(
+            /([a-zA-Z][a-zA-Z0-9\s.]{0,30}?)\s+at\s+([a-zA-Z][a-zA-Z0-9\s.]{0,30}?)\s+dot\s+(co\s+dot\s+u\s+k|com|org|net|uk|io)/i
+        )
+        if (broadMatch) {
+            const local = cleanEmailParts(broadMatch[1])
+            const domain = cleanEmailParts(broadMatch[2])
+            const tld = broadMatch[3].replace(/\s+/g, '').replace(/dot/gi, '.')
+            const email = (local + '@' + domain + '.' + tld).toLowerCase()
+            if (email.length > 5 && email.length < 50 && /^[a-z0-9.]+@[a-z0-9.]+\.[a-z.]+$/.test(email)) {
+                return email
+            }
+        }
+    }
+    
+    // Strategy 2: Check ALL lines (including Sarah's) for confirmed/mentioned email
+    // Sarah often confirms: "is that mail at o2 academy..." or "I'll pop those over to back to back at..."
+    for (const line of lines) {
+        const confirmMatch = line.match(
+            /([a-zA-Z][a-zA-Z0-9\s.]{0,25}?)\s+(?:at|@)\s+([a-zA-Z][a-zA-Z0-9\s.]{0,25}?)\s+dot\s+(co\s+dot\s+u\s+k|com|org|net|uk|io)/i
+        )
+        if (confirmMatch) {
+            // Skip if this looks like IVR content
+            if (IVR_LINE_MARKERS.test(line)) continue
+            const local = cleanEmailParts(confirmMatch[1])
+            const domain = cleanEmailParts(confirmMatch[2])
+            const tld = confirmMatch[3].replace(/\s+/g, '').replace(/dot/gi, '.')
+            const email = (local + '@' + domain + '.' + tld).toLowerCase()
+            if (email.length > 5 && email.length < 50 && /^[a-z0-9.]+@[a-z0-9.]+\.[a-z.]+$/.test(email)) {
+                return email
+            }
+        }
+    }
+    
+    // Strategy 3: Last resort — look for literal @ anywhere in business speech
+    // but only if it looks like a real email (short, has proper structure)
+    for (const line of lines) {
+        if (line.startsWith('Sarah:')) continue
+        const literalMatch = line.match(/([a-zA-Z0-9._%+-]{2,30})@([a-zA-Z0-9.-]{2,30}\.[a-zA-Z]{2,6})/)
+        if (literalMatch) {
+            const email = literalMatch[0].toLowerCase()
+            // Filter out obvious non-emails
+            if (email.length < 50 && !email.includes('www.') && !email.includes('http')) {
+                return email
+            }
+        }
+    }
+
+    return null
+}
+
+function extractNameFromTranscript(transcript: string): string | null {
+    // Look for patterns like "send it to [Name]" or "speak to [Name]" or "[Name] speaking"
+    const patterns = [
+        /(?:this is|speaking|my name is|I'm|I am)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/,
+        /(?:send it to|speak to|ask for|put you through to)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+speaking/,
+    ]
+    for (const p of patterns) {
+        const match = transcript.match(p)
+        if (match) {
+            const name = match[1].trim()
+            // Filter out common false positives
+            if (['Sarah', 'Park', 'Bunny', 'Quick', 'Hello', 'Thanks', 'Sorry'].includes(name)) continue
+            if (name.length >= 2 && name.length <= 30) return name
+        }
+    }
+    return null
+}
+
+function detectCallbackTime(transcript: string): string | null {
+    const patterns = [
+        /call.{0,5}back\s+(tomorrow|monday|tuesday|wednesday|thursday|friday)/i,
+        /try again\s+(tomorrow|later|in the morning|this afternoon)/i,
+        /(tomorrow|monday|tuesday|wednesday|thursday|friday)\s*(?:morning|afternoon|late)?\s*(?:would be|is)?\s*(?:best|good|better)/i,
+    ]
+    for (const p of patterns) {
+        const match = transcript.match(p)
+        if (match) return match[0].trim()
+    }
+    return null
+}
+
 export function processCallResult(payload: any): ProcessedCallResult {
-    const structured = payload?.analysis?.structuredData ?? {}
-    const outcomeMap: Record<string, CallStatus> = {
-        LEAD_CAPTURED: 'LEAD_CAPTURED',
-        CALLBACK_BOOKED: 'CALLBACK_BOOKED',
-        NOT_INTERESTED: 'NOT_INTERESTED',
-        VOICEMAIL: 'VOICEMAIL',
-        GATEKEEPER_BLOCKED: 'GATEKEEPER_BLOCKED',
-    }
-
-    const rawOutcome = structured.call_outcome as string | undefined
-    let callStatus: CallStatus = outcomeMap[rawOutcome ?? ''] ?? 'FAILED'
-
-    // Map Vapi endedReason to our statuses
+    // ── Extract raw data from VAPI response ──
     const endedReason = payload?.endedReason ?? payload?.call?.endedReason ?? null
-    if (endedReason === 'voicemail') callStatus = 'VOICEMAIL'
-    if (endedReason === 'customer-did-not-answer') callStatus = 'NO_ANSWER'
-    if (endedReason === 'twilio-failed-to-connect-call') callStatus = 'FAILED'
-
-    // Detect IVR/automated systems:
-    // - max-duration-reached with GATEKEEPER_BLOCKED = stuck in IVR
-    // - silence-timed-out with GATEKEEPER_BLOCKED = IVR dropped
-    // - summary containing 'automated' or 'menu' with GATEKEEPER_BLOCKED
     const summary = payload?.summary ?? payload?.analysis?.summary ?? ''
-    if (callStatus === 'GATEKEEPER_BLOCKED') {
-        const isIVR =
-            endedReason === 'max-duration-reached' ||
-            endedReason === 'silence-timed-out' ||
-            /automated|menu loop|automated system|ivr|press \d/i.test(summary)
-        if (isIVR) callStatus = 'IVR_BLOCKED'
+    const transcript = payload?.transcript ?? payload?.artifact?.transcript ?? null
+    const recordingUrl = payload?.recordingUrl ?? payload?.artifact?.recordingUrl ?? null
+
+    // ── Compute duration from timestamps ──
+    let callDuration: number | null = null
+    const startedAt = payload?.startedAt ?? payload?.call?.startedAt
+    const endedAt = payload?.endedAt ?? payload?.call?.endedAt
+    if (startedAt && endedAt) {
+        callDuration = Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000)
+    } else if (payload?.call?.duration) {
+        callDuration = Math.round(payload.call.duration)
     }
 
-    // customer-ended-call with no structured outcome is likely a hang-up, not a "failure"
-    if (callStatus === 'FAILED' && endedReason === 'customer-ended-call') {
+    // ── Try VAPI structured data first (may be empty) ──
+    const structured = payload?.analysis?.structuredData
+        ?? payload?.artifact?.structuredOutputs?.[0]?.output
+        ?? {}
+
+    let extractedName: string | null = structured.decision_maker_name ?? null
+    let extractedEmail: string | null = structured.decision_maker_email ?? null
+    let callbackTime: string | null = structured.best_callback_time ?? null
+
+    // ── Transcript-based intelligence (supplement/override VAPI) ──
+    const isIVR = transcript ? IVR_KEYWORDS.test(transcript) : false
+    const isCallback = transcript ? CALLBACK_KEYWORDS.test(transcript) : false
+
+    // Extract email from transcript if VAPI missed it
+    if (!extractedEmail && transcript) {
+        extractedEmail = extractEmailFromTranscript(transcript)
+    }
+
+    // Extract name from transcript if VAPI missed it
+    if (!extractedName && transcript) {
+        extractedName = extractNameFromTranscript(transcript)
+    }
+
+    // Detect callback time from transcript
+    if (!callbackTime && transcript) {
+        callbackTime = detectCallbackTime(transcript)
+    }
+
+    // ── Determine call status ──
+    let callStatus: CallStatus = 'FAILED'
+
+    // Priority 1: endedReason-based statuses (definitive)
+    if (endedReason === 'voicemail') {
+        callStatus = 'VOICEMAIL'
+    } else if (endedReason === 'customer-did-not-answer') {
+        callStatus = 'NO_ANSWER'
+    } else if (endedReason === 'twilio-failed-to-connect-call') {
+        callStatus = 'FAILED'
+    }
+    // Priority 2: Transcript-based classification (smart)
+    else if (extractedEmail) {
+        callStatus = 'LEAD_CAPTURED'
+    } else if (isCallback || callbackTime) {
+        callStatus = 'CALLBACK_BOOKED'
+    } else if (isIVR) {
+        // If entire call was IVR and we never got through
+        callStatus = 'IVR_BLOCKED'
+    } else if (endedReason === 'exceeded-max-duration' || endedReason === 'silence-timed-out') {
+        // Timed out without IVR — likely unanswered transfer or hold
+        callStatus = isIVR ? 'IVR_BLOCKED' : 'FAILED'
+    } else if (endedReason === 'customer-ended-call' || endedReason === 'assistant-said-end-call-phrase') {
+        // Human hung up or Sarah ended normally
         callStatus = 'NOT_INTERESTED'
+    } else if (endedReason === 'customer-busy') {
+        callStatus = 'NO_ANSWER'
+    }
+
+    // Priority 3: Use VAPI structured outcome if available
+    const rawOutcome = structured.call_outcome as string | undefined
+    if (rawOutcome) {
+        const outcomeMap: Record<string, CallStatus> = {
+            LEAD_CAPTURED: 'LEAD_CAPTURED',
+            CALLBACK_BOOKED: 'CALLBACK_BOOKED',
+            NOT_INTERESTED: 'NOT_INTERESTED',
+            VOICEMAIL: 'VOICEMAIL',
+            GATEKEEPER_BLOCKED: 'GATEKEEPER_BLOCKED',
+        }
+        if (outcomeMap[rawOutcome]) callStatus = outcomeMap[rawOutcome]
     }
 
     return {
         callStatus,
         callSummary: summary || null,
-        transcript: payload?.transcript ?? null,
-        recordingUrl: payload?.recordingUrl ?? null,
-        callDuration: payload?.call?.duration ? Math.round(payload.call.duration) : null,
-        extractedName: structured.decision_maker_name ?? null,
-        extractedEmail: structured.decision_maker_email ?? null,
+        transcript,
+        recordingUrl,
+        callDuration,
+        extractedName,
+        extractedEmail,
         extractedPhone: null,
-        callbackTime: structured.best_callback_time ?? null,
+        callbackTime,
         endedReason,
     }
 }
