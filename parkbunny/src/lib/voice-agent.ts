@@ -78,7 +78,7 @@ export async function dispatchCall(
     const e164 = formatPhoneE164(phone)
     if (!e164) return { success: false, error: 'invalid_number' }
 
-    const businessName = cb.reportLocationPlace.place.name
+    const businessName = cb.reportLocationPlace.place.name.slice(0, 40)
 
     const payload = {
         assistantId: config.vapiAssistantId,
