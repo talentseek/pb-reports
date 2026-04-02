@@ -312,7 +312,11 @@ export function processCallResult(payload: any): ProcessedCallResult {
 
     // ── Transcript-based intelligence (supplement/override VAPI) ──
     const isIVR = transcript ? IVR_KEYWORDS.test(transcript) : false
-    const isCallback = transcript ? CALLBACK_KEYWORDS.test(transcript) : false
+    // Only check for callback in human (business) speech, not in IVR/Sarah lines
+    const businessText = transcript
+        ? transcript.split('\n').filter((l: string) => l.startsWith('Business:')).join(' ')
+        : ''
+    const isCallback = CALLBACK_KEYWORDS.test(businessText) && !isIVR
 
     // Extract email from transcript if VAPI missed it
     if (!extractedEmail && transcript) {
@@ -358,15 +362,17 @@ export function processCallResult(payload: any): ProcessedCallResult {
         callStatus = 'NO_ANSWER'
     }
 
-    // Priority 3: Use VAPI structured outcome if available
+    // Priority 3: Use VAPI structured outcome ONLY as fallback
+    // Our transcript-based classifier is more accurate, so only use VAPI
+    // when we classified as FAILED/NOT_INTERESTED and VAPI disagrees
     const rawOutcome = structured.call_outcome as string | undefined
-    if (rawOutcome) {
+    if (rawOutcome && (callStatus === 'FAILED' || callStatus === 'NOT_INTERESTED')) {
         const outcomeMap: Record<string, CallStatus> = {
             LEAD_CAPTURED: 'LEAD_CAPTURED',
             CALLBACK_BOOKED: 'CALLBACK_BOOKED',
-            NOT_INTERESTED: 'NOT_INTERESTED',
             VOICEMAIL: 'VOICEMAIL',
             GATEKEEPER_BLOCKED: 'GATEKEEPER_BLOCKED',
+            IVR_BLOCKED: 'IVR_BLOCKED',
         }
         if (outcomeMap[rawOutcome]) callStatus = outcomeMap[rawOutcome]
     }
