@@ -109,6 +109,7 @@ function outcomeColor(color: string): string {
     blue: 'bg-blue-500',
     red: 'bg-red-500',
     amber: 'bg-amber-500',
+    orange: 'bg-orange-500',
     rose: 'bg-rose-500',
     slate: 'bg-slate-400',
     gray: 'bg-gray-300',
@@ -367,9 +368,11 @@ export default function VoiceOutreachDashboard() {
                       </td>
                       <td className="px-5 py-3">{outcomeBadge(call.callStatus)}</td>
                       <td className="px-5 py-3">
-                        {call.extractedName ? (
+                        {(call.extractedName || call.extractedEmail) ? (
                           <div>
-                            <div className="text-xs font-medium">{call.extractedName}</div>
+                            {call.extractedName && (
+                              <div className="text-xs font-medium">{call.extractedName}</div>
+                            )}
                             {call.extractedEmail && (
                               <div className="text-xs text-blue-600">{call.extractedEmail}</div>
                             )}
