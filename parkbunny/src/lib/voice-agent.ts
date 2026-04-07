@@ -401,7 +401,7 @@ export async function getCallableBusinesses(campaignId: string, maxAttempts: num
                 { callStatus: 'PENDING' },
                 { callStatus: 'QUEUED' },
                 {
-                    callStatus: { in: ['VOICEMAIL', 'NO_ANSWER'] },
+                    callStatus: { in: ['VOICEMAIL', 'NO_ANSWER', 'CALLBACK_BOOKED'] },
                     callAttempts: { lt: maxAttempts },
                     nextCallAt: { lte: new Date() },
                 },
