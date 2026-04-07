@@ -30,9 +30,28 @@ const CALL_GAP_MS = 10_000  // 10 seconds between individual calls in a wave
 
 const IVR_PREFIXES = ['0330', '0800', '0845', '0345', '0844', '0870']
 
+// Business types that almost always have IVR — skip to save calls
+const IVR_HEAVY_TYPES = [
+  'bank',
+  'pharmacy',
+  'car_dealer',
+  'hospital',
+  'doctor',
+  'dentist',
+  'insurance_agency',
+  'department_store',
+  'post_office',
+  'supermarket',
+]
+
 function isIvrPrefix(phone: string): boolean {
   const clean = phone.replace(/\s/g, '')
   return IVR_PREFIXES.some(pfx => clean.startsWith(pfx))
+}
+
+function isIvrHeavyType(types: string): boolean {
+  const typeList = types.toLowerCase().split(',')
+  return IVR_HEAVY_TYPES.some(t => typeList.some(bt => bt.trim().includes(t)))
 }
 
 async function main() {
@@ -70,16 +89,30 @@ async function main() {
   // 3. Get businesses with phones
   const places = await prisma.reportLocationPlace.findMany({
     where: { locationId: location.id },
-    include: { place: { select: { name: true, phone: true, placeId: true } } },
+    include: { place: { select: { name: true, phone: true, placeId: true, types: true } } },
   })
 
   const withPhone = places.filter(p => p.place.phone)
   console.log('📊 Total places: ' + places.length + ' | With phone: ' + withPhone.length)
 
+  // Time window check — only run between 10am and 12pm
+  const hour = new Date().getHours()
+  if (hour < 10 || hour >= 12) {
+    console.log('⏰ Current hour: ' + hour + '. Calls should run between 10am-12pm.')
+    console.log('   Pass --force to override the time window.')
+    if (!process.argv.includes('--force')) {
+      console.log('   Exiting. Use: npx tsx scripts/launch-b5-campaign.ts --force')
+      return
+    }
+    console.log('   --force flag detected, proceeding anyway.')
+  }
+
   // 4. Filter and create CampaignBusiness records
   let ivrSkipped = 0
   let dupSkipped = 0
   let invalidSkipped = 0
+  let typeSkipped = 0
+  let prevIvrSkipped = 0
   const queued: string[] = []
 
   for (const rlp of withPhone) {
@@ -99,7 +132,21 @@ async function main() {
         },
       })
       ivrSkipped++
-      console.log('  🤖 IVR skip: ' + rlp.place.name)
+      console.log('  🤖 IVR prefix skip: ' + rlp.place.name)
+      continue
+    }
+
+    // IVR-heavy business type check
+    if (isIvrHeavyType(rlp.place.types)) {
+      await prisma.campaignBusiness.create({
+        data: {
+          campaignId: campaign.id,
+          reportLocationPlaceId: rlp.id,
+          callStatus: 'IVR_BLOCKED',
+        },
+      })
+      typeSkipped++
+      console.log('  🏦 IVR-heavy type skip: ' + rlp.place.name + ' (' + rlp.place.types + ')')
       continue
     }
 
@@ -115,6 +162,27 @@ async function main() {
       })
       dupSkipped++
       console.log('  🔄 Duplicate skip: ' + rlp.place.name + ' (from ' + dupCampaign + ')')
+      continue
+    }
+
+    // Previously IVR-blocked check — if this placeId was IVR_BLOCKED in any campaign, skip
+    const prevIvr = await prisma.campaignBusiness.findFirst({
+      where: {
+        reportLocationPlace: { place: { placeId: rlp.place.placeId } },
+        callStatus: 'IVR_BLOCKED',
+        campaignId: { not: campaign.id },
+      },
+    })
+    if (prevIvr) {
+      await prisma.campaignBusiness.create({
+        data: {
+          campaignId: campaign.id,
+          reportLocationPlaceId: rlp.id,
+          callStatus: 'IVR_BLOCKED',
+        },
+      })
+      prevIvrSkipped++
+      console.log('  🚫 Prev IVR skip: ' + rlp.place.name)
       continue
     }
 
@@ -147,7 +215,9 @@ async function main() {
   console.log('')
   console.log('═'.repeat(60))
   console.log('📊 Pre-flight:')
-  console.log('   IVR skipped: ' + ivrSkipped)
+  console.log('   IVR prefix skipped: ' + ivrSkipped)
+  console.log('   IVR type skipped: ' + typeSkipped)
+  console.log('   Prev IVR skipped: ' + prevIvrSkipped)
   console.log('   Duplicates skipped: ' + dupSkipped)
   console.log('   Invalid numbers: ' + invalidSkipped)
   console.log('   Queued for calling: ' + queued.length)
@@ -224,7 +294,9 @@ async function main() {
   console.log('🏁 Campaign dispatch complete!')
   console.log('   Dispatched: ' + dispatched)
   console.log('   Failed: ' + failed)
-  console.log('   IVR skipped: ' + ivrSkipped)
+  console.log('   IVR prefix skipped: ' + ivrSkipped)
+  console.log('   IVR type skipped: ' + typeSkipped)
+  console.log('   Prev IVR skipped: ' + prevIvrSkipped)
   console.log('   Duplicates: ' + dupSkipped)
   console.log('   Invalid: ' + invalidSkipped)
   console.log('')
