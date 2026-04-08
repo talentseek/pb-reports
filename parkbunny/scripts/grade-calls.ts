@@ -184,7 +184,7 @@ function suggestImprovements(call: CallAudit, problems: string[]): string[] {
     improvements.push('Got a callback mention but no specific time captured — improve extraction')
   }
   
-  return [...new Set(improvements)]
+  return Array.from(new Set(improvements))
 }
 
 function gradeCall(call: CallAudit): 'A' | 'B' | 'C' | 'D' | 'F' {
