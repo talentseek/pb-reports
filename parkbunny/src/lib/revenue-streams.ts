@@ -281,7 +281,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     DOG_WASH_UNIT: {
         label: 'Self-Service Dog Wash',
         icon: 'Dog',
-        image: '/dog-wash-unit-placeholder.webp',
+        image: '/dog-wash-unit.avif',
         description: 'Fully self-service dog wash unit — choice of enclosed or open-air. All setup and install costs covered by supplier. Revenue share model with quarterly payments.',
         bullets: [
             'Average gross revenue: ~£15,000 per year',
@@ -299,7 +299,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     SELF_SERVICE_LAUNDRY: {
         label: 'Self-Service Laundry',
         icon: 'WashingMachine',
-        image: '/self-service-laundry-placeholder.webp',
+        image: '/self-service-laundry.png',
         description: 'Self-service laundry unit with 4 drums (2 washers, 2 dryers — all large capacity). All setup and install costs covered. Revenue share model with quarterly payments.',
         bullets: [
             'Average gross revenue: ~£35,000 per year',
@@ -317,7 +317,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     SOLAR_PPA: {
         label: 'Solar PPA (Power Purchase Agreement)',
         icon: 'Sun',
-        image: '/solar-ppa-placeholder.webp',
+        image: '/solar-ppa.png',
         description: 'Fully-funded Solar PV, Battery, and EV charging installation via Power Purchase Agreement. No capital expenditure — fixed kWh tariff with approximately 30% bill reduction for the full term.',
         bullets: [
             'Free installation — fully funded by PPA provider',
@@ -338,7 +338,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     SOLAR_PV_PAID: {
         label: 'Solar PV (Paid Installation)',
         icon: 'SunDim',
-        image: '/solar-pv-placeholder.webp',
+        image: '/solar-pv-paid.png',
         description: 'Paid solar PV generation and battery storage — tailored installation to remove up to 80% of grid electricity usage. Average ROI of approximately 7 years with 500% return over system life.',
         bullets: [
             'Removes up to 80% of electricity usage from the grid',
@@ -356,7 +356,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     TARIFF_OPTIMISATION: {
         label: 'Energy Tariff Optimisation',
         icon: 'TrendingDown',
-        image: '/tariff-optimisation-placeholder.webp',
+        image: '/tariff-optimisation.png',
         description: 'Full energy tariff optimisation service with access to exclusive tariffs from 20+ energy retailers. Proposals returned within 48 hours.',
         bullets: [
             'Between 20% and 70% saving on current energy bills',
@@ -374,7 +374,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     SITE_MAINTENANCE: {
         label: 'Site Maintenance & Clearance',
         icon: 'Wrench',
-        image: '/site-maintenance-placeholder.webp',
+        image: '/site-maintenance.png',
         description: 'Full site clearance, maintenance, and building services available with UK-wide coverage. From cleaning and power washing to specialist maintenance contracts.',
         bullets: [
             'Full site clearance and maintenance',
@@ -392,7 +392,7 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
     OCTOPUS_ENERGY: {
         label: 'Octopus Energy — Domestic Switch',
         icon: 'Plug',
-        image: '/octopus-energy-placeholder.webp',
+        image: '/octopus-energy.webp',
         description: 'In-app hyperlink allowing drivers to switch domestic energy supply to Octopus Energy in approximately 2 minutes. Generates revenue per switch with zero site impact.',
         bullets: [
             '£50 credit to new Octopus customers on switch',
