@@ -134,6 +134,14 @@ function getStreamEmoji(streamType: StreamType): string {
     case 'WATERLESS_CAR_WASH': return '✨'
     case 'DIGITAL_SIGNAGE': return '📺'
     case 'DOMINOS_POD': return '🍕'
+    case 'LAST_MILE_LOCKER': return '🏭'
+    case 'DOG_WASH_UNIT': return '🛁'
+    case 'SELF_SERVICE_LAUNDRY': return '🧼'
+    case 'SOLAR_PPA': return '☀️'
+    case 'SOLAR_PV_PAID': return '🔋'
+    case 'TARIFF_OPTIMISATION': return '💡'
+    case 'SITE_MAINTENANCE': return '🔧'
+    case 'OCTOPUS_ENERGY': return '🐙'
     default: return '📊'
   }
 }
