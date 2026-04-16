@@ -263,6 +263,7 @@ enum StreamType {
   TARIFF_OPTIMISATION
   SITE_MAINTENANCE
   OCTOPUS_ENERGY
+  PADEL_COURT
 }
 
 model RevenueStream {

@@ -57,6 +57,7 @@ function getEmoji(st: StreamType): string {
         DOG_WASH_UNIT: '🛁', SELF_SERVICE_LAUNDRY: '🧼', SOLAR_PPA: '☀️',
         SOLAR_PV_PAID: '🔋', TARIFF_OPTIMISATION: '💡', SITE_MAINTENANCE: '🔧',
         OCTOPUS_ENERGY: '🐙',
+        PADEL_COURT: '🎾',
     }
     return map[st] ?? '📊'
 }

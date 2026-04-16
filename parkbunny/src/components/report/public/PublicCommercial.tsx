@@ -142,6 +142,7 @@ function getStreamEmoji(streamType: StreamType): string {
     case 'TARIFF_OPTIMISATION': return '💡'
     case 'SITE_MAINTENANCE': return '🔧'
     case 'OCTOPUS_ENERGY': return '🐙'
+    case 'PADEL_COURT': return '🎾'
     default: return '📊'
   }
 }

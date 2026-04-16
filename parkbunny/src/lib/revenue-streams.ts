@@ -9,6 +9,7 @@ export const ALT_STREAM_TYPES: StreamType[] = [
     'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
     'DOMINOS_POD', 'LAST_MILE_LOCKER', 'DOG_WASH_UNIT', 'SELF_SERVICE_LAUNDRY',
     'SOLAR_PPA', 'SOLAR_PV_PAID', 'TARIFF_OPTIMISATION', 'SITE_MAINTENANCE', 'OCTOPUS_ENERGY',
+    'PADEL_COURT',
 ]
 export const ALL_STREAM_TYPES: StreamType[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
@@ -406,6 +407,26 @@ export const STREAM_DEFAULTS: Record<StreamType, StreamMeta> = {
         isTextOnly: true,
         textDisplay: '£25 per customer switch',
         statusLabel: 'National Deal',
+        isAlternative: true,
+    },
+    PADEL_COURT: {
+        label: 'Instant Padel Courts',
+        icon: 'Racquet',
+        image: '/padel.png',
+        description: 'Zero-CAPEX instant padel courts manufactured in Sweden. Revenue share model with 25% to the site partner. Minimum two-court installation with flexible relocation options within your portfolio.',
+        bullets: [
+            'Total revenue per 2–4 courts: £250,000 – £350,000 per year',
+            'Revenue share model — 25% to the site partner',
+            'Zero CAPEX — all costs covered',
+            '300 sq m per court (two-court minimum to make viable)',
+            'Min 24-month contract with option to relocate after 18 months',
+            '4–12 week install time dependent on stock',
+            'Manufactured in Sweden — premium build quality',
+            'Multiple court flooring options depending on location',
+        ],
+        defaultMin: 62500,
+        defaultMax: 87500,
+        statusLabel: 'Subject to Survey',
         isAlternative: true,
     },
 }

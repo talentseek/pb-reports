@@ -8,7 +8,7 @@ type StreamType = 'LOCKER' | 'CAR_WASH' | 'EV_CHARGING' | 'FARMERS_MARKET'
   | 'NHS_MRI_SCANNER' | 'FILM_CREW_HOSTING' | 'ELECTRIC_BIKE_BAY' | 'WATERLESS_CAR_WASH' | 'DIGITAL_SIGNAGE'
   | 'DOMINOS_POD' | 'LAST_MILE_LOCKER'
   | 'DOG_WASH_UNIT' | 'SELF_SERVICE_LAUNDRY' | 'SOLAR_PPA' | 'SOLAR_PV_PAID'
-  | 'TARIFF_OPTIMISATION' | 'SITE_MAINTENANCE' | 'OCTOPUS_ENERGY'
+  | 'TARIFF_OPTIMISATION' | 'SITE_MAINTENANCE' | 'OCTOPUS_ENERGY' | 'PADEL_COURT'
 
 type StreamConfig = {
   id?: string
@@ -48,6 +48,7 @@ const STREAM_LABELS: Record<string, string> = {
   TARIFF_OPTIMISATION: 'Energy Tariff Optimisation',
   SITE_MAINTENANCE: 'Site Maintenance & Clearance',
   OCTOPUS_ENERGY: 'Octopus Energy — Domestic Switch',
+  PADEL_COURT: 'Instant Padel Courts',
 }
 
 const STREAM_DEFAULTS: Record<string, { rate?: number; min?: number; max?: number; isTextOnly?: boolean; textDisplay?: string }> = {
@@ -73,6 +74,7 @@ const STREAM_DEFAULTS: Record<string, { rate?: number; min?: number; max?: numbe
   TARIFF_OPTIMISATION: { isTextOnly: true, textDisplay: '20%–70% savings on energy bills' },
   SITE_MAINTENANCE: { isTextOnly: true, textDisplay: 'Subject to survey' },
   OCTOPUS_ENERGY: { isTextOnly: true, textDisplay: '£25 per customer switch' },
+  PADEL_COURT: { min: 62500, max: 87500 },
 }
 
 const CORE_STREAM_TYPES: string[] = ['LOCKER', 'CAR_WASH', 'EV_CHARGING', 'FARMERS_MARKET']
@@ -81,6 +83,7 @@ const ALT_STREAM_TYPES: string[] = [
   'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
   'DOMINOS_POD', 'LAST_MILE_LOCKER', 'DOG_WASH_UNIT', 'SELF_SERVICE_LAUNDRY',
   'SOLAR_PPA', 'SOLAR_PV_PAID', 'TARIFF_OPTIMISATION', 'SITE_MAINTENANCE', 'OCTOPUS_ENERGY',
+  'PADEL_COURT',
 ]
 const ALL_STREAM_TYPES: string[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
 
