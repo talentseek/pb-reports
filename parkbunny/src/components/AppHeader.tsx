@@ -57,6 +57,12 @@ export default function AppHeader() {
             📞 Support
           </Link>
           <Link
+            href="/dashboard/support/email"
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/dashboard/support/email' ? 'text-primary' : 'text-muted-foreground'}`}
+          >
+            📧 Email
+          </Link>
+          <Link
             href="/outreach/analytics"
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/outreach/analytics' ? 'text-primary' : 'text-muted-foreground'}`}
           >

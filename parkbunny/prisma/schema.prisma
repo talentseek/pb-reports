@@ -465,3 +465,49 @@ model SupportCall {
   @@index([category])
   @@index([createdAt])
 }
+
+// ─── Email Support Integration ───
+
+model EmailIntegration {
+  id               String   @id @default(cuid())
+  provider         String   // "OUTLOOK"
+  unipileAccountId String   @unique
+  emailAddress     String?  // The actual address e.g. support@parkbunny.app
+  connectedAt      DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model SupportEmail {
+  id              String   @id @default(cuid())
+  unipileEmailId  String   @unique  // Unipile's internal email ID (dedup key)
+
+  // Inbound email data
+  fromEmail       String
+  fromName        String?
+  subject         String
+  bodyText        String?  @db.Text
+  bodyHtml        String?  @db.Text
+  receivedAt      DateTime
+
+  // AI processing
+  // processing | replied | needs_review | escalated | ignored
+  status          String   @default("processing")
+  category        String?  // FAQ category matched
+  resolved        Boolean  @default(false)
+  escalatedToHuman Boolean @default(false)
+  sentiment       String?  // positive | neutral | negative
+  aiSummary       String?  @db.Text
+  suggestedReply  String?  @db.Text  // AI draft (stored even if not sent)
+
+  // Reply tracking
+  replySentAt     DateTime?
+  replyText       String?  @db.Text  // What was actually sent
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([fromEmail])
+  @@index([createdAt])
+}

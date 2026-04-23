@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/check-support-emails",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}
