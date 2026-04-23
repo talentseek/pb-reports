@@ -7,7 +7,7 @@ type StreamType = 'LOCKER' | 'CAR_WASH' | 'EV_CHARGING' | 'FARMERS_MARKET'
   | 'TESLA_DEMO' | 'WE_BUY_ANY_CAR' | 'GIANT_WASHING_MACHINE' | 'DOG_GROOMING'
   | 'NHS_MRI_SCANNER' | 'FILM_CREW_HOSTING' | 'ELECTRIC_BIKE_BAY' | 'WATERLESS_CAR_WASH' | 'DIGITAL_SIGNAGE'
   | 'DOMINOS_POD' | 'LAST_MILE_LOCKER'
-  | 'DOG_WASH_UNIT' | 'SELF_SERVICE_LAUNDRY' | 'SOLAR_PPA' | 'SOLAR_PV_PAID'
+  | 'DOG_WASH_UNIT' | 'SELF_SERVICE_LAUNDRY' | 'SOLAR_PPA'
   | 'TARIFF_OPTIMISATION' | 'SITE_MAINTENANCE' | 'OCTOPUS_ENERGY' | 'PADEL_COURT'
 
 type StreamConfig = {
@@ -43,8 +43,8 @@ const STREAM_LABELS: Record<string, string> = {
   LAST_MILE_LOCKER: 'Last Mile Logistics Locker',
   DOG_WASH_UNIT: 'Self-Service Dog Wash',
   SELF_SERVICE_LAUNDRY: 'Self-Service Laundry',
-  SOLAR_PPA: 'Solar PPA (Power Purchase Agreement)',
-  SOLAR_PV_PAID: 'Solar PV (Paid Installation)',
+  SOLAR_PPA: 'Solar Energy Solutions',
+
   TARIFF_OPTIMISATION: 'Energy Tariff Optimisation',
   SITE_MAINTENANCE: 'Site Maintenance & Clearance',
   OCTOPUS_ENERGY: 'Octopus Energy — Domestic Switch',
@@ -69,8 +69,8 @@ const STREAM_DEFAULTS: Record<string, { rate?: number; min?: number; max?: numbe
   LAST_MILE_LOCKER: { min: 3000, max: 4000 },
   DOG_WASH_UNIT: { rate: 3000 },
   SELF_SERVICE_LAUNDRY: { rate: 7000 },
-  SOLAR_PPA: { isTextOnly: true, textDisplay: '~30% bill reduction — free installation' },
-  SOLAR_PV_PAID: { isTextOnly: true, textDisplay: 'Up to 80% grid reduction — ~7yr ROI' },
+  SOLAR_PPA: { isTextOnly: true, textDisplay: '~30% bill reduction (PPA) or up to 80% grid reduction (Paid)' },
+
   TARIFF_OPTIMISATION: { isTextOnly: true, textDisplay: '20%–70% savings on energy bills' },
   SITE_MAINTENANCE: { isTextOnly: true, textDisplay: 'Subject to survey' },
   OCTOPUS_ENERGY: { isTextOnly: true, textDisplay: '£25 per customer switch' },
@@ -82,7 +82,7 @@ const ALT_STREAM_TYPES: string[] = [
   'TESLA_DEMO', 'WE_BUY_ANY_CAR', 'GIANT_WASHING_MACHINE', 'DOG_GROOMING',
   'NHS_MRI_SCANNER', 'FILM_CREW_HOSTING', 'ELECTRIC_BIKE_BAY', 'WATERLESS_CAR_WASH', 'DIGITAL_SIGNAGE',
   'DOMINOS_POD', 'LAST_MILE_LOCKER', 'DOG_WASH_UNIT', 'SELF_SERVICE_LAUNDRY',
-  'SOLAR_PPA', 'SOLAR_PV_PAID', 'TARIFF_OPTIMISATION', 'SITE_MAINTENANCE', 'OCTOPUS_ENERGY',
+  'SOLAR_PPA', 'TARIFF_OPTIMISATION', 'SITE_MAINTENANCE', 'OCTOPUS_ENERGY',
   'PADEL_COURT',
 ]
 const ALL_STREAM_TYPES: string[] = [...CORE_STREAM_TYPES, ...ALT_STREAM_TYPES]
