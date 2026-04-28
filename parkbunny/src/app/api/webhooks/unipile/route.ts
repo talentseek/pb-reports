@@ -166,9 +166,13 @@ async function handleInboundEmail(payload: any) {
 
   console.log(`[Unipile Webhook] New inbound support email from ${from}: "${subject}"`)
 
-  // Process asynchronously — return 200 to Unipile immediately
-  processInboundEmail(
-    { unipileEmailId: emailId, fromEmail: from, fromName, subject, bodyText, bodyHtml, receivedAt },
-    accountId,
-  ).catch((err) => console.error('[Unipile Webhook] processInboundEmail error:', err.message))
+  // Must await — Vercel serverless kills unawaited async work after response
+  try {
+    await processInboundEmail(
+      { unipileEmailId: emailId, fromEmail: from, fromName, subject, bodyText, bodyHtml, receivedAt },
+      accountId,
+    )
+  } catch (err: any) {
+    console.error('[Unipile Webhook] processInboundEmail error:', err.message)
+  }
 }
