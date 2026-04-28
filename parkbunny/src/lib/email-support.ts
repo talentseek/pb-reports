@@ -26,9 +26,9 @@ const openai = new OpenAI({
   },
 })
 
-// Default: Gemini 2.0 Flash — fast, cheap, reliable JSON output.
-// Override via OPENROUTER_MODEL env var (e.g. moonshotai/kimi-k2.6).
-const MODEL = process.env.OPENROUTER_MODEL ?? 'google/gemini-2.0-flash-001'
+// Default: Kimi K2.6 — strong reasoning, good value.
+// Override via OPENROUTER_MODEL env var.
+const MODEL = process.env.OPENROUTER_MODEL ?? 'moonshotai/kimi-k2.6'
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -130,7 +130,7 @@ export async function processInboundEmail(
     const completion = await openai.chat.completions.create({
       model: MODEL,
       temperature: 0.3,
-      max_tokens: 2048,
+      max_tokens: 4096,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: buildSystemPrompt() },
