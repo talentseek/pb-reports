@@ -28,7 +28,9 @@ const UNIPILE_HEADERS = () => {
  * so we can identify it on the callback without multi-tenancy complexity.
  */
 export async function generateHostedAuthLink(): Promise<{ url: string } | { error: string }> {
-  const appUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_BASE_URL
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+    || 'https://app.parkbunnyreports.com'
   const webhookUrl = process.env.NGROK_URL || appUrl
   const expiresOn = new Date(Date.now() + 60 * 60 * 1000).toISOString()
 

@@ -21,13 +21,14 @@ const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY ?? '',
   baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
-    'HTTP-Referer': 'https://parkbunny.app',
+    'HTTP-Referer': 'https://app.parkbunnyreports.com',
     'X-Title': 'ParkBunny Email Support',
   },
 })
 
-// Default: fast + cheap. Override via OPENROUTER_MODEL env var.
-const MODEL = process.env.OPENROUTER_MODEL ?? 'google/gemini-flash-1.5'
+// Default: Gemini 2.0 Flash — fast, cheap, reliable JSON output.
+// Override via OPENROUTER_MODEL env var (e.g. moonshotai/kimi-k2.6).
+const MODEL = process.env.OPENROUTER_MODEL ?? 'google/gemini-2.0-flash-001'
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -129,7 +130,7 @@ export async function processInboundEmail(
     const completion = await openai.chat.completions.create({
       model: MODEL,
       temperature: 0.3,
-      max_tokens: 800,
+      max_tokens: 2048,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: buildSystemPrompt() },
@@ -143,8 +144,19 @@ ${email.bodyText}`,
       ],
     })
 
-    const raw = completion.choices[0]?.message?.content ?? '{}'
-    aiResult = JSON.parse(raw) as AIResult
+    const raw = completion.choices[0]?.message?.content ?? ''
+    if (!raw.trim()) {
+      console.error(`[EmailSupport] AI returned empty content (model: ${MODEL}, finish_reason: ${completion.choices[0]?.finish_reason})`)
+      await prisma.supportEmail.update({
+        where: { id: record.id },
+        data: { status: 'needs_review', aiSummary: `AI returned empty response (model: ${MODEL}). Manual review required.` },
+      })
+      return
+    }
+
+    // Some models wrap JSON in markdown code blocks — strip them
+    const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
+    aiResult = JSON.parse(cleaned) as AIResult
   } catch (err: any) {
     console.error('[EmailSupport] OpenAI error:', err.message)
     // Mark as needs_review so a human sees it
